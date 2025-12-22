@@ -1,0 +1,15 @@
+/* You can add global styles to this file, and also import other style files */
+.main-bg {
+  background-color: #0d0d0d; /* Negro profundo de la plantilla */
+}
+
+.custom-input {
+  background-color: #000000 !important;
+  border: 1px solid #ffc107 !important; /* Borde amarillo */
+  color: white !important;
+  border-radius: 8px;
+}
+
+.custom-input:focus {
+  box-shadow: 0 0 5px #ffc107;
+}

@@ -1,0 +1,11 @@
+.main-bg {
+  background-color: #0d0d0d;
+  min-height: 100vh;
+}
+.consult-box {
+  max-width: 600px;
+  background-color: #141414;
+}
+.card {
+  border-radius: 15px;
+}

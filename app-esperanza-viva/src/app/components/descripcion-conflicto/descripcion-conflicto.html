@@ -1,0 +1,69 @@
+<div class="wireframe-container">
+  <header class="p-3 d-flex align-items-center">
+    <button class="btn-volver me-3" routerLink="/nueva-solicitud">
+       <span>&#8617;</span> Volver
+    </button>
+    <div class="logo-text">
+      <h5 class="m-0 text-warning fw-bold">Esperanza Viva</h5>
+      <small class="text-white d-block">centro de conciliacion</small>
+    </div>
+  </header>
+
+  <div class="container mt-3">
+    <div class="d-flex justify-content-between step-labels">
+      <span class="completed-step"><i class="bi bi-check-circle-fill"></i> Datos de las partes</span>
+      <span class="active-step"><i class="bi bi-file-earmark-text-fill"></i> Descripcion del Conflicto</span>
+      <span class="inactive-step"><i class="bi bi-upload"></i> Documentos</span>
+    </div>
+    <div class="progress-bar-custom mt-2">
+      <div class="progress-fill" style="width: 66%;"></div>
+    </div>
+
+    <div class="custom-card mt-5 p-4">
+      <h6 class="text-warning mb-1">Descripción del Conflicto</h6>
+      <p class="text-secondary small mb-4">Describe los hechos y tu pretensión de manera clara y detallada</p>
+      
+      <div class="row g-4">
+        <div class="col-md-12">
+          <label class="label-yellow">Materia Conciliable *</label>
+          <select class="input-dark select-arrow" [(ngModel)]="materia" name="materia">
+            <option value="" disabled selected>Selecciona una opción...</option>
+            <option value="Derecho de Familia">Derecho de Familia</option>
+            <option value="Derecho Civil">Derecho Civil</option>
+            <option value="Derecho Laboral">Derecho Laboral</option>
+          </select>
+        </div>
+
+        <div class="col-md-12">
+          <label class="label-yellow">Hechos que sustentan la solicitud *</label>
+          <textarea class="input-dark" rows="5" 
+            [(ngModel)]="hechosTexto" 
+            name="hechos"
+            placeholder="Describe de forma cronológica los hechos..."></textarea>
+          <div class="d-flex justify-content-between">
+            <small class="text-secondary-custom">Incluye fechas, lugares y circunstancias relevantes</small>
+            <small [ngClass]="hechosTexto.length < 20 ? 'text-danger' : 'text-success'">
+              {{ hechosTexto.length }}/1000
+            </small>
+          </div>
+        </div>
+
+        <div class="col-md-12">
+          <label class="label-yellow">Pretensión *</label>
+          <textarea class="input-dark" rows="4" 
+            [(ngModel)]="pretensionTexto" 
+            name="pretension"
+            placeholder="¿Qué esperas obtener de la conciliación?"></textarea>
+          <small class="text-secondary-custom">Especifica claramente lo que solicitas (pago, acuerdo, etc.)</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-between mt-5 pb-5">
+      <button class="btn-action" routerLink="/nueva-solicitud">Anterior</button>
+      <button class="btn-action yellow-border" (click)="irADocumentos()">
+        Siguiente <i class="bi bi-arrow-right"></i>
+      </button>
+    </div>
+  </div>
+</div>

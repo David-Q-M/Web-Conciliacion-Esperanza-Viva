@@ -1,0 +1,20 @@
+.wireframe-container { background-color: #121212; min-height: 100vh; color: white; }
+.btn-volver { background: transparent; border: 1px solid #ffc107; color: #ffc107; border-radius: 5px; padding: 5px 15px; }
+.progress-bar-custom { background-color: #333; height: 6px; width: 100%; border-radius: 10px; }
+.progress-fill { background-color: #4dfd8c; height: 100%; border-radius: 10px; }
+.active-step { color: #ffc107; font-weight: bold; }
+.completed-step { color: #4dfd8c; }
+.inactive-step { color: #666; }
+.custom-card { background-color: #2e2e2e; border-radius: 15px; border: 1px solid #444; }
+.label-yellow { color: #ffc107; font-size: 0.9rem; margin-bottom: 8px; display: block; }
+.input-dark { background-color: #000; border: 1px solid #ffc107; color: white; width: 100%; padding: 12px; border-radius: 8px; outline: none; }
+.text-secondary-custom { color: #aaa; font-size: 0.75rem; display: block; margin-top: 5px; }
+.btn-action { background: transparent; color: white; border: 1px solid #666; border-radius: 8px; padding: 10px 30px; }
+.yellow-border { border-color: #ffc107; color: #ffc107; }
+select.input-dark option {
+  background-color: #2e2e2e;
+  color: white;
+}
+
+.text-danger { color: #ff4d4d !important; font-size: 0.7rem; }
+.text-success { color: #4dfd8c !important; font-size: 0.7rem; }

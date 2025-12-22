@@ -1,0 +1,40 @@
+#######################################
+# BACKEND - SPRING BOOT (STS)
+#######################################
+backend/target/
+backend/.classpath
+backend/.project
+backend/.settings/
+
+#######################################
+# FRONTEND - ANGULAR / VITE / REACT
+#######################################
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+frontend/.vite/
+
+#######################################
+# VARIABLES SENSIBLES
+#######################################
+*.env
+application.properties
+application.yml
+
+#######################################
+# ARCHIVOS SUBIDOS (NO VERSIONAR)
+#######################################
+uploads/
+*.log
+
+#######################################
+# IDEs
+#######################################
+.vscode/
+.idea/
+
+#######################################
+# SISTEMA OPERATIVO
+#######################################
+.DS_Store
+Thumbs.db

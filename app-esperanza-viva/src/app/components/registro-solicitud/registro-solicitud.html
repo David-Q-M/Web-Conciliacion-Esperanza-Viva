@@ -1,0 +1,91 @@
+<div class="wireframe-container">
+  <header class="p-3 d-flex align-items-center">
+    <button class="btn-volver me-3" routerLink="/consulta">
+       <span>&#8617;</span> Volver
+    </button>
+    <div class="logo-text">
+      <h5 class="m-0 text-warning fw-bold">Esperanza Viva</h5>
+      <small class="text-white d-block">centro de conciliacion</small>
+    </div>
+  </header>
+
+  <div class="container mt-3">
+    <div class="d-flex justify-content-between step-labels">
+      <span class="active-step"><i class="bi bi-people-fill"></i> Datos de las partes</span>
+      <span class="inactive-step"><i class="bi bi-file-text"></i> Descripción</span>
+      <span class="inactive-step"><i class="bi bi-upload"></i> Documentos</span>
+    </div>
+    <div class="progress-bar-custom mt-2">
+      <div class="progress-fill" style="width: 33%;"></div>
+    </div>
+
+    <div class="custom-card mt-5 p-4">
+      <h6 class="text-warning mb-1">Datos del Solicitante</h6>
+      <p class="text-secondary small mb-4">Ingresa tus datos personales</p>
+      
+      <div class="row g-4">
+        <div class="col-md-6">
+          <label class="label-yellow">Nombres (solo letras)</label>
+          <input type="text" class="input-dark" [(ngModel)]="nuevaSolicitud.solicitante.nombres" name="n1" placeholder="Ej: Juan">
+        </div>
+        <div class="col-md-6">
+          <label class="label-yellow">Apellidos</label>
+          <input type="text" class="input-dark" [(ngModel)]="nuevaSolicitud.solicitante.apellidos" name="a1" placeholder="Ej: Perez">
+        </div>
+        <div class="col-md-6">
+          <label class="label-yellow">DNI (8 dígitos)</label>
+          <input type="text" class="input-dark" [(ngModel)]="nuevaSolicitud.solicitante.dni" name="d1" maxlength="8" placeholder="Solo números">
+        </div>
+        <div class="col-md-6">
+          <label class="label-yellow">Teléfono (9 dígitos)</label>
+          <input type="text" class="input-dark" [(ngModel)]="nuevaSolicitud.solicitante.telefono" name="t1" maxlength="9" placeholder="999888777">
+        </div>
+        <div class="col-md-12">
+          <label class="label-yellow">Domicilio Actual</label>
+          <input type="text" class="input-dark" [(ngModel)]="nuevaSolicitud.solicitante.domicilio" name="dom1" placeholder="Dirección completa">
+        </div>
+        <div class="col-md-12">
+          <label class="label-yellow">Correo Electrónico</label>
+          <input type="email" class="input-dark" [(ngModel)]="nuevaSolicitud.solicitante.correoElectronico" name="c1" placeholder="ejemplo@correo.com">
+        </div>
+      </div>
+    </div>
+
+    <div class="custom-card mt-4 p-4">
+      <h6 class="text-warning mb-1">Datos del Invitado</h6>
+      <p class="text-secondary small mb-4">Datos de la otra parte en el conflicto</p>
+      
+      <div class="row g-4">
+        <div class="col-md-6">
+          <label class="label-yellow">Nombres del Invitado</label>
+          <input type="text" class="input-dark" [(ngModel)]="nuevaSolicitud.invitado.nombres" name="n2">
+        </div>
+        <div class="col-md-6">
+          <label class="label-yellow">Apellidos del Invitado</label>
+          <input type="text" class="input-dark" [(ngModel)]="nuevaSolicitud.invitado.apellidos" name="a2">
+        </div>
+        <div class="col-md-6">
+          <label class="label-yellow">DNI del Invitado</label>
+          <input type="text" class="input-dark" [(ngModel)]="nuevaSolicitud.invitado.dni" name="d2" maxlength="8">
+        </div>
+        <div class="col-md-6">
+          <label class="label-yellow">Teléfono del Invitado</label>
+          <input type="text" class="input-dark" [(ngModel)]="nuevaSolicitud.invitado.telefono" name="t2" maxlength="9">
+        </div>
+        <div class="col-md-12">
+          <label class="label-yellow">Domicilio del Invitado</label>
+          <input type="text" class="input-dark" [(ngModel)]="nuevaSolicitud.invitado.domicilio" name="dom2">
+        </div>
+        <div class="col-md-12">
+          <label class="label-yellow">Correo Electrónico del Invitado</label>
+          <input type="email" class="input-dark" [(ngModel)]="nuevaSolicitud.invitado.correoElectronico" name="c2">
+        </div>
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-between mt-5 pb-5">
+      <button class="btn-action" routerLink="/consulta">Anterior</button>
+      <button class="btn-action yellow-border" (click)="irASiguiente()">Siguiente &#10132;</button>
+    </div>
+  </div>
+</div>

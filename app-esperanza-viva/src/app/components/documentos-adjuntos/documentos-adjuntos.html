@@ -1,0 +1,64 @@
+<div class="wireframe-container">
+  <header class="p-3 d-flex align-items-center">
+    <button class="btn-volver me-3" routerLink="/descripcion-conflicto">
+       <span>&#8617;</span> Volver
+    </button>
+    <div class="logo-text">
+      <h5 class="m-0 text-warning fw-bold">Esperanza Viva</h5>
+      <small class="text-white d-block">centro de conciliacion</small>
+    </div>
+  </header>
+
+  <div class="container mt-3">
+    <div class="d-flex justify-content-between step-labels">
+      <span class="completed-step"><i class="bi bi-check-circle-fill"></i> Partes</span>
+      <span class="completed-step"><i class="bi bi-check-circle-fill"></i> Conflicto</span>
+      <span class="active-step"><i class="bi bi-upload"></i> Documentos</span>
+    </div>
+    <div class="progress-bar-custom mt-2">
+      <div class="progress-fill" style="width: 100%;"></div>
+    </div>
+
+    <div class="custom-card mt-5 p-4">
+      <h6 class="text-warning mb-1">Documentos adjuntos</h6>
+      <p class="text-secondary small mb-4">Carga los documentos requeridos para tu solicitud</p>
+      
+      <div class="mb-4">
+        <label class="label-yellow">DNI del Solicitante (obligatorio)</label>
+        <input type="file" class="input-file-dark" (change)="onFileSelected($event, 'dni')">
+      </div>
+
+      <div class="mb-4">
+        <label class="label-yellow">Pruebas Sustentatorias (opcional)</label>
+        <input type="file" class="input-file-dark" (change)="onFileSelected($event, 'pruebas')">
+      </div>
+
+      <hr class="border-secondary my-4">
+
+      <div class="mb-4">
+        <label class="label-yellow">Solicitud Firmada (obligatorio)</label>
+        <div class="instruction-box p-3 mb-2">
+          <p class="small m-0">
+            <strong>Instrucciones:</strong> 
+            1. Haz clic en el botón amarillo para descargar tu solicitud con tus datos ya llenos. 
+            2. Fírmala físicamente o digitalmente. 
+            3. Escanéala y súbela en el recuadro de abajo.
+          </p>
+        </div>
+        
+        <button class="btn btn-warning w-100 mb-3 fw-bold py-2" (click)="descargarFormatoA()">
+          <i class="bi bi-file-earmark-pdf-fill"></i> GENERAR Y DESCARGAR FORMATO A PRE-LLENADO
+        </button>
+
+        <input type="file" class="input-file-dark" (change)="onFileSelected($event, 'firma')">
+        <small class="text-secondary-custom">Sube aquí el PDF o imagen de tu solicitud ya firmada.</small>
+      </div>
+
+    <div class="d-flex justify-content-between mt-5 pb-5">
+      <button class="btn-action" routerLink="/descripcion-conflicto">Anterior</button>
+      <button class="btn-enviar-final" (click)="finalizarRegistro()">
+        <i class="bi bi-check-lg"></i> Enviar solicitud
+      </button>
+    </div>
+  </div>
+</div>

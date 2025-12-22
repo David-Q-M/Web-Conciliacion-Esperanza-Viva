@@ -1,0 +1,66 @@
+.wireframe-container {
+  background-color: #121212; /* Fondo oscuro de la imagen */
+  min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.btn-volver {
+  background: transparent;
+  border: 1px solid #ffc107;
+  color: #ffc107;
+  border-radius: 5px;
+  padding: 5px 15px;
+  font-size: 0.8rem;
+}
+
+.progress-bar-custom {
+  background-color: #333;
+  height: 6px;
+  width: 100%;
+  border-radius: 10px;
+}
+
+.progress-fill {
+  background-color: #4dfd8c; /* Verde neón de tu imagen */
+  height: 100%;
+  border-radius: 10px;
+}
+
+.active-step { color: #ffc107; font-weight: bold; font-size: 0.9rem; }
+.inactive-step { color: #666; font-size: 0.9rem; }
+
+.custom-card {
+  background-color: #2e2e2e; /* Gris oscuro de la tarjeta */
+  border-radius: 15px;
+  border: 1px solid #444;
+}
+
+.label-yellow {
+  color: #ffc107;
+  font-size: 0.85rem;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.input-dark {
+  background-color: #000;
+  border: 1px solid #ffc107;
+  color: white;
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  outline: none;
+}
+
+.btn-action {
+  background: transparent;
+  color: white;
+  border: 1px solid #666;
+  border-radius: 8px;
+  padding: 8px 25px;
+}
+
+.yellow-border {
+  border-color: #ffc107;
+  color: #ffc107;
+}
