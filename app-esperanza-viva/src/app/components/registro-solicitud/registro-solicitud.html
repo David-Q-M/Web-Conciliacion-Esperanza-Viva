@@ -52,6 +52,41 @@
     </div>
 
     <div class="custom-card mt-4 p-4">
+      <h6 class="text-warning mb-1">Datos del apoderado (opcional)</h6>
+      <p class="text-secondary small mb-4">Ingresa tus datos personales</p>
+      
+      <div class="row g-4">
+        <div class="col-md-6">
+          <label class="label-yellow">Nombres</label>
+          <input type="text" class="input-dark" [(ngModel)]="nuevaSolicitud.apoderado.nombres" name="apn">
+        </div>
+        <div class="col-md-6">
+          <label class="label-yellow">Apellidos</label>
+          <input type="text" class="input-dark" [(ngModel)]="nuevaSolicitud.apoderado.apellidos" name="apa">
+        </div>
+        
+        <div class="col-md-6">
+          <label class="label-yellow">DNI/ Documento de</label>
+          <input type="text" class="input-dark" [(ngModel)]="nuevaSolicitud.apoderado.dni" name="apdni" maxlength="8">
+        </div>
+        <div class="col-md-6">
+          <label class="label-yellow">Telefono</label>
+          <input type="text" class="input-dark" [(ngModel)]="nuevaSolicitud.apoderado.telefono" name="aptel">
+        </div>
+
+        <div class="col-md-12">
+          <label class="label-yellow">Domicilio</label>
+          <input type="text" class="input-dark" [(ngModel)]="nuevaSolicitud.apoderado.domicilio" name="apdom">
+        </div>
+        
+        <div class="col-md-12">
+          <label class="label-yellow">Correo Electronico</label>
+          <input type="email" class="input-dark" [(ngModel)]="nuevaSolicitud.apoderado.correoElectronico" name="apmail">
+        </div>
+      </div>
+    </div>
+
+    <div class="custom-card mt-4 p-4">
       <h6 class="text-warning mb-1">Datos del Invitado</h6>
       <p class="text-secondary small mb-4">Datos de la otra parte en el conflicto</p>
       

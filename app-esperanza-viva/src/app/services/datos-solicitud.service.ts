@@ -8,6 +8,7 @@ export class DatosSolicitudService {
   datosFormulario: any = {
     solicitante: {},
     invitado: {},
+    apoderado: { nombres: '', apellidos: '', domicilio: '' },
     materiaConciliable: '',
     hechos: '',
     pretension: ''

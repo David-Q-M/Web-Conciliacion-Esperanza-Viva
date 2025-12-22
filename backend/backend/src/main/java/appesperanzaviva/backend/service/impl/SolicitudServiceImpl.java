@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption; // 🔹 Importación añadida para mayor seguridad
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -28,28 +28,39 @@ public class SolicitudServiceImpl implements SolicitudService {
     @Override
     public Solicitud crearSolicitudConArchivos(Solicitud solicitud, MultipartFile dni, MultipartFile pruebas, MultipartFile firma) {
         try {
-            // 1. Crear carpeta si no existe (Usa la ruta absoluta del sistema)
+
+            // 1️⃣ Crear carpeta si no existe
             if (!Files.exists(root)) {
                 Files.createDirectories(root);
             }
 
-            // 2. Generar Número de Expediente
+            // Validar si el apoderado viene vacío desde el frontend
+            if (solicitud.getApoderado() != null &&
+               (solicitud.getApoderado().getNombres() == null ||
+                solicitud.getApoderado().getNombres().isEmpty())) {
+
+                solicitud.setApoderado(null);
+            }
+
+            // Generar correlativo
             long count = repository.count() + 1;
             solicitud.setNumeroExpediente("EXP-2025-" + String.format("%06d", count));
             solicitud.setEstado("PENDIENTE");
 
-            // 3. Guardar archivos y asignar nombres únicos a la DB
+            // Guardar archivos físicamente
             if (dni != null && !dni.isEmpty()) {
                 solicitud.setDniArchivoUrl(guardarArchivo(dni));
             }
+
             if (pruebas != null && !pruebas.isEmpty()) {
                 solicitud.setPruebasArchivoUrl(guardarArchivo(pruebas));
             }
+
             if (firma != null && !firma.isEmpty()) {
                 solicitud.setFirmaArchivoUrl(guardarArchivo(firma));
             }
 
-            // 4. Guardar en MariaDB
+            // Guardar en la base de datos
             return repository.save(solicitud);
 
         } catch (IOException e) {
@@ -58,13 +69,16 @@ public class SolicitudServiceImpl implements SolicitudService {
     }
 
     private String guardarArchivo(MultipartFile archivo) throws IOException {
-        // 🔹 Generamos un nombre único para evitar que archivos con el mismo nombre se borren
+        // 🔹 Generamos un nombre único
         String nombreUnico = UUID.randomUUID().toString() + "_" + archivo.getOriginalFilename();
-        
-        // 🔹 Copiamos el archivo usando StandardCopyOption.REPLACE_EXISTING por seguridad
-        Files.copy(archivo.getInputStream(), this.root.resolve(nombreUnico), StandardCopyOption.REPLACE_EXISTING);
-        
-        return nombreUnico; 
+
+        Files.copy(
+                archivo.getInputStream(),
+                this.root.resolve(nombreUnico),
+                StandardCopyOption.REPLACE_EXISTING
+        );
+
+        return nombreUnico;
     }
 
     @Override

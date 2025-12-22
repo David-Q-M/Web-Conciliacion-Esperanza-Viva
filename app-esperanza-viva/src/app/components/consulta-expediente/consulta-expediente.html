@@ -1,5 +1,10 @@
 <div class="main-bg text-white">
-  <header class="d-flex justify-content-between align-items-center p-3">
+  <app-login-admin 
+    *ngIf="mostrarLoginModal" 
+    (cerrar)="mostrarLoginModal = false">
+  </app-login-admin>
+
+  <header class="d-flex justify-content-between align-items-center p-3 position-relative">
     <div class="d-flex align-items-center">
       <div class="logo-box me-2"></div>
       <div>
@@ -7,7 +12,20 @@
         <small class="text-secondary">centro de conciliacion</small>
       </div>
     </div>
-    <button class="btn btn-outline-warning btn-sm">Ingreso personal/Roles ▾</button>
+
+    <div class="dropdown-roles">
+      <button class="btn btn-outline-warning btn-sm" (click)="toggleMenu()">
+        Ingreso personal/Roles {{ mostrarMenuRoles ? '▴' : '▾' }}
+      </button>
+      
+      <ul class="dropdown-menu-custom" *ngIf="mostrarMenuRoles">
+        <li (click)="irALoginAdmin('ADMINISTRADOR')">Administrador</li>
+        <li (click)="irALoginAdmin('DIRECTOR')">Director</li>
+        <li (click)="irALoginAdmin('CONCILIADOR')">Conciliador</li>
+        <li (click)="irALoginAdmin('ABOGADO')">Abogado</li>
+        <li (click)="irALoginAdmin('NOTIFICADOR')">Notificador</li>
+      </ul>
+    </div>
   </header>
 
   <div class="container text-center mt-5">
@@ -17,16 +35,16 @@
       Resolvemos conflictos legales de manera ágil, transparente y profesional. Tu solución está a un clic de distancia.
     </p>
 
-    <button class="btn btn-warning fw-bold px-4 py-2 mt-4 shadow" routerLink="/nueva-solicitud">
+    <button class="btn btn-warning fw-bold px-4 py-2 mt-4 shadow" routerLink="/registro-solicitud">
       <i class="bi bi-file-earmark-text"></i> Nueva Solicitud
     </button>
 
     <div class="consult-box mx-auto mt-5 p-4 border border-secondary rounded">
       <h6 class="text-warning mb-3">🔍 Consultar Estado del Expediente</h6>
-      <p class="small text-secondary">Ingresa tu numero de segumiento para verificar el estado de tu solicitud</p>
+      <p class="small text-secondary">Ingresa tu numero de seguimiento para verificar el estado de tu solicitud</p>
       <div class="input-group mb-3">
         <input type="text" class="form-control bg-dark text-white border-warning" 
-              placeholder="Ej: EXP-2025-000009" [(ngModel)]="numeroBusqueda" name="busqueda">
+               placeholder="Ej: EXP-2025-000009" [(ngModel)]="numeroBusqueda" name="busqueda">
         <button class="btn btn-outline-warning" (click)="consultar()">Consultar</button>
       </div>
     </div>
@@ -35,19 +53,19 @@
       <div class="col-md-4">
         <div class="card bg-transparent border-secondary p-3 h-100">
           <h6 class="text-warning">Confidencialidad</h6>
-          <p class="small text-secondary">Garantizamos la privacidad absoluta de tu información y procesos</p>
+          <p class="small text-secondary">Garantizamos la privacidad absoluta de tu información y procesos [cite: 7]</p>
         </div>
       </div>
       <div class="col-md-4">
         <div class="card bg-transparent border-secondary p-3 h-100">
           <h6 class="text-warning">Atención Rápida</h6>
-          <p class="small text-secondary">Respuesta en menos de 48 horas hábiles a tu solicitud</p>
+          <p class="small text-secondary">Respuesta en menos de 48 horas hábiles a tu solicitud [cite: 20]</p>
         </div>
       </div>
       <div class="col-md-4">
         <div class="card bg-transparent border-secondary p-3 h-100">
           <h6 class="text-warning">Profesionalismo</h6>
-          <p class="small text-secondary">Equipo especializado con años de experiencia en conciliación</p>
+          <p class="small text-secondary">Equipo especializado con años de experiencia en conciliación [cite: 22]</p>
         </div>
       </div>
     </div>
@@ -55,6 +73,6 @@
 
   <footer class="text-center text-secondary mt-5 pb-4 small">
     © 2024 Ministerio de Justicia y Derechos Humanos - Sistema de Conciliación Extrajudicial<br>
-    Todos los derechos reservados
+    Todos los derechos reservados [cite: 23]
   </footer>
 </div>

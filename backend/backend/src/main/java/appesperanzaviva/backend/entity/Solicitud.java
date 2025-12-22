@@ -26,6 +26,11 @@ public class Solicitud {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "invitado_id")
     private Persona invitado;
+    
+    // 🔹 NUEVO: Apoderado opcional para el Formato A
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "apoderado_id")
+    private Persona apoderado;
 
     // Wireframe-3: Descripción del Conflicto
     @Column(name = "materia_conciliable")

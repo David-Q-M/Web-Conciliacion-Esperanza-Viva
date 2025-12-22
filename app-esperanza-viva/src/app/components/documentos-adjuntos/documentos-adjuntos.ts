@@ -28,6 +28,7 @@ export class DocumentosAdjuntos {
     const datos = this.datosService.obtenerDatos();
     const doc = new jsPDF();
     const s = datos.solicitante || {};
+    const a = datos.apoderado || {};
     const i = datos.invitado || {};
 
     // --- ENCABEZADO OFICIAL ---
@@ -59,8 +60,10 @@ export class DocumentosAdjuntos {
     doc.text(`2.  Nombre o razón social del (los) solicitante(s): ${s.nombres || ''} ${s.apellidos || ''}`, 20, 88);
     doc.text(`3.  Documento de identidad o RUC del (los) solicitante(s): ${s.dni || ''}`, 20, 96);
     doc.text(`4.  Domicilio de los solicitantes: ${s.domicilio || ''}`, 20, 104);
-    doc.text(`5.  Nombre del apoderado o representante: __________________________________________`, 20, 112);
-    doc.text(`6.  Domicilio del apoderado o representante: _________________________________________`, 20, 120);
+
+    doc.text(`5. Nombre del apoderado: ${datos.apoderado.nombres || ''} ${datos.apoderado.apellidos || ''}`, 20, 112);
+    doc.text(`6. Domicilio del apoderado: ${datos.apoderado.domicilio || ''}`, 20, 120);
+
     doc.text(`7.  Nombre o razón social del (los) invitado(s): ${i.nombres || ''} ${i.apellidos || ''}`, 20, 128);
     doc.text(`8.  Domicilio(s) del (los) invitado(s): ${i.domicilio || ''}`, 20, 136);
 

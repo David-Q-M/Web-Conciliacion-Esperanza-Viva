@@ -14,6 +14,7 @@ import { DatosSolicitudService } from '../../services/datos-solicitud.service';
 export class RegistroSolicitud {
   nuevaSolicitud = {
     solicitante: { nombres: '', apellidos: '', dni: '', telefono: '', domicilio: '', correoElectronico: '' },
+    apoderado: { nombres: '', apellidos: '', dni: '', telefono: '', domicilio: '', correoElectronico: '' },
     invitado: { nombres: '', apellidos: '', dni: '', telefono: '', domicilio: '', correoElectronico: '' }
   };
 
@@ -78,11 +79,9 @@ export class RegistroSolicitud {
     }
 
     // --- GUARDADO Y NAVEGACIÓN ---
-    console.log("Datos validados correctamente. Guardando en memoria...");
-    this.datosService.actualizarDatos({
-      solicitante: this.nuevaSolicitud.solicitante,
-      invitado: this.nuevaSolicitud.invitado
-    });
+    console.log("Guardando datos completos:", this.nuevaSolicitud);
+    // 🔹 Enviamos el objeto completo al servicio de una sola vez
+    this.datosService.actualizarDatos(this.nuevaSolicitud);
     
     this.router.navigate(['/descripcion-conflicto']);
   }

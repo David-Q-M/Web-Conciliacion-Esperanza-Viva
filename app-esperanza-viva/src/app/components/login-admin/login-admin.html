@@ -1,0 +1,31 @@
+<div class="login-overlay">
+  <div class="login-modal">
+    <div class="modal-header-custom">
+      <h5 class="text-warning fw-bold m-0">Acceso Administrador</h5>
+      <p class="text-white small m-0">Ingresa tus credenciales para acceder al sistema</p>
+    </div>
+
+    <div class="modal-body-custom mt-4">
+      <div class="mb-3 text-start">
+        <label class="fw-bold text-white mb-2">Usuario</label>
+        <input type="text" 
+               [(ngModel)]="credentials.usuario" 
+               class="input-wireframe" 
+               placeholder="Ingresa tu usuario">
+      </div>
+
+      <div class="mb-4 text-start">
+        <label class="fw-bold text-white mb-2">Contraseña</label>
+        <input type="password" 
+               [(ngModel)]="credentials.contrasena" 
+               class="input-wireframe" 
+               placeholder="Ingresa tu contraseña">
+      </div>
+
+      <div class="d-flex justify-content-center gap-3">
+        <button class="btn-modal-white" (click)="cancelar()">Cancelar</button>
+        <button class="btn-modal-yellow" (click)="ingresar()">Ingresar</button>
+      </div>
+    </div>
+  </div>
+</div>

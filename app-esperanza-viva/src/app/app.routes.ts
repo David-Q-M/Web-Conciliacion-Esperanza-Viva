@@ -5,6 +5,9 @@ import { ExitoRegistro } from './components/exito-registro/exito-registro';
 import { DescripcionConflicto } from './components/descripcion-conflicto/descripcion-conflicto';
 import { DocumentosAdjuntos } from './components/documentos-adjuntos/documentos-adjuntos';
 import { ResumenRegistro } from './components/resumen-registro/resumen-registro';
+import { LoginAdmin } from './components/login-admin/login-admin';
+import { GestionUsuarios } from './components/gestion-usuarios/gestion-usuarios';
+import { authGuard } from './auth.guard';
 
 export const routes: Routes = [
   // Página de inicio (Wireframe-1)
@@ -18,5 +21,17 @@ export const routes: Routes = [
   { path: 'resumen-registro/:expediente', component: ResumenRegistro },
   
   // Página de Éxito/Resultado (Wireframe-5)
-  { path: 'exito/:expediente', component: ExitoRegistro}
+  { path: 'exito/:expediente', component: ExitoRegistro},
+
+  // Rutas públicas ya existentes
+  { path: 'registro', component: RegistroSolicitud },
+  
+  // 🔹 NUEVAS RUTAS ADMINISTRATIVAS
+  { path: 'login-admin', component: LoginAdmin },
+  { path: 'gestion-usuarios', component: GestionUsuarios },
+  
+  // Ruta por defecto (Wireframe-6)
+  { path: '', redirectTo: '/home', pathMatch: 'full' },
+
+  { path: 'gestion-usuarios', component: GestionUsuarios, canActivate: [authGuard] }
 ];

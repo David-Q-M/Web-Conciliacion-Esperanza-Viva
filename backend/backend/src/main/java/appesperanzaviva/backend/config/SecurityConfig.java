@@ -37,6 +37,7 @@ public class SecurityConfig {
                 // Permitir acceso total a las solicitudes de ciudadanos
                 .requestMatchers("/api/solicitudes/**").permitAll()
                 // El resto requiere autenticación (para el futuro panel admin)
+                .requestMatchers("/api/usuarios/**").permitAll()
                 .anyRequest().authenticated()
             );
 

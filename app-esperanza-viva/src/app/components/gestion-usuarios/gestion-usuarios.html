@@ -1,0 +1,120 @@
+<div class="admin-container">
+  <aside class="sidebar-viva">
+    <div class="logo-section">
+      <img src="assets/logo.png" alt="Logo" class="logo-img">
+      <div class="logo-text">
+        <h5 class="m-0 fw-bold">Esperanza Viva</h5>
+        <small>centro de conciliación</small>
+      </div>
+    </div>
+    
+    <nav class="sidebar-nav">
+      <a class="nav-link-viva active">
+        <i class="bi bi-people-fill"></i> Gestión de usuarios
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="btn-logout-viva" (click)="cerrarSesion()">
+        <i class="bi bi-arrow-left"></i> Cerrar Sesión
+      </button>
+    </div>
+  </aside>
+
+  <main class="main-content-viva">
+    <header class="content-header">
+      <div class="header-titles">
+        <h2 class="text-warning fw-bold m-0">Gestión de usuarios</h2>
+        <p class="text-secondary small">Administración del Sistema de Conciliación</p>
+      </div>
+      <div class="admin-badge">
+        <span>{{ usuarioActivo }}</span>
+      </div>
+    </header>
+
+    <div class="info-card-viva">
+      <div class="info-content">
+        <i class="bi bi-people-fill text-warning me-3"></i>
+        <p class="m-0">
+          Como Administrador, puedes crear y gestionar las cuentas de acceso del personal interno (Director, Conciliador, Abogado, Notificador). Los usuarios públicos (solicitantes e invitados) no requieren registro previo.
+        </p>
+      </div>
+    </div>
+
+    <div class="table-actions">
+      <h4 class="text-white">Usuarios Registrados <small class="text-secondary ms-2">Total: {{ usuarios.length }} empleados</small></h4>
+      <button class="btn-register-viva" (click)="abrirRegistro()">
+        <i class="bi bi-person-plus-fill"></i> Registrar nuevo empleado
+      </button>
+    </div>
+
+    <div class="table-viva-container">
+      <table class="table-viva">
+        <thead>
+          <tr>
+            <th>Nombres y Apellidos</th>
+            <th>Usuario</th>
+            <th>Rol</th>
+            <th>Estado</th>
+            <th>Fecha de registro</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let u of usuarios">
+            <td>{{ u.nombreCompleto }}</td>
+            <td class="text-secondary">{{ u.usuario }}</td>
+            <td>
+              <span class="role-pill" [ngClass]="u.rol.toLowerCase()">{{ u.rol }}</span>
+            </td>
+            <td>
+              <span class="status-dot"></span> Activo
+            </td>
+            <td>{{ u.fechaRegistro | date:'dd/MM/yyyy' }}</td>
+            <td class="actions-cell">
+              <button class="btn-action-viva" (click)="abrirEdicion(u)"><i class="bi bi-pencil-square"></i></button>
+              <button class="btn-action-viva delete" (click)="eliminarUsuario(u.id, u.nombreCompleto)"><i class="bi bi-trash"></i></button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <div class="viva-modal-overlay" *ngIf="mostrarModal">
+    <div class="viva-modal-card">
+      <div class="modal-viva-header">
+        <h5 class="text-warning m-0">{{ modoEdicion ? 'Actualizar Datos' : 'Registra Nuevo Empleado' }}</h5>
+        <button class="close-viva" (click)="mostrarModal = false">&times;</button>
+      </div>
+      <p class="text-secondary small mb-4">Crea las credenciales de acceso para un nuevo miembro del personal</p>
+
+      <div class="viva-form-group">
+        <label>Nombre Completo</label>
+        <input type="text" [(ngModel)]="usuarioForm.nombreCompleto" class="viva-input">
+      </div>
+      <div class="viva-form-group">
+        <label>Usuario</label>
+        <input type="text" [(ngModel)]="usuarioForm.usuario" class="viva-input">
+      </div>
+      <div class="viva-form-group">
+        <label>Contraseña</label>
+        <input type="password" [(ngModel)]="usuarioForm.contrasena" class="viva-input">
+      </div>
+      <div class="viva-form-group mb-4">
+        <label>Rol</label>
+        <select [(ngModel)]="usuarioForm.rol" class="viva-input">
+          <option value="DIRECTOR">Director</option>
+          <option value="CONCILIADOR">Conciliador</option>
+          <option value="ABOGADO">Abogado</option>
+          <option value="NOTIFICADOR">Notificador</option>
+        </select>
+      </div>
+
+      <div class="viva-modal-buttons">
+        <button class="btn-viva-white" (click)="mostrarModal = false">Cancelar</button>
+        <button class="btn-viva-yellow" (click)="guardar()">{{ modoEdicion ? 'Actualizar' : 'Registrar usuario' }}</button>
+      </div>
+    </div>
+  </div>
+</div>
