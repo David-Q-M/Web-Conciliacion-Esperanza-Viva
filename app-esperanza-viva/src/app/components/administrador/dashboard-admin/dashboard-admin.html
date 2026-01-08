@@ -1,0 +1,83 @@
+<div class="admin-container">
+  <aside class="sidebar-viva">
+    <div class="logo-section">
+      <h5 class="m-0 fw-bold">Esperanza Viva</h5>
+      <small>centro de conciliación</small>
+    </div>
+    <nav class="sidebar-nav">
+      <a class="nav-link-viva active" routerLink="/admin-dashboard" routerLinkActive="active">Inicio</a>
+      <a class="nav-link-viva" routerLink="/gestion-usuarios" routerLinkActive="active">Gestion de usuarios</a>
+      <a class="nav-link-viva" routerLink="/configuracion" routerLinkActive="active">Configuracion</a>
+      <a class="nav-link-viva" routerLink="/auditoria" routerLinkActive="active">Auditoria</a>
+      <a class="nav-link-viva" routerLink="/reportes" routerLinkActive="active">Reportes</a>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="btn-logout-viva" routerLink="/"><i class="bi bi-arrow-left"></i> Cerrar Sesion</button>
+    </div>
+  </aside>
+
+  <main class="main-content-viva">
+    <header class="content-header">
+      <div class="header-titles">
+        <h2 class="text-warning fw-bold m-0">Panel de Administracion</h2>
+        <p class="text-secondary small">Gestion integral des sistema de conciliacion</p>
+      </div>
+      <div class="admin-badge">
+        {{ usuarioActivo }} <br>
+        <small class="text-secondary">Administrador</small>
+      </div>
+    </header>
+
+    <div class="row g-3 mb-5">
+      <div class="col-md-3">
+        <div class="stat-card">
+          <small class="text-secondary">Total Expedientes</small>
+          <h1>{{ stats.totalExpedientes }}</h1>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stat-card">
+          <small class="text-secondary">Usuarios Activos</small>
+          <h1>{{ stats.usuariosActivos }}</h1>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stat-card">
+          <small class="text-secondary">Pendientes</small>
+          <h1>{{ stats.pendientes }}</h1>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stat-card">
+          <small class="text-secondary">Finalizados</small>
+          <h1>{{ stats.finalizados }}</h1>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-md-6">
+        <div class="action-card p-4">
+          <h6 class="text-warning mb-4">Accesos Rapidos</h6>
+          <button class="btn-viva-action w-100 mb-3" routerLink="/gestion-usuarios">Gestionar Usuarios</button>
+          <button class="btn-viva-action w-100 mb-3" routerLink="/configuracion">Configuracion</button>
+          <button class="btn-viva-action w-100" routerLink="/auditoria">Ver Auditoria</button>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="action-card p-4">
+          <h6 class="text-warning mb-4">Resumen de Actividad</h6>
+          <div class="activity-item d-flex justify-content-between mb-3">
+            <span>Gestionar Usuarios</span> 
+            <span class="badge-viva">{{ stats.totalExpedientes }}</span>
+          </div>
+          <div class="activity-item d-flex justify-content-between">
+            <span>Personal Activo</span> 
+            <span class="badge-viva">{{ stats.usuariosActivos }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

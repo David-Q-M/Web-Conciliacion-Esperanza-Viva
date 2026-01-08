@@ -1,0 +1,51 @@
+<div class="admin-container">
+  <aside class="sidebar-viva">
+    <div class="logo-section p-4 text-center">
+      <h5 class="m-0 fw-bold text-dark">ESPERANZA VIVA</h5>
+    </div>
+    <nav class="sidebar-nav">
+        <a class="nav-link-viva" routerLink="/conciliador/mis-casos" routerLinkActive="active">
+            <i class="bi bi-folder-fill"></i> Mis Casos
+        </a>
+        <a class="nav-link-viva" routerLink="/conciliador/agenda" routerLinkActive="active">
+            <i class="bi bi-calendar3"></i> Mi Agenda
+        </a>
+        <a class="nav-link-viva" routerLink="/conciliador/historial" routerLinkActive="active">
+            <i class="bi bi-clock-history"></i> Historial
+        </a>
+    </nav>
+    <div class="sidebar-footer p-3">
+      <button class="btn-logout-viva w-100" (click)="cerrarSesion()">Cerrar Sesión</button>
+    </div>
+  </aside>
+
+  <main class="main-content-viva p-4">
+    <header class="mb-4 d-flex justify-content-between align-items-center">
+      <h2 class="text-warning fw-bold m-0">Mi Agenda de Audiencias</h2>
+      <div class="admin-badge"><span>{{ conciliadorNombre }}</span></div>
+    </header>
+
+    <div class="row g-3">
+      <div class="col-md-4" *ngFor="let aud of audiencias">
+        <div class="info-card-wireframe p-3 border-start border-warning border-4">
+          <div class="d-flex justify-content-between">
+            <span class="badge bg-warning text-dark">{{ aud.fechaAudiencia | date:'dd/MM/yyyy' }}</span>
+            <span class="text-white fw-bold">{{ aud.horaAudiencia }}</span>
+          </div>
+          <hr class="border-secondary">
+          <p class="text-info small mb-1">EXP: {{ aud.solicitud?.numeroExpediente }}</p>
+          <h6 class="text-white mb-3">{{ aud.solicitud?.solicitante?.nombres }} vs {{ aud.solicitud?.invitado?.nombres }}</h6>
+          
+          <button class="btn btn-sm btn-outline-light w-100" [routerLink]="['/conciliador/registro', aud.solicitud?.id]">
+            Abrir Sala / Registrar
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="audiencias.length === 0" class="col-12 text-center p-5">
+        <i class="bi bi-calendar-x text-secondary display-1"></i>
+        <p class="text-secondary mt-3">No tienes audiencias programadas próximamente.</p>
+      </div>
+    </div>
+  </main>
+</div>

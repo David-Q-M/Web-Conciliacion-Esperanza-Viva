@@ -1,0 +1,18 @@
+.admin-container { display: flex; min-height: 100vh; background-color: #000; }
+.sidebar-viva { width: 260px; background-color: #ffc107; display: flex; flex-direction: column; }
+.main-content-viva { flex: 1; padding: 40px; background-color: #0d0d0d; overflow-y: auto; }
+
+.sidebar-nav .nav-link-viva {
+  display: flex; align-items: center; gap: 10px; padding: 15px 25px;
+  text-decoration: none; color: #000; font-weight: bold;
+}
+.sidebar-nav .active { background-color: #000; color: #ffc107 !important; }
+
+.info-card-wireframe { background-color: #1a1a1a; border: 1px solid #333; border-radius: 12px; }
+.viva-textarea { background-color: #000; border: 1px solid #333; color: #fff; width: 100%; padding: 12px; border-radius: 8px; font-size: 0.85rem; min-height: 90px; }
+.viva-input-black { background-color: #000; border: 1px solid #333; color: #fff; width: 100%; padding: 12px; border-radius: 8px; }
+
+.btn-agregar-clausula { background-color: #8b7400; color: #fff; border: none; font-weight: bold; padding: 12px; border-radius: 8px; transition: 0.3s; }
+.btn-agregar-clausula:hover { background-color: #ffc107; color: #000; }
+
+.admin-badge span { border: 1px solid #ffc107; color: #ffc107; padding: 5px 15px; border-radius: 5px; font-size: 0.8rem; }

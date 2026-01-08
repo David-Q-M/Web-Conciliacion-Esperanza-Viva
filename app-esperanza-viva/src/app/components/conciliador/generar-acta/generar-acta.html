@@ -1,0 +1,71 @@
+<div class="admin-container">
+  <aside class="sidebar-viva">
+    <div class="logo-section p-4 text-center">
+      <h5 class="m-0 fw-bold text-dark">ESPERANZA VIVA</h5>
+      <small class="text-dark fw-bold">CONCILIACIÓN</small>
+    </div>
+    <nav class="sidebar-nav">
+      <a class="nav-link-viva active" routerLink="/conciliador/mis-casos">
+        <i class="bi bi-folder-fill"></i> Mis Casos
+      </a>
+      <a class="nav-link-viva" routerLink="/conciliador/mis-casos">
+        <i class="bi bi-calendar3"></i> Mi Agenda
+      </a>
+    </nav>
+    <div class="sidebar-footer p-3">
+      <button class="btn-logout-viva w-100" (click)="cerrarSesion()">
+        <i class="bi bi-door-open-fill"></i> Cerrar Sesión
+      </button>
+    </div>
+  </aside>
+
+  <main class="main-content-viva p-4">
+    <header class="d-flex justify-content-between align-items-center mb-4 border-bottom border-secondary pb-2">
+      <div>
+        <h2 class="text-warning fw-bold m-0">GENERACIÓN DE ACTA</h2>
+        <p class="text-secondary small">Acuerdo Total - Expediente: {{expediente.numeroExpediente}}</p>
+      </div>
+      <div class="admin-badge"><span>{{ conciliadorNombre }}</span></div>
+    </header>
+
+    <div class="row g-4">
+      <div class="col-md-6">
+        <div class="info-card-wireframe p-4 mb-3">
+          <h6 class="text-warning small fw-bold mb-3"><i class="bi bi-info-circle"></i> ANTECEDENTES</h6>
+          <label class="text-secondary small mb-1">1. Hechos expuestos</label>
+          <textarea class="viva-textarea mb-3" [(ngModel)]="acta.antecedentes"></textarea>
+          
+          <label class="text-secondary small mb-1">2. Controversias</label>
+          <textarea class="viva-textarea" [(ngModel)]="acta.controversias" placeholder="Describa los puntos en disputa..."></textarea>
+        </div>
+
+        <div class="info-card-wireframe p-4">
+          <h6 class="text-warning small fw-bold mb-2">VERIFICACIÓN DE LEGALIDAD</h6>
+          <select class="viva-input-black" [(ngModel)]="acta.abogadoVerificadorId">
+            <option [ngValue]="null">-- Seleccione abogado verificador --</option>
+            <option *ngFor="let a of abogados" [value]="a.id">{{ a.nombreCompleto }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="info-card-wireframe p-4 h-100">
+          <h6 class="text-white small fw-bold mb-3">ACUERDOS ADOPTADOS (Wireframe 48)</h6>
+          <div class="clausulas-container" style="max-height: 400px; overflow-y: auto;">
+            <div *ngFor="let c of acta.clausulas; let i = index" class="mb-4 border-start border-warning ps-3">
+              <label class="text-warning small fw-bold d-block mb-1">CLÁUSULA {{ i + 1 }}</label>
+              <textarea class="viva-textarea" [(ngModel)]="c.descripcion" placeholder="Redacte el acuerdo..."></textarea>
+            </div>
+          </div>
+          <button class="btn-agregar-clausula w-100 mt-3" (click)="agregarClausula()">+ Agregar Cláusula</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-end mt-4 d-flex justify-content-end gap-3">
+      <button class="btn btn-warning fw-bold px-5" (click)="emitirActaFinal()" [disabled]="!acta.abogadoVerificadorId">
+        Emitir Acta Final
+      </button>
+    </div>
+  </main>
+</div>

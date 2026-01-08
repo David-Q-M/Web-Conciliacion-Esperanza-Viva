@@ -1,0 +1,56 @@
+<div class="admin-container">
+  <aside class="sidebar-viva">
+    <div class="logo-section p-4 text-center">
+      <h5 class="m-0 fw-bold text-dark">ESPERANZA VIVA</h5>
+    </div>
+    <nav class="sidebar-nav">
+        <a class="nav-link-viva" routerLink="/conciliador/mis-casos" routerLinkActive="active">
+            <i class="bi bi-folder-fill"></i> Mis Casos
+        </a>
+        <a class="nav-link-viva" routerLink="/conciliador/agenda" routerLinkActive="active">
+            <i class="bi bi-calendar3"></i> Mi Agenda
+        </a>
+        <a class="nav-link-viva" routerLink="/conciliador/historial" routerLinkActive="active">
+            <i class="bi bi-clock-history"></i> Historial
+        </a>
+    </nav>
+    <div class="sidebar-footer p-3">
+      <button class="btn-logout-viva w-100" (click)="cerrarSesion()">Cerrar Sesión</button>
+    </div>
+  </aside>
+
+  <main class="main-content-viva p-4">
+    <header class="mb-4 d-flex justify-content-between align-items-center">
+      <h2 class="text-warning fw-bold m-0">Historial de Casos Atendidos</h2>
+      <div class="admin-badge"><span>{{ conciliadorNombre }}</span></div>
+    </header>
+
+    <div class="table-responsive info-card-wireframe p-3">
+      <table class="table table-dark table-hover m-0">
+        <thead>
+          <tr class="text-warning">
+            <th>Expediente</th>
+            <th>Materia</th>
+            <th>Solicitante</th>
+            <th>Estado Final</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let c of casosCerrados">
+            <td>{{ c.numeroExpediente }}</td>
+            <td>{{ c.materiaConciliable }}</td>
+            <td>{{ c.solicitante?.nombres }}</td>
+            <td><span class="badge bg-success">{{ c.estado }}</span></td>
+            <td>
+              <button class="btn btn-sm btn-outline-warning">Ver Acta</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div *ngIf="casosCerrados.length === 0" class="text-center p-5 text-secondary">
+        No hay registros en el historial.
+      </div>
+    </div>
+  </main>
+</div>

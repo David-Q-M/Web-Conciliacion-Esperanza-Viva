@@ -12,41 +12,80 @@ import { DatosSolicitudService } from '../../services/datos-solicitud.service';
   styleUrls: ['./descripcion-conflicto.css']
 })
 export class DescripcionConflicto {
-  materia: string = '';
-  hechosTexto: string = '';
-  pretensionTexto: string = '';
+  // Controles de visibilidad de menús
+  menuMateriaAbierto = false;
+  menuSubMateriaAbierto = false;
+  mostrarCampoAlimentos = false;
+
+  // Datos del formulario
+  materiaSeleccionada = '';
+  subMateriaSeleccionada = '';
+  hechosTexto = '';
+  pretensionTexto = '';
+  otrasPersonasAlimentario = '';
 
   constructor(
     private router: Router,
     private datosSolicitudService: DatosSolicitudService
-  ) {}
+  ) { }
+
+  seleccionarMateria(materia: string) {
+    this.materiaSeleccionada = materia;
+    this.menuMateriaAbierto = false;
+    this.menuSubMateriaAbierto = true; // Salto automático al sub-menú (Wireframe 30)
+    this.subMateriaSeleccionada = '';
+    this.mostrarCampoAlimentos = false;
+  }
+
+  seleccionarSubMateria(sub: string) {
+    this.subMateriaSeleccionada = sub;
+    this.menuSubMateriaAbierto = false;
+
+    // Wireframe 32: Detectar si es una materia de alimentos
+    const materiasAlimentos = [
+      'Pensión de Alimentos',
+      'Exoneración de Alimentos',
+      'Pensión de alimentos a favor de conviviente'
+    ];
+    this.mostrarCampoAlimentos = materiasAlimentos.includes(sub);
+  }
 
   irADocumentos() {
-    // 1. Validar selección de materia
-    if (!this.materia) {
-      alert("Por favor, selecciona una Materia Conciliable.");
+    if (!this.subMateriaSeleccionada) {
+      alert("Por favor, selecciona el tipo de conflicto.");
       return;
     }
 
-    // 2. Validar longitud mínima de los hechos (Evita textos muy cortos en MariaDB)
-    if (this.hechosTexto.trim().length < 20) {
-      alert("Por favor, detalla un poco más los hechos (mínimo 20 caracteres).");
+    // 1. Validación: Hechos (Min 50, Max 200)
+    if (!this.hechosTexto || this.hechosTexto.trim().length < 50) {
+      alert(`La descripción de los hechos es muy corta (${this.hechosTexto.length}/50 min). Detalle más los hechos.`);
       return;
     }
 
-    // 3. Validar pretensión
-    if (this.pretensionTexto.trim().length < 10) {
-      alert("La pretensión es obligatoria para procesar tu solicitud.");
+    // 2. Validación: Otras Personas (Min 50, Max 200) - Solo si el campo es visible
+    if (this.mostrarCampoAlimentos) {
+      if (!this.otrasPersonasAlimentario || this.otrasPersonasAlimentario.trim().length < 50) {
+        alert(`La descripción de otras personas es muy corta (${(this.otrasPersonasAlimentario || '').length}/50 min).`);
+        return;
+      }
+    }
+
+    // 3. Validación: Pretensión (Min 20, Max 150)
+    if (!this.pretensionTexto || this.pretensionTexto.trim().length < 20) {
+      alert(`La pretensión es muy corta (${this.pretensionTexto.length}/20 min). Explique mejor qué solicita.`);
       return;
     }
 
-    // Si todo es correcto, actualizamos el servicio de memoria
+    // Si es materia de alimentos, quizás validar el campo opcional si es necesario, pero es opcional "otrasPersonasAlimentario".
+
     this.datosSolicitudService.actualizarDatos({
-      materiaConciliable: this.materia,
+      materiaConciliable: this.materiaSeleccionada,
+      subMateria: this.subMateriaSeleccionada,
       hechos: this.hechosTexto,
-      pretension: this.pretensionTexto
+      pretension: this.pretensionTexto,
+      otrasPersonasAlimentario: this.otrasPersonasAlimentario
     });
-    
+
     this.router.navigate(['/documentos-adjuntos']);
   }
 }

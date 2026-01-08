@@ -1,0 +1,23 @@
+.admin-container { background-color: #000; min-height: 100vh; display: flex; }
+.sidebar-viva { width: 260px; background-color: #ffc107; display: flex; flex-direction: column; }
+.main-content-viva { flex: 1; background-color: #0d0d0d; overflow-y: auto; }
+
+.key-box { background-color: #1a1a1a; border: 1px solid #333; border-radius: 12px; padding: 20px; text-align: center; }
+.info-card-wireframe { background-color: #1a1a1a; border: 1px solid #333; border-radius: 12px; }
+.info-card-wireframe:hover { border-color: #ffc107; transition: 0.3s; }
+
+.viva-input-search, .viva-input-black, .viva-textarea { 
+  background: #000; border: 1px solid #333; color: #fff; width: 100%; padding: 10px; border-radius: 8px; outline: none; 
+}
+.search-box-viva { background: #000; border: 1px solid #ffc107; border-radius: 10px; display: flex; align-items: center; padding: 0 15px; }
+
+.btn-detail-viva { background: #8b7400; color: #fff; border: none; padding: 5px 15px; border-radius: 5px; cursor: pointer; }
+.btn-viva-white, .btn-action-white { background: #fff; color: #000; border: none; font-weight: bold; padding: 10px; border-radius: 8px; cursor: pointer; }
+.btn-register-viva, .btn-modal-send { background: #ffc107; color: #000; border: none; font-weight: bold; padding: 10px; border-radius: 8px; cursor: pointer; }
+
+.viva-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: flex; justify-content: center; align-items: center; z-index: 2000; }
+.viva-modal-card { background-color: #1a1a1a; padding: 30px; border-radius: 20px; border: 1px solid #ffc107; width: 500px; }
+
+.table-viva { width: 100%; border-collapse: collapse; color: #fff; }
+.table-viva th, .table-viva td { padding: 15px; border-bottom: 1px solid #222; text-align: left; }
+.role-pill { padding: 4px 12px; border-radius: 20px; color: #fff; font-weight: bold; font-size: 0.8rem; }

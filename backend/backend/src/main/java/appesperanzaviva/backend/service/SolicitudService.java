@@ -6,10 +6,22 @@ import java.util.List;
 import java.util.Optional;
 
 public interface SolicitudService {
-    // Método principal para el registro completo con archivos
-    Solicitud crearSolicitudConArchivos(Solicitud solicitud, MultipartFile dni, MultipartFile pruebas, MultipartFile firma);
-    
+    // Registro completo con archivos
+    Solicitud crearSolicitudConArchivos(Solicitud solicitud, MultipartFile dni, MultipartFile pruebas,
+            MultipartFile firma);
+
     List<Solicitud> listarTodas();
-    
+
+    Optional<Solicitud> buscarPorId(Long id); // 🔹 Útil para el detalle del director
+
     Optional<Solicitud> buscarPorNumero(String numero);
+
+    // 🔹 Nuevo: Para aprobar/observar desde el panel del director
+    Solicitud actualizarEstado(Long id, String nuevoEstado, String observacion);
+
+    // 🔹 Nuevo: Para designar conciliador
+    Solicitud designarConciliador(Long id, Long conciliadorId);
+
+    // 🔹 Nuevo: Listar por conciliador
+    List<Solicitud> listarPorConciliador(Long conciliadorId);
 }

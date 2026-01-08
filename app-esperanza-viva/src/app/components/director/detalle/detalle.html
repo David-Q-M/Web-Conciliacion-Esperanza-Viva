@@ -1,0 +1,99 @@
+<div class="admin-container">
+  <main class="main-content-viva w-100 p-4">
+    <header class="d-flex justify-content-between align-items-center mb-4">
+      <button class="btn-viva-white" routerLink="/director/bandeja-solicitudes">← volver a solicitudes</button>
+      <span class="role-pill px-4 py-2" style="background-color: #FFD700; color: #000;">{{expediente.estado}}</span>
+    </header>
+
+    <div class="row g-4">
+      <div class="col-md-8">
+        <div class="info-card-wireframe p-4 mb-4">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+              <h5 class="text-white m-0">Expediente {{expediente.numeroExpediente}}</h5>
+              <small class="text-secondary">Formato A - Solicitud de conciliación</small>
+            </div>
+            <button class="btn-register-viva btn-sm">Descargar PDF</button>
+          </div>
+          <p class="text-secondary small">Fecha de presentación: {{expediente.fechaPresentacion | date:'dd/MM/yyyy'}}
+          </p>
+          <hr class="border-secondary">
+
+          <div class="row mt-3 text-white">
+            <div class="col-md-6 mb-3">
+              <h6 class="text-warning small fw-bold">DATOS DEL SOLICITANTE</h6>
+              <p class="mb-1 fw-bold">{{expediente.solicitante?.nombreCompleto}}</p>
+              <p class="text-secondary small m-0">DNI: {{expediente.solicitante?.dni}}</p>
+              <p class="text-secondary small m-0">Tel: {{expediente.solicitante?.telefono}}</p>
+              <p class="text-secondary small">Email: {{expediente.solicitante?.email}}</p>
+            </div>
+            <div class="col-md-6 mb-3">
+              <h6 class="text-warning small fw-bold">DATOS DEL INVITADO</h6>
+              <p class="mb-1 fw-bold">{{expediente.invitado?.nombreCompleto}}</p>
+              <p class="text-secondary small m-0">DNI: {{expediente.invitado?.dni}}</p>
+              <p class="text-secondary small m-0">Tel: {{expediente.invitado?.telefono}}</p>
+              <p class="text-secondary small">Email: {{expediente.invitado?.email}}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-card-wireframe p-4">
+          <h6 class="text-warning small fw-bold mb-3">DETALLES DEL CONFLICTO</h6>
+          <p class="text-warning small mb-1">Materia: {{expediente.materiaConciliable}}</p>
+          <p class="text-white small">{{expediente.hechos || 'Sin detalles adicionales.'}}</p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="info-card-wireframe p-4 mb-4 text-center">
+          <h6 class="text-warning mb-3 fw-bold">Acciones</h6>
+          <button class="btn-action-white w-100 mb-2" (click)="actualizarEstado('APROBADO')">Aprobar</button>
+          <button class="btn-action-white w-100 mb-2" (click)="abrirModalObservacion()">Observar</button>
+          <button class="btn-action-white w-100 mb-2" (click)="actualizarEstado('RECHAZADO')">Rechazar</button>
+          <button class="btn-viva-white w-100 text-warning border-warning"
+            style="background: transparent; border: 1px solid #FFD700; color: #FFD700;">
+            <i class="bi bi-download"></i> Descargar Documentos Adjuntos
+          </button>
+        </div>
+
+        <div class="info-card-wireframe p-4">
+          <h6 class="text-warning mb-2 fw-bold">Designar Conciliador</h6>
+          <p class="text-secondary small mb-3">Asigne un conciliador para este expediente (Formato B)</p>
+
+
+          <label class="text-info small mb-1">Seleccionar Conciliador</label>
+          <select class="viva-input-black mb-3" [(ngModel)]="conciliadorId">
+            <option [ngValue]="null">Seleccione un conciliador...</option>
+            <option *ngFor="let c of conciliadores" [value]="c.id">
+              {{c.nombreCompleto}}
+            </option>
+          </select>
+
+          <!-- Lista visual de conciliadores -->
+          <div class="conciliator-list mb-3 custom-scroll">
+            <div class="conciliator-item" *ngFor="let c of conciliadores">
+              <span class="text-white small">{{c.nombreCompleto}}</span>
+              <span class="status-badge status-available">Disponible</span>
+            </div>
+          </div>
+
+          <button class="btn-green-viva" *ngIf="conciliadorId" (click)="generarFormatoB()">
+            Guardar Asignacion
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div class="viva-modal-overlay" *ngIf="mostrarModal">
+    <div class="viva-modal-card">
+      <div class="d-flex justify-content-between">
+        <h5 class="text-warning fw-bold">Enviar Observación</h5>
+        <button class="close-viva" (click)="mostrarModal = false">&times;</button>
+      </div>
+      <textarea [(ngModel)]="observacionTexto" class="viva-textarea mt-3" rows="5"
+        placeholder="Escriba la observación..."></textarea>
+      <button class="btn-modal-send w-100 mt-3" (click)="actualizarEstado('OBSERVADO')">Enviar</button>
+    </div>
+  </div>
+</div>

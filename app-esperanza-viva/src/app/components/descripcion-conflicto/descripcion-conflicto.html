@@ -1,7 +1,7 @@
 <div class="wireframe-container">
   <header class="p-3 d-flex align-items-center">
-    <button class="btn-volver me-3" routerLink="/nueva-solicitud">
-       <span>&#8617;</span> Volver
+    <button class="btn-volver me-3" routerLink="/registro-solicitud">
+      <span>&#8617;</span> Volver
     </button>
     <div class="logo-text">
       <h5 class="m-0 text-warning fw-bold">Esperanza Viva</h5>
@@ -21,49 +21,92 @@
 
     <div class="custom-card mt-5 p-4">
       <h6 class="text-warning mb-1">Descripción del Conflicto</h6>
-      <p class="text-secondary small mb-4">Describe los hechos y tu pretensión de manera clara y detallada</p>
-      
+      <p class="text-secondary small mb-4">Describe los hechos y tu pretensión de manera clara</p>
+
       <div class="row g-4">
-        <div class="col-md-12">
-          <label class="label-yellow">Materia Conciliable *</label>
-          <select class="input-dark select-arrow" [(ngModel)]="materia" name="materia">
-            <option value="" disabled selected>Selecciona una opción...</option>
-            <option value="Derecho de Familia">Derecho de Familia</option>
-            <option value="Derecho Civil">Derecho Civil</option>
-            <option value="Derecho Laboral">Derecho Laboral</option>
-          </select>
+        <div class="col-md-12 position-relative">
+          <label class="label-yellow">Materia Conciliables</label>
+          <div class="select-box-viva" (click)="menuMateriaAbierto = !menuMateriaAbierto">
+            {{ subMateriaSeleccionada || materiaSeleccionada || 'EJ: Derecho de familia, Derecho civil, etc.' }}
+            <i class="bi bi-chevron-down text-warning"></i>
+          </div>
+
+          <ul class="dropdown-viva animate__animated animate__fadeIn" *ngIf="menuMateriaAbierto">
+            <li class="d-flex justify-content-between" (click)="seleccionarMateria('FAMILIA')">
+              FAMILIA <i class="bi bi-chevron-right"></i>
+            </li>
+            <li class="d-flex justify-content-between" (click)="seleccionarMateria('CIVIL')">
+              CIVIL <i class="bi bi-chevron-right"></i>
+            </li>
+            <li (click)="seleccionarMateria('CONTRATACIONES CON EL ESTADO')">
+              CONTRATACIONES CON EL ESTADO
+            </li>
+          </ul>
+
+          <ul class="dropdown-viva sub-menu animate__animated animate__fadeIn"
+            *ngIf="menuSubMateriaAbierto && materiaSeleccionada === 'FAMILIA'">
+            <li (click)="seleccionarSubMateria('Pensión de Alimentos')">Pensión de Alimentos</li>
+            <li (click)="seleccionarSubMateria('Exoneración de Alimentos')">Exoneración de Alimentos</li>
+            <li (click)="seleccionarSubMateria('Pensión de alimentos a favor de conviviente')">Pensión de alimentos a
+              favor de conviviente</li>
+            <li (click)="seleccionarSubMateria('Liquidación de sociedad de gananciales')">Liquidación de sociedad de
+              gananciales</li>
+            <li (click)="seleccionarSubMateria('Petición de herencia')">Petición de herencia</li>
+            <li (click)="seleccionarSubMateria('Sucesión intestada')">Sucesión intestada</li>
+          </ul>
+
+          <ul class="dropdown-viva sub-menu animate__animated animate__fadeIn"
+            *ngIf="menuSubMateriaAbierto && materiaSeleccionada === 'CIVIL'">
+            <li (click)="seleccionarSubMateria('Incumplimiento de contrato')">Incumplimiento de contrato</li>
+            <li (click)="seleccionarSubMateria('Desalojo')">Desalojo</li>
+            <li (click)="seleccionarSubMateria('Reivindicación')">Reivindicación</li>
+            <li (click)="seleccionarSubMateria('División y partición')">División y partición</li>
+          </ul>
         </div>
 
         <div class="col-md-12">
           <label class="label-yellow">Hechos que sustentan la solicitud *</label>
-          <textarea class="input-dark" rows="5" 
-            [(ngModel)]="hechosTexto" 
-            name="hechos"
-            placeholder="Describe de forma cronológica los hechos..."></textarea>
+          <textarea class="input-dark" rows="4" [(ngModel)]="hechosTexto" maxlength="200"
+            placeholder="Describe de forma cronológica y detalla los hechos que originaron el conflicto..."></textarea>
           <div class="d-flex justify-content-between">
-            <small class="text-secondary-custom">Incluye fechas, lugares y circunstancias relevantes</small>
-            <small [ngClass]="hechosTexto.length < 20 ? 'text-danger' : 'text-success'">
-              {{ hechosTexto.length }}/1000
+            <small class="text-secondary-custom">Mínimo 50 caracteres</small>
+            <small [class.text-danger]="hechosTexto.length < 50" [class.text-success]="hechosTexto.length >= 50">
+              {{ hechosTexto.length }} / 200 (Máximo)
+            </small>
+          </div>
+        </div>
+
+        <div class="col-md-12 animate__animated animate__fadeIn" *ngIf="mostrarCampoAlimentos">
+          <label class="label-yellow">Otras personas con derecho alimentario</label>
+          <textarea class="input-dark" rows="3" [(ngModel)]="otrasPersonasAlimentario" maxlength="200"
+            placeholder="Personas que merecen el derecho alimentario"></textarea>
+          <div class="d-flex justify-content-between">
+            <small class="text-secondary-custom">Mínimo 50 caracteres</small>
+            <small [class.text-danger]="(otrasPersonasAlimentario || '').length < 50"
+              [class.text-success]="(otrasPersonasAlimentario || '').length >= 50">
+              {{ (otrasPersonasAlimentario || '').length }} / 200 (Máximo)
             </small>
           </div>
         </div>
 
         <div class="col-md-12">
           <label class="label-yellow">Pretensión *</label>
-          <textarea class="input-dark" rows="4" 
-            [(ngModel)]="pretensionTexto" 
-            name="pretension"
-            placeholder="¿Qué esperas obtener de la conciliación?"></textarea>
-          <small class="text-secondary-custom">Especifica claramente lo que solicitas (pago, acuerdo, etc.)</small>
+          <textarea class="input-dark" rows="4" [(ngModel)]="pretensionTexto" maxlength="150"
+            placeholder="Indica que esperas obtener de la conciliación..."></textarea>
+          <div class="d-flex justify-content-between">
+            <small class="text-secondary-custom">Mínimo 20 caracteres</small>
+            <small [class.text-danger]="pretensionTexto.length < 20"
+              [class.text-success]="pretensionTexto.length >= 20">
+              {{ pretensionTexto.length }} / 150 (Máximo)
+            </small>
+          </div>
         </div>
       </div>
     </div>
 
     <div class="d-flex justify-content-between mt-5 pb-5">
       <button class="btn-action" routerLink="/nueva-solicitud">Anterior</button>
-      <button class="btn-action yellow-border" (click)="irADocumentos()">
-        Siguiente <i class="bi bi-arrow-right"></i>
-      </button>
+      <button class="btn-action yellow-border" (click)="irADocumentos()">Siguiente &#10132;</button>
     </div>
   </div>
 </div>

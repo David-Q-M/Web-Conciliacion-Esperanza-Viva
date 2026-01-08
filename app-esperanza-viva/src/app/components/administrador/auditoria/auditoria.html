@@ -1,0 +1,63 @@
+<div class="admin-container">
+  <aside class="sidebar-viva">
+    <div class="logo-section">
+      <h5 class="m-0 fw-bold text-dark">Esperanza Viva</h5>
+      <small class="text-dark">centro de conciliación</small>
+    </div>
+    <nav class="sidebar-nav">
+      <a class="nav-link-viva" routerLink="/admin-dashboard" routerLinkActive="active">Inicio</a>
+      <a class="nav-link-viva" routerLink="/gestion-usuarios" routerLinkActive="active">Gestión de usuarios</a>
+      <a class="nav-link-viva" routerLink="/configuracion" routerLinkActive="active">Configuración</a>
+      <a class="nav-link-viva active" routerLink="/auditoria" routerLinkActive="active">Auditoría</a>
+      <a class="nav-link-viva" routerLink="/reportes" routerLinkActive="active">Reportes</a>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="btn-logout-viva" (click)="cerrarSesion()">
+        <i class="bi bi-arrow-left"></i> Cerrar Sesión
+      </button>
+    </div>
+  </aside>
+
+  <main class="main-content-viva">
+    <header class="content-header d-flex justify-content-between align-items-center">
+      <div class="header-titles">
+        <h2 class="text-warning fw-bold m-0">Auditoría y Trazabilidad</h2>
+        <p class="text-secondary small m-0">Historial completo de acciones del sistema</p>
+      </div>
+      <div class="admin-badge"><span>{{ usuarioActivo }}</span></div>
+    </header>
+
+    <div class="d-flex justify-content-end mb-4 mt-4">
+      <button class="btn-register-viva px-4 py-2" (click)="exportarCSV()">
+        <i class="bi bi-file-earmark-spreadsheet me-2"></i> Exportar CSV
+      </button>
+    </div>
+
+    <div class="table-viva-container">
+      <table class="table-viva">
+        <thead>
+          <tr>
+            <th class="text-cian">Fecha/Hora</th>
+            <th class="text-cian">Usuario</th>
+            <th class="text-cian">Acción</th>
+            <th class="text-cian">Detalles</th>
+            <th class="text-cian text-center">Expediente</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let log of logs">
+            <td class="text-white small">{{ log.fechaHora | date:'dd/MM/yyyy, hh:mm:ss a' }}</td>
+            <td class="text-secondary">{{ log.usuarioNombre }}</td>
+            <td>
+              <span class="role-pill" style="background-color: #6f42c1;">
+                {{ log.accion }}
+              </span>
+            </td>
+            <td class="text-secondary small">{{ log.detalles }}</td>
+            <td class="text-center text-white">{{ log.expedienteId || '--' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>

@@ -1,0 +1,36 @@
+.admin-container { display: flex; min-height: 100vh; background-color: #000; }
+.sidebar-viva { width: 260px; background-color: #ffc107; display: flex; flex-direction: column; }
+.main-content-viva { flex: 1; padding: 40px; background-color: #0d0d0d; overflow-y: auto; }
+
+.admin-badge span { border: 1px solid #ffc107; color: #ffc107; padding: 5px 15px; border-radius: 5px; font-size: 0.8rem; }
+
+.info-card-wireframe {
+  background-color: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 12px;
+}
+.info-card-wireframe:hover { border-color: #ffc107; transition: 0.3s; }
+
+.progress-wire-bg { background-color: #000; height: 6px; border-radius: 10px; border: 1px solid #222; }
+.progress-wire-bar { background-color: #ffc107; height: 100%; border-radius: 10px; }
+
+.work-item-black-wire {
+  background-color: #000;
+  padding: 12px 15px;
+  border-radius: 8px;
+  border: 1px solid #222;
+}
+
+.indicator-box-black {
+  background-color: #000;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  border: 1px solid #222;
+}
+
+/* Scroll estilizado para la carga de trabajo */
+.scroll-carga::-webkit-scrollbar { width: 5px; }
+.scroll-carga::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+
+.btn-logout-viva { background: none; border: none; font-weight: bold; color: #000; cursor: pointer; padding: 20px; }

@@ -5,16 +5,64 @@
 .active-step { color: #ffc107; font-weight: bold; }
 .completed-step { color: #4dfd8c; }
 .inactive-step { color: #666; }
+
 .custom-card { background-color: #2e2e2e; border-radius: 15px; border: 1px solid #444; }
 .label-yellow { color: #ffc107; font-size: 0.9rem; margin-bottom: 8px; display: block; }
 .input-dark { background-color: #000; border: 1px solid #ffc107; color: white; width: 100%; padding: 12px; border-radius: 8px; outline: none; }
 .text-secondary-custom { color: #aaa; font-size: 0.75rem; display: block; margin-top: 5px; }
-.btn-action { background: transparent; color: white; border: 1px solid #666; border-radius: 8px; padding: 10px 30px; }
-.yellow-border { border-color: #ffc107; color: #ffc107; }
-select.input-dark option {
-  background-color: #2e2e2e;
-  color: white;
+
+/* Estilo de los Selectores de Wireframe */
+.select-box-viva {
+  background-color: #000;
+  border: 1px solid #ffc107;
+  color: #fff;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.text-danger { color: #ff4d4d !important; font-size: 0.7rem; }
-.text-success { color: #4dfd8c !important; font-size: 0.7rem; }
+/* Menú Principal Flotante */
+.dropdown-viva {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 300px;
+  background-color: #1a1a1a;
+  border: 1px solid #ffc107;
+  border-radius: 8px;
+  list-style: none;
+  padding: 0;
+  margin-top: 5px;
+  z-index: 1000;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
+
+.dropdown-viva li {
+  padding: 12px 20px;
+  color: white;
+  cursor: pointer;
+  border-bottom: 1px solid #333;
+  transition: 0.3s;
+}
+
+.dropdown-viva li:hover {
+  background-color: #ffc107;
+  color: black;
+}
+
+/* Sub-menú Flotante Lateral (Wireframe 30/31) */
+.sub-menu {
+  left: 305px; /* Aparece a la derecha del menú anterior */
+  top: 0;
+  margin-top: 0;
+  width: 320px;
+  background-color: #111;
+}
+
+.btn-action { background: transparent; color: white; border: 1px solid #666; border-radius: 8px; padding: 10px 30px; font-weight: bold; }
+.yellow-border { border-color: #ffc107; color: #ffc107; }
+
+.animate__animated { animation-duration: 0.4s; }

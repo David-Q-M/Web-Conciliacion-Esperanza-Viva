@@ -1,0 +1,86 @@
+<div class="admin-container">
+  <aside class="sidebar-viva">
+    <div class="logo-section p-3 text-center">
+      <h5 class="m-0 fw-bold text-dark">Esperanza Viva</h5>
+      <small class="text-dark">centro de conciliación</small>
+    </div>
+    <nav class="sidebar-nav">
+      <a class="nav-link-viva" routerLink="/director/bandeja-solicitudes">Solicitudes</a>
+      <a class="nav-link-viva" routerLink="/director/personal">Personal</a>
+      <a class="nav-link-viva active" routerLink="/director/bandeja-reportes">Reportes</a>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="btn-logout-viva" (click)="cerrarSesion()">
+        <i class="bi bi-arrow-left"></i> Cerrar Sesión
+      </button>
+    </div>
+  </aside>
+
+  <main class="main-content-viva">
+    <header class="content-header d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h2 class="text-warning fw-bold m-0">Bandeja de Reportes</h2>
+        <p class="text-secondary small">Panel de gestión de expedientes de conciliación</p>
+      </div>
+      <div class="admin-badge"><span>{{ directorNombre }} - Director</span></div>
+    </header>
+
+    <div class="row g-3 mb-4">
+      <div class="col-md-3">
+        <div class="key-box-report">
+          <small class="text-white d-block mb-1">Total de solicitudes</small>
+          <h3 class="text-success m-0">{{reportData.total}}</h3>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="key-box-report">
+          <small class="text-white d-block mb-1">Pendientes</small>
+          <h3 class="text-success m-0">{{reportData.pendientes}}</h3>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="key-box-report">
+          <small class="text-white d-block mb-1">En Revision</small>
+          <h3 class="text-success m-0">{{reportData.revision}}</h3>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="key-box-report">
+          <small class="text-white d-block mb-1">Aprobadas</small>
+          <h3 class="text-success m-0">{{reportData.aprobadas}}</h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="filter-box-viva p-4 mb-4">
+      <h6 class="text-warning small mb-3 fw-bold">Filtros</h6>
+      <div class="search-input-wrapper">
+        <i class="bi bi-search text-white"></i>
+        <input type="text" placeholder="Buscar..." class="viva-report-input">
+      </div>
+    </div>
+
+    <div class="table-viva-container">
+      <table class="table-viva">
+        <thead>
+          <tr>
+            <th class="text-cian">Nº Expediente</th>
+            <th class="text-cian">Solicitante</th>
+            <th class="text-cian">Invitado</th>
+            <th class="text-cian">Fecha</th>
+            <th class="text-cian">Materia</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of reportData.lista">
+            <td class="text-white small">{{item.nroExpediente}}</td>
+            <td class="text-secondary small">{{item.nombreSolicitante}}</td>
+            <td class="text-secondary small">{{item.nombreInvitado}}</td>
+            <td class="text-secondary small">{{item.fechaCreacion | date:'dd/MM/yyyy'}}</td>
+            <td class="text-secondary small">{{item.materia}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>

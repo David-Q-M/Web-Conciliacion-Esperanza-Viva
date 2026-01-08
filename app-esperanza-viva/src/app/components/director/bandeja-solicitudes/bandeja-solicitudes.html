@@ -1,0 +1,81 @@
+<div class="admin-container">
+  <aside class="sidebar-viva">
+    <div class="logo-section p-3">
+      <h5 class="m-0 fw-bold text-dark">Esperanza Viva</h5>
+      <small class="text-dark">centro de conciliación</small>
+    </div>
+    <nav class="sidebar-nav">
+      <a class="nav-link-viva active" routerLink="/director/bandeja-solicitudes" routerLinkActive="active">
+        <i class="bi bi-envelope-fill"></i> Solicitudes
+      </a>
+      <a class="nav-link-viva" routerLink="/director/personal" routerLinkActive="active">
+        <i class="bi bi-people-fill"></i> Personal
+      </a>
+      <a class="nav-link-viva" routerLink="/director/bandeja-reportes" routerLinkActive="active">
+        <i class="bi bi-bar-chart-fill"></i> Reportes
+      </a>
+    </nav>
+    <div class="sidebar-footer p-3">
+      <button class="btn-logout-viva" (click)="cerrarSesion()">
+        <i class="bi bi-arrow-left"></i> Cerrar Sesión
+      </button>
+    </div>
+  </aside>
+
+  <main class="main-content-viva">
+    <header class="content-header d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h2 class="text-warning fw-bold m-0">Bandeja de Solicitudes</h2>
+        <p class="text-secondary small">Panel de gestión de expedientes</p>
+      </div>
+      <div class="admin-badge"><span>{{ directorNombre }} - Director</span></div>
+    </header>
+
+    <div class="row g-3 mb-4">
+      <div class="col-md-3"><div class="key-box"><small class="text-white">Total solicitudes</small><h3 class="text-success m-0">{{stats.total}}</h3></div></div>
+      <div class="col-md-3"><div class="key-box"><small class="text-white">Pendientes</small><h3 class="text-warning m-0">{{stats.pendientes}}</h3></div></div>
+      <div class="col-md-3"><div class="key-box"><small class="text-white">En Revisión</small><h3 class="text-info m-0">{{stats.revision}}</h3></div></div>
+      <div class="col-md-3"><div class="key-box"><small class="text-white">Aprobadas</small><h3 class="text-success m-0">{{stats.aprobadas}}</h3></div></div>
+    </div>
+
+    <div class="filter-container p-4 mb-4">
+      <h6 class="text-warning small mb-3 fw-bold">Filtros</h6>
+      <div class="search-box-viva">
+        <i class="bi bi-search text-white"></i>
+        <input type="text" placeholder="Buscar por expediente..." class="viva-input-search">
+      </div>
+    </div>
+
+    <div class="table-viva-container">
+      <table class="table-viva">
+        <thead>
+          <tr>
+            <th style="color: #0dcaf0;">Nº Expediente</th>
+            <th style="color: #0dcaf0;">Solicitante</th>
+            <th style="color: #0dcaf0;">Invitado</th>
+            <th style="color: #0dcaf0;">Fecha</th>
+            <th style="color: #0dcaf0;">Materia</th>
+            <th style="color: #0dcaf0;" class="text-center">Acciones</th>
+            <th style="color: #0dcaf0;">Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let s of solicitudes">
+            <td class="text-white small">{{s.numeroExpediente}}</td>
+            <td class="text-secondary small">{{s.solicitante?.nombreCompleto}}</td>
+            <td class="text-secondary small">{{s.invitado?.nombreCompleto}}</td>
+            <td class="text-secondary small">{{s.fechaPresentacion | date:'dd/MM/yyyy'}}</td>
+            <td class="text-secondary small">{{s.materiaConciliable}}</td>
+            <td class="text-center">
+              <button class="btn-detail-viva" [routerLink]="['/director/detalle', s.id]">Ver Detalles</button>
+            </td>
+            <td><span class="role-pill" style="background-color: #6a1b9a;">{{s.estado}}</span></td>
+          </tr>
+          <tr *ngIf="solicitudes.length === 0">
+            <td colspan="7" class="text-center text-secondary py-4">No hay expedientes en la base de datos.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>

@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-// Importamos el componente de login para poder usarlo como etiqueta
 import { LoginAdmin } from '../login-admin/login-admin'; 
 
 @Component({
@@ -14,8 +13,9 @@ import { LoginAdmin } from '../login-admin/login-admin';
 })
 export class ConsultaExpediente {
   numeroBusqueda: string = '';
-  mostrarLoginModal = false; // Controla el modal sobrepuesto
-  mostrarMenuRoles: boolean = false; 
+  mostrarLoginModal = false; 
+  mostrarMenuRoles: boolean = false;
+  rolElegido: string = '';
 
   constructor(private router: Router) {}
 
@@ -23,9 +23,8 @@ export class ConsultaExpediente {
     this.mostrarMenuRoles = !this.mostrarMenuRoles;
   }
 
-  // Activa el modal sobrepuesto sin cambiar de URL 
   irALoginAdmin(rol: string) {
-    console.log("Rol seleccionado:", rol);
+    this.rolElegido = rol; // Guardamos si es DIRECTOR, ADMIN, etc.
     this.mostrarMenuRoles = false;
     this.mostrarLoginModal = true; 
   }

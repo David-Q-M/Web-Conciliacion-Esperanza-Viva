@@ -1,0 +1,83 @@
+<div class="admin-container">
+  <aside class="sidebar-viva">
+    <div class="logo-section p-4 text-center">
+      <h5 class="m-0 fw-bold text-dark">ESPERANZA VIVA</h5>
+      <small class="text-dark fw-bold">CONCILIACIÓN</small>
+    </div>
+    <nav class="sidebar-nav">
+      <a class="nav-link-viva active" routerLink="/conciliador/mis-casos">
+        <i class="bi bi-folder-fill"></i> Mis Casos
+      </a>
+      <a class="nav-link-viva" routerLink="/conciliador/mis-casos">
+        <i class="bi bi-calendar3"></i> Mi Agenda
+      </a>
+    </nav>
+    <div class="sidebar-footer p-3">
+      <button class="btn-logout-viva w-100" (click)="cerrarSesion()">
+        <i class="bi bi-door-open-fill"></i> Cerrar Sesión
+      </button>
+    </div>
+  </aside>
+
+  <main class="main-content-viva p-4">
+    <header class="mb-4 d-flex justify-content-between align-items-center">
+      <div>
+        <h2 class="text-warning fw-bold m-0">Registro de Audiencia</h2>
+        <p class="text-secondary small">Expediente: {{ audiencia.solicitud?.numeroExpediente }}</p>
+      </div>
+      <div class="admin-badge"><span>{{ conciliadorNombre }}</span></div>
+    </header>
+
+    <div class="info-card-wireframe p-4 mb-4">
+      <h6 class="text-warning small mb-3 fw-bold">CONTROL DE ASISTENCIA</h6>
+      <div class="asistencia-row d-flex justify-content-between align-items-center mb-2 p-3 rounded shadow-sm">
+        <span class="text-white">SOLICITANTE: {{ audiencia.solicitud?.solicitante?.nombres }}</span>
+        <button [class]="audiencia.asistenciaSolicitante ? 'btn-asistio' : 'btn-no-asistio'" (click)="toggleAsistencia('solicitante')">
+          {{ audiencia.asistenciaSolicitante ? 'Asistió' : 'No asistió' }}
+        </button>
+      </div>
+      <div class="asistencia-row d-flex justify-content-between align-items-center p-3 rounded shadow-sm">
+        <span class="text-white">INVITADO: {{ audiencia.solicitud?.invitado?.nombres }}</span>
+        <button [class]="audiencia.asistenciaInvitado ? 'btn-asistio' : 'btn-no-asistio'" (click)="toggleAsistencia('invitado')">
+          {{ audiencia.asistenciaInvitado ? 'Asistió' : 'No asistió' }}
+        </button>
+      </div>
+    </div>
+
+    <div class="info-card-wireframe p-4">
+      <h6 class="text-warning small text-center mb-4 fw-bold">RESULTADOS DE LA SESIÓN</h6>
+      <div class="row justify-content-center">
+        <div class="col-md-9">
+          <div class="resultado-option p-3 mb-3 border rounded">
+            <input type="radio" name="res" id="r1" value="Inasistencias" [(ngModel)]="resultadoSeleccionado">
+            <label class="text-white ms-2 fw-bold" for="r1">Inasistencias (Formato D)</label>
+            <select class="viva-input-black mt-2" *ngIf="resultadoSeleccionado === 'Inasistencias'" [(ngModel)]="subResultado">
+              <option value="Inasistencia de una de las partes">Inasistencia de una de las partes</option>
+              <option value="Inasistencia de ambas partes">Inasistencia de ambas partes</option>
+            </select>
+          </div>
+
+          <div class="resultado-option p-3 mb-3 border rounded">
+            <input type="radio" name="res" id="r2" value="Acuerdo Total" [(ngModel)]="resultadoSeleccionado">
+            <label class="text-white ms-2 fw-bold" for="r2">Acuerdo Total</label>
+          </div>
+
+          <div class="resultado-option p-3 border rounded">
+            <input type="radio" name="res" id="r3" value="Falta de Acuerdo" [(ngModel)]="resultadoSeleccionado">
+            <label class="text-white ms-2 fw-bold" for="r3">Falta de Acuerdo</label>
+            <select class="viva-input-black mt-2" *ngIf="resultadoSeleccionado === 'Falta de Acuerdo'" [(ngModel)]="subResultado">
+              <option value="Falta de acuerdo con posiciones">Falta de acuerdo con posiciones</option>
+              <option value="Falta de acuerdo con sustento">Falta de acuerdo con sustento</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-center mt-5">
+      <button class="btn btn-warning fw-bold px-5 py-2 shadow" [disabled]="!resultadoSeleccionado" (click)="finalizarProceso()">
+        GUARDAR Y CONTINUAR
+      </button>
+    </div>
+  </main>
+</div>

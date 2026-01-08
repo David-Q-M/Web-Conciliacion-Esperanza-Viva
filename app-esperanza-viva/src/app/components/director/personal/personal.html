@@ -1,0 +1,62 @@
+<div class="admin-container">
+  <aside class="sidebar-viva">
+    <div class="logo-section p-3">
+      <h5 class="m-0 fw-bold text-dark">Esperanza Viva</h5>
+      <small class="text-dark">centro de conciliación</small>
+    </div>
+    <nav class="sidebar-nav">
+      <a class="nav-link-viva" routerLink="/director/bandeja-solicitudes" routerLinkActive="active">
+        <i class="bi bi-envelope-fill"></i> Solicitudes
+      </a>
+      <a class="nav-link-viva active" routerLink="/director/personal" routerLinkActive="active">
+        <i class="bi bi-people-fill"></i> Personal
+      </a>
+      <a class="nav-link-viva" routerLink="/director/bandeja-reportes" routerLinkActive="active">
+        <i class="bi bi-bar-chart-fill"></i> Reportes
+      </a>
+    </nav>
+    <div class="sidebar-footer p-3">
+      <button class="btn-logout-viva" (click)="cerrarSesion()">
+        <i class="bi bi-arrow-left"></i> Cerrar Sesión
+      </button>
+    </div>
+  </aside>
+
+  <main class="main-content-viva">
+    <header class="content-header d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h2 class="text-warning fw-bold m-0">Gestión de Personal</h2>
+        <p class="text-secondary small">Centro de Conciliación Extrajudicial</p>
+      </div>
+      <div class="admin-badge"><span>{{ directorNombre }} - Director</span></div>
+    </header>
+
+    <div class="row g-3 mb-4">
+      <div class="col-md-3"><div class="key-box-viva"><h3 class="text-success m-0">{{stats.total}}</h3><small class="text-white">Total Personal</small></div></div>
+      <div class="col-md-3"><div class="key-box-viva"><h3 class="text-success m-0">{{stats.activos}}</h3><small class="text-white">Personal Activo</small></div></div>
+      <div class="col-md-3"><div class="key-box-viva"><h3 class="text-success m-0">{{stats.conciliadores}}</h3><small class="text-white">Conciliadores</small></div></div>
+      <div class="col-md-3"><div class="key-box-viva"><h3 class="text-success m-0">{{stats.abogados}}</h3><small class="text-white">Abogados</small></div></div>
+    </div>
+
+    <h5 class="text-warning fw-bold mb-3">Personal del Centro</h5>
+    <p class="text-secondary small mb-4">Gestiona conciliadores y abogados registrados en el sistema</p>
+
+    <div class="row g-4">
+      <div class="col-md-6" *ngFor="let p of personal">
+        <div class="info-card-wireframe p-4">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h6 class="text-white m-0 fw-bold">{{p.nombreCompleto}}</h6>
+            <span class="role-pill" [ngClass]="p.estado === 'ACTIVO' ? 'pill-green' : 'pill-red'">{{p.estado}}</span>
+          </div>
+          <p class="text-secondary small mb-2">{{p.rol}} - Derecho Civil y Comercial</p>
+          <p class="text-white small mb-3"><i class="bi bi-telephone text-warning me-2"></i> +51 999 111 222</p>
+          
+          <div class="progress-wire-bg">
+            <div class="progress-wire-bar" style="width: 53%;"></div>
+          </div>
+          <small class="text-secondary mt-2 d-block">Carga de Trabajo: 8 / 15 casos (53%)</small>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

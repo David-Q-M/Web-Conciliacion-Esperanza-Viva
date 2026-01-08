@@ -1,0 +1,31 @@
+.admin-container { display: flex; min-height: 100vh; background-color: #000; }
+.sidebar-viva { width: 260px; background-color: #ffc107; display: flex; flex-direction: column; }
+.main-content-viva { flex: 1; padding: 40px; background-color: #0d0d0d; overflow-y: auto; }
+
+/* 🔹 CAJAS DE INDICADORES */
+.key-box-viva {
+  background-color: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+}
+
+/* 🔹 TARJETAS DE PERSONAL */
+.info-card-wireframe {
+  background-color: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 12px;
+}
+.info-card-wireframe:hover { border-color: #ffc107; transition: 0.3s; }
+
+/* 🔹 PÍLDORAS DE ESTADO */
+.pill-green { background-color: #198754; color: #fff; padding: 4px 12px; border-radius: 6px; font-size: 0.75rem; }
+.pill-red { background-color: #dc3545; color: #fff; padding: 4px 12px; border-radius: 6px; font-size: 0.75rem; }
+
+/* 🔹 BARRAS DE PROGRESO */
+.progress-wire-bg { background-color: #000; height: 6px; border-radius: 10px; border: 1px solid #222; }
+.progress-wire-bar { background-color: #ffc107; height: 100%; border-radius: 10px; }
+
+.admin-badge span { border: 1px solid #ffc107; color: #ffc107; padding: 5px 15px; border-radius: 5px; font-size: 0.8rem; }
+.btn-logout-viva { background: none; border: none; font-weight: bold; color: #000; cursor: pointer; padding: 10px; text-align: left; width: 100%; }

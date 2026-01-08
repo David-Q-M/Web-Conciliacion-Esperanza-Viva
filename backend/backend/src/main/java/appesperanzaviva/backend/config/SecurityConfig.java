@@ -9,6 +9,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -17,29 +21,23 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            // 1. Configuración de sesión sin estado (típico de APIs REST)
-            .sessionManagement(session -> 
-                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            )
-
-            // 2. Desactivar CSRF y Form Login que causan el error 403 en Angular
-            .csrf(AbstractHttpConfigurer::disable)
-            .httpBasic(AbstractHttpConfigurer::disable)
-            .formLogin(AbstractHttpConfigurer::disable)
-
-            // 3. Aplicar la política CORS definida en WebConfig
-            .cors(Customizer.withDefaults())
-
-            // 4. Reglas de acceso a las rutas
-            .authorizeHttpRequests(auth -> auth
-                // Permitir peticiones de diagnóstico (OPTIONS) del navegador
-                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                // Permitir acceso total a las solicitudes de ciudadanos
-                .requestMatchers("/api/solicitudes/**").permitAll()
-                // El resto requiere autenticación (para el futuro panel admin)
-                .requestMatchers("/api/usuarios/**").permitAll()
-                .anyRequest().authenticated()
-            );
+                .csrf(AbstractHttpConfigurer::disable)
+                // Permitimos CORS para que Angular no sea bloqueado al cambiar de ruta
+                .cors(Customizer.withDefaults())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS) // Cambiado a
+                                                                                                          // ALWAYS para
+                                                                                                          // mantener
+                                                                                                          // sesión
+                                                                                                          // local
+                )
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        // Permitimos acceso a las APIs principales para evitar redirecciones al login
+                        .requestMatchers("/api/solicitudes/**", "/api/usuarios/**", "/api/audiencias/**",
+                                "/api/reportes/**",
+                                "/api/configuracion/**", "/api/auditoria/**")
+                        .permitAll()
+                        .anyRequest().authenticated());
 
         return http.build();
     }

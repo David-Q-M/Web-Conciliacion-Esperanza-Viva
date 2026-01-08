@@ -1,0 +1,71 @@
+<div class="admin-container">
+  <aside class="sidebar-viva">
+    <div class="logo-section p-4 text-center">
+      <h5 class="m-0 fw-bold text-dark">ESPERANZA VIVA</h5>
+      <small class="text-dark fw-bold">CONCILIACIÓN</small>
+    </div>
+    <nav class="sidebar-nav">
+      <a class="nav-link-viva active" routerLink="/conciliador/mis-casos">
+        <i class="bi bi-folder-fill"></i> Mis Casos
+      </a>
+      <a class="nav-link-viva" routerLink="/conciliador/mis-casos">
+        <i class="bi bi-calendar3"></i> Mi Agenda
+      </a>
+    </nav>
+    <div class="sidebar-footer p-3">
+      <button class="btn-logout-viva w-100" (click)="cerrarSesion()">
+        <i class="bi bi-door-open-fill"></i> Cerrar Sesión
+      </button>
+    </div>
+  </aside>
+
+  <main class="main-content-viva p-4">
+    <header class="mb-4 d-flex justify-content-between align-items-center">
+      <div>
+        <h2 class="text-warning fw-bold m-0">Programación de audiencia</h2>
+        <p class="text-secondary small">GENERAR INVITACIÓN (FORMATO C) - EXP: {{expediente.numeroExpediente}}</p>
+      </div>
+      <div class="admin-badge"><span>{{ conciliadorNombre }}</span></div>
+    </header>
+
+    <div class="row g-4">
+      <div class="col-md-6">
+        <div class="info-card-wireframe p-4">
+          <h6 class="text-warning small fw-bold mb-3"><i class="bi bi-calendar-check"></i> DATOS DE LA SESIÓN</h6>
+          <div class="row mb-3">
+            <div class="col-6">
+              <label class="text-secondary small">Fecha de Audiencia</label>
+              <input type="date" class="viva-input-black" [(ngModel)]="form.fechaAudiencia">
+            </div>
+            <div class="col-6">
+              <label class="text-secondary small">Hora (10 min tolerancia)</label>
+              <input type="time" class="viva-input-black" [(ngModel)]="form.horaAudiencia">
+            </div>
+          </div>
+          <label class="text-secondary small">Lugar (Dirección del Centro)</label>
+          <input type="text" class="viva-input-black" [(ngModel)]="form.lugar">
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="info-card-wireframe p-4">
+          <h6 class="text-warning small fw-bold mb-3"><i class="bi bi-person-check"></i> PARTES CITADAS</h6>
+          <div class="mb-3">
+            <label class="text-info small d-block">SOLICITANTE:</label>
+            <div class="viva-data-display">{{expediente.solicitante?.nombres}} {{expediente.solicitante?.apellidos}}</div>
+          </div>
+          <div>
+            <label class="text-info small d-block">INVITADO:</label>
+            <div class="viva-data-display">{{expediente.invitado?.nombres}} {{expediente.invitado?.apellidos}}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-5 text-center">
+      <button class="btn btn-warning fw-bold px-5 py-2 shadow" (click)="generarInvitacion()">
+        <i class="bi bi-file-earmark-pdf"></i> Generar Invitación y Programar
+      </button>
+    </div>
+  </main>
+</div>

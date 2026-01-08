@@ -1,0 +1,76 @@
+<div class="admin-container">
+  <aside class="sidebar-viva">
+    <div class="logo-section p-4 text-center">
+      <h5 class="m-0 fw-bold text-dark">ESPERANZA VIVA</h5>
+      <small class="text-dark fw-bold">CONCILIACIÓN</small>
+    </div>
+    <nav class="sidebar-nav">
+      <a class="nav-link-viva" routerLink="/conciliador/mis-casos" routerLinkActive="active">
+        <i class="bi bi-folder-fill"></i> Mis Casos
+      </a>
+      <a class="nav-link-viva" routerLink="/conciliador/agenda" routerLinkActive="active">
+        <i class="bi bi-calendar3"></i> Mi Agenda
+      </a>
+      <a class="nav-link-viva" routerLink="/conciliador/historial" routerLinkActive="active">
+        <i class="bi bi-clock-history"></i> Historial
+      </a>
+    </nav>
+  </aside>
+
+  <main class="main-content-viva">
+    <div *ngIf="cargando" class="text-center text-warning p-5">
+      <div class="spinner-border" role="status"></div>
+      <p class="mt-2">Cargando datos del conflicto...</p>
+    </div>
+
+    <div *ngIf="!cargando && expediente">
+      <header class="mb-4 d-flex justify-content-between align-items-center">
+        <div>
+          <h2 class="text-warning fw-bold m-0">Expediente {{expediente.numeroExpediente}}</h2>
+          <p class="text-secondary small">Evaluación de Designación Jurídica</p>
+        </div>
+        <div class="admin-badge"><span>{{conciliadorNombre}}</span></div>
+      </header>
+
+      <div class="info-card-wireframe p-4 mb-4">
+        <h6 class="text-warning mb-3 fw-bold">INFORMACIÓN DEL CONFLICTO</h6>
+        <div class="row text-white">
+          <div class="col-md-6 border-end border-secondary">
+            <p class="mb-1 small text-info">Solicitante</p>
+            <p class="mb-1"><strong>{{expediente.solicitante?.nombres}} {{expediente.solicitante?.apellidos}}</strong>
+            </p>
+            <p class="small m-0 text-secondary">DNI: {{expediente.solicitante?.dni}}</p>
+          </div>
+          <div class="col-md-6 ps-4">
+            <p class="mb-1 small text-info">Invitado</p>
+            <p class="mb-1"><strong>{{expediente.invitado?.nombres}} {{expediente.invitado?.apellidos}}</strong></p>
+            <p class="small m-0 text-secondary">DNI/RUC: {{expediente.invitado?.dni}}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-card-wireframe p-4 mb-4">
+        <h6 class="text-warning mb-3 fw-bold">DETALLES DEL PEDIDO</h6>
+        <div class="mb-3">
+          <label class="text-secondary small d-block mb-1">Materia Conciliable:</label>
+          <div class="viva-data-box">{{expediente.materiaConciliable}}</div>
+        </div>
+        <div>
+          <label class="text-secondary small d-block mb-1">Pretensión:</label>
+          <div class="viva-data-box text-italic">{{expediente.pretension}}</div>
+        </div>
+      </div>
+
+      <div class="designacion-box p-4 text-center">
+        <h6 class="text-warning fw-bold mb-2">DESIGNACIÓN PENDIENTE</h6>
+        <p class="text-white small mb-4 mx-auto" style="max-width: 500px;">
+          Por norma legal, confirme que no presenta impedimentos para llevar este caso.
+        </p>
+        <div class="d-flex justify-content-center gap-4">
+          <button class="btn btn-danger btn-lg px-5 shadow-sm" (click)="responder(false)">Declinar</button>
+          <button class="btn btn-success btn-lg px-5 shadow-sm" (click)="responder(true)">Aceptar y Empezar</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

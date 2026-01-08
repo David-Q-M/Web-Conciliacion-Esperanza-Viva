@@ -22,62 +22,55 @@ public class SolicitudServiceImpl implements SolicitudService {
     @Autowired
     private SolicitudRepository repository;
 
-    // 🔹 Usamos Path para manejar rutas de forma más limpia
+    @Autowired
+    private appesperanzaviva.backend.repository.UsuarioSistemaRepository usuarioRepository;
+
     private final Path root = Paths.get("uploads");
 
     @Override
-    public Solicitud crearSolicitudConArchivos(Solicitud solicitud, MultipartFile dni, MultipartFile pruebas, MultipartFile firma) {
+    public Solicitud crearSolicitudConArchivos(Solicitud solicitud, MultipartFile dni, MultipartFile pruebas,
+            MultipartFile firma) {
         try {
-
-            // 1️⃣ Crear carpeta si no existe
             if (!Files.exists(root)) {
                 Files.createDirectories(root);
             }
 
-            // Validar si el apoderado viene vacío desde el frontend
+            // Validar apoderado vacío (Limpia datos basura del JSON)
             if (solicitud.getApoderado() != null &&
-               (solicitud.getApoderado().getNombres() == null ||
-                solicitud.getApoderado().getNombres().isEmpty())) {
-
+                    (solicitud.getApoderado().getNombres() == null
+                            || solicitud.getApoderado().getNombres().isEmpty())) {
                 solicitud.setApoderado(null);
             }
 
-            // Generar correlativo
+            // Generar correlativo dinámico
             long count = repository.count() + 1;
             solicitud.setNumeroExpediente("EXP-2025-" + String.format("%06d", count));
-            solicitud.setEstado("PENDIENTE");
 
-            // Guardar archivos físicamente
-            if (dni != null && !dni.isEmpty()) {
+            // Asegurar estado inicial
+            if (solicitud.getEstado() == null) {
+                solicitud.setEstado("PENDIENTE");
+            }
+
+            // El campo subMateria ya viene mapeado automáticamente por el Controller
+
+            // Guardar archivos físicamente y setear URLs
+            if (dni != null && !dni.isEmpty())
                 solicitud.setDniArchivoUrl(guardarArchivo(dni));
-            }
-
-            if (pruebas != null && !pruebas.isEmpty()) {
+            if (pruebas != null && !pruebas.isEmpty())
                 solicitud.setPruebasArchivoUrl(guardarArchivo(pruebas));
-            }
-
-            if (firma != null && !firma.isEmpty()) {
+            if (firma != null && !firma.isEmpty())
                 solicitud.setFirmaArchivoUrl(guardarArchivo(firma));
-            }
 
-            // Guardar en la base de datos
             return repository.save(solicitud);
 
         } catch (IOException e) {
-            throw new RuntimeException("Error al procesar archivos: " + e.getMessage());
+            throw new RuntimeException("Error en el sistema de archivos: " + e.getMessage());
         }
     }
 
     private String guardarArchivo(MultipartFile archivo) throws IOException {
-        // 🔹 Generamos un nombre único
         String nombreUnico = UUID.randomUUID().toString() + "_" + archivo.getOriginalFilename();
-
-        Files.copy(
-                archivo.getInputStream(),
-                this.root.resolve(nombreUnico),
-                StandardCopyOption.REPLACE_EXISTING
-        );
-
+        Files.copy(archivo.getInputStream(), this.root.resolve(nombreUnico), StandardCopyOption.REPLACE_EXISTING);
         return nombreUnico;
     }
 
@@ -87,7 +80,42 @@ public class SolicitudServiceImpl implements SolicitudService {
     }
 
     @Override
+    public Optional<Solicitud> buscarPorId(Long id) {
+        return repository.findById(id);
+    }
+
+    @Override
     public Optional<Solicitud> buscarPorNumero(String numero) {
         return repository.findByNumeroExpediente(numero);
+    }
+
+    // 🔹 Implementación de actualización para el Director
+    @Override
+    public Solicitud actualizarEstado(Long id, String nuevoEstado, String observacion) {
+        return repository.findById(id).map(s -> {
+            s.setEstado(nuevoEstado);
+            s.setObservacion(observacion);
+            return repository.save(s);
+        }).orElseThrow(() -> new RuntimeException("Expediente no encontrado"));
+    }
+
+    @Override
+    public Solicitud designarConciliador(Long id, Long conciliadorId) {
+        Solicitud solicitud = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
+
+        appesperanzaviva.backend.entity.UsuarioSistema conciliador = usuarioRepository
+                .findById(Math.toIntExact(conciliadorId))
+                .orElseThrow(() -> new RuntimeException("Conciliador no encontrado"));
+
+        solicitud.setConciliador(conciliador);
+        solicitud.setEstado("ASIGNADO"); // Estado clave para que aparezca en la bandeja del conciliador
+
+        return repository.save(solicitud);
+    }
+
+    @Override
+    public List<Solicitud> listarPorConciliador(Long conciliadorId) {
+        return repository.findByConciliadorId(conciliadorId);
     }
 }

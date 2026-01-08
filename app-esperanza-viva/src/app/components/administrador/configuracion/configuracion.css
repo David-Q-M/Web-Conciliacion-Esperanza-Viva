@@ -1,0 +1,56 @@
+.admin-container { display: flex; min-height: 100vh; background-color: #000; }
+.sidebar-viva { width: 260px; background-color: #ffc107; display: flex; flex-direction: column; }
+.main-content-viva { flex: 1; padding: 40px; background-color: #0d0d0d; overflow-y: auto; }
+
+/* 🔹 HEADER Y BADGE (Igual a gestión-personal) */
+.admin-badge span { 
+  border: 1px solid #ffc107; 
+  color: #ffc107; 
+  padding: 5px 15px; 
+  border-radius: 5px; 
+  font-size: 0.8rem; 
+}
+
+/* 🔹 CAJAS CONFIGURACIÓN WIREFRAME */
+.config-wire-card {
+  background-color: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 25px;
+}
+.config-wire-card:hover { border-color: #ffc107; transition: 0.3s; }
+
+.pill-group { display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* 🔹 PÍLDORAS SEGÚN WIREFRAME */
+.viva-pill {
+  padding: 6px 18px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.pill-yellow-viva { background-color: #8b7400; color: #fff; }
+.pill-blue-viva { background-color: #2e3b8b; color: #fff; }
+.pill-green-viva { background-color: #198754; color: #fff; }
+
+.rechazo-list-container { display: flex; flex-direction: column; gap: 8px; }
+.rechazo-item {
+  background-color: #000;
+  border: 1px solid #222;
+  color: #ccc;
+  padding: 12px 20px;
+  border-radius: 6px;
+}
+
+.horario-box-display {
+  background-color: #000;
+  border: 1px solid #333;
+  color: #fff;
+  padding: 10px 25px;
+  border-radius: 8px;
+  display: inline-block;
+}
+
+.smaller { font-size: 0.75rem; }
+.btn-logout-viva { background: none; border: none; font-weight: bold; color: #000; cursor: pointer; padding: 20px; }

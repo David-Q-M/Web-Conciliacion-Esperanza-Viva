@@ -8,7 +8,7 @@
   },
   "include": [
     "src/**/*.ts"
-  ],
+, "src/app/components/conciliador/generar-acta"  ],
   "exclude": [
     "src/**/*.spec.ts"
   ]
