@@ -5,67 +5,66 @@
       <small class="text-dark fw-bold">CONCILIACIÓN</small>
     </div>
     <nav class="sidebar-nav">
-      <a class="nav-link-viva active" routerLink="/conciliador/mis-casos">
-        <i class="bi bi-folder-fill"></i> Mis Casos
-      </a>
-      <a class="nav-link-viva" routerLink="/conciliador/mis-casos">
-        <i class="bi bi-calendar3"></i> Mi Agenda
-      </a>
+      <a class="nav-link-viva active" routerLink="/conciliador/mis-casos"><i class="bi bi-folder-fill"></i> Mis Casos</a>
+      <a class="nav-link-viva" routerLink="/conciliador/agenda"><i class="bi bi-calendar3"></i> Mi Agenda</a>
     </nav>
     <div class="sidebar-footer p-3">
-      <button class="btn-logout-viva w-100" (click)="cerrarSesion()">
-        <i class="bi bi-door-open-fill"></i> Cerrar Sesión
-      </button>
+      <button class="btn-logout-viva w-100" (click)="cerrarSesion()">Cerrar Sesión</button>
     </div>
   </aside>
 
-  <main class="main-content-viva p-4">
-    <header class="mb-4 d-flex justify-content-between align-items-center">
+  <main class="main-content-viva p-5">
+    <header class="mb-5 d-flex justify-content-between align-items-center">
       <div>
         <h2 class="text-warning fw-bold m-0">Programación de audiencia</h2>
-        <p class="text-secondary small">GENERAR INVITACIÓN (FORMATO C) - EXP: {{expediente.numeroExpediente}}</p>
+        <p class="text-secondary small">EVALUACIÓN DE DESIGNACIÓN - FORMATO C</p>
       </div>
       <div class="admin-badge"><span>{{ conciliadorNombre }}</span></div>
     </header>
 
+    <h5 class="text-white mb-4">GENERAR INVITACIÓN (FORMATO C)</h5>
+
     <div class="row g-4">
       <div class="col-md-6">
-        <div class="info-card-wireframe p-4">
-          <h6 class="text-warning small fw-bold mb-3"><i class="bi bi-calendar-check"></i> DATOS DE LA SESIÓN</h6>
+        <div class="info-card-wireframe p-4 shadow">
+          <small class="text-warning fw-bold d-block mb-3">DATOS DE LA AUDIENCIA</small>
           <div class="row mb-3">
             <div class="col-6">
-              <label class="text-secondary small">Fecha de Audiencia</label>
+              <label class="small text-secondary">Fecha de Audiencia</label>
               <input type="date" class="viva-input-black" [(ngModel)]="form.fechaAudiencia">
             </div>
             <div class="col-6">
-              <label class="text-secondary small">Hora (10 min tolerancia)</label>
+              <label class="small text-secondary">Hora (10 min tolerancia)</label>
               <input type="time" class="viva-input-black" [(ngModel)]="form.horaAudiencia">
             </div>
           </div>
-          <label class="text-secondary small">Lugar (Dirección del Centro)</label>
-          <input type="text" class="viva-input-black" [(ngModel)]="form.lugar">
+          <label class="small text-secondary">Lugar de la Audiencia (Dirección del Centro)</label>
+          <input type="text" class="viva-input-black mt-1" [(ngModel)]="form.lugar">
         </div>
       </div>
 
       <div class="col-md-6">
-        <div class="info-card-wireframe p-4">
-          <h6 class="text-warning small fw-bold mb-3"><i class="bi bi-person-check"></i> PARTES CITADAS</h6>
-          <div class="mb-3">
-            <label class="text-info small d-block">SOLICITANTE:</label>
-            <div class="viva-data-display">{{expediente.solicitante?.nombres}} {{expediente.solicitante?.apellidos}}</div>
-          </div>
-          <div>
-            <label class="text-info small d-block">INVITADO:</label>
-            <div class="viva-data-display">{{expediente.invitado?.nombres}} {{expediente.invitado?.apellidos}}</div>
-          </div>
+        <div class="info-card-wireframe p-4 shadow">
+          <small class="text-warning fw-bold d-block mb-3">VERIFICACIÓN DE PARTES</small>
+          <p class="small text-white mb-1"><strong>SOLICITANTE:</strong> {{expediente.solicitante?.nombres}} {{expediente.solicitante?.apellidos}}</p>
+          <label class="small text-secondary">Dirección:</label>
+          <input type="text" class="viva-input-black mb-3" [value]="expediente.solicitante?.domicilio || 'No registrado'" readonly>
+          
+          <p class="small text-white mb-1"><strong>INVITADO:</strong> {{expediente.invitado?.nombres}} {{expediente.invitado?.apellidos}}</p>
+          <label class="small text-secondary">Dirección:</label>
+          <input type="text" class="viva-input-black" [value]="expediente.invitado?.domicilio || 'No registrado'" readonly>
         </div>
       </div>
     </div>
 
-    <div class="mt-5 text-center">
-      <button class="btn btn-warning fw-bold px-5 py-2 shadow" (click)="generarInvitacion()">
-        <i class="bi bi-file-earmark-pdf"></i> Generar Invitación y Programar
-      </button>
+    <div class="d-flex justify-content-end gap-3 mt-5">
+       <button class="btn-register-viva px-4 py-3" (click)="generarInvitacion()">
+          <i class="bi bi-file-earmark-pdf"></i> Descargar Documento
+       </button>
+
+       <button class="btn-green-viva px-4 py-3" (click)="guardarYSalir()">
+          <i class="bi bi-check-circle-fill"></i> Guardar Audiencia Programada
+       </button>
     </div>
   </main>
 </div>

@@ -1,18 +1,12 @@
 package appesperanzaviva.backend.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties; // 🔹 Importación necesaria
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "solicitudes")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-@JsonIgnoreProperties(ignoreUnknown = true) // 🔹 Evita errores si Angular envía campos adicionales
+@JsonIgnoreProperties(ignoreUnknown = true) // Evita errores si Angular envía campos adicionales
 public class Solicitud {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -77,6 +71,12 @@ public class Solicitud {
     @ManyToOne
     @JoinColumn(name = "conciliador_id")
     private UsuarioSistema conciliador;
+    
+    @Column(name = "modalidad")
+    private String modalidad;
+    
+    public String getModalidad() { return modalidad; }
+    public void setModalidad(String modalidad) { this.modalidad = modalidad; }
 
     @PrePersist
     protected void onCreate() {
@@ -86,5 +86,141 @@ public class Solicitud {
         if (this.estado == null) {
             this.estado = "PENDIENTE";
         }
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getNumeroExpediente() {
+        return numeroExpediente;
+    }
+
+    public void setNumeroExpediente(String numeroExpediente) {
+        this.numeroExpediente = numeroExpediente;
+    }
+
+    public Persona getSolicitante() {
+        return solicitante;
+    }
+
+    public void setSolicitante(Persona solicitante) {
+        this.solicitante = solicitante;
+    }
+
+    public String getSubMateria() {
+        return subMateria;
+    }
+
+    public void setSubMateria(String subMateria) {
+        this.subMateria = subMateria;
+    }
+
+    public Persona getInvitado() {
+        return invitado;
+    }
+
+    public void setInvitado(Persona invitado) {
+        this.invitado = invitado;
+    }
+
+    public Persona getApoderado() {
+        return apoderado;
+    }
+
+    public void setApoderado(Persona apoderado) {
+        this.apoderado = apoderado;
+    }
+
+    public String getMateriaConciliable() {
+        return materiaConciliable;
+    }
+
+    public void setMateriaConciliable(String materiaConciliable) {
+        this.materiaConciliable = materiaConciliable;
+    }
+
+    public String getHechos() {
+        return hechos;
+    }
+
+    public void setHechos(String hechos) {
+        this.hechos = hechos;
+    }
+
+    public String getPretension() {
+        return pretension;
+    }
+
+    public void setPretension(String pretension) {
+        this.pretension = pretension;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
+    public LocalDateTime getFechaPresentacion() {
+        return fechaPresentacion;
+    }
+
+    public void setFechaPresentacion(LocalDateTime fechaPresentacion) {
+        this.fechaPresentacion = fechaPresentacion;
+    }
+
+    public String getDniArchivoUrl() {
+        return dniArchivoUrl;
+    }
+
+    public void setDniArchivoUrl(String dniArchivoUrl) {
+        this.dniArchivoUrl = dniArchivoUrl;
+    }
+
+    public String getPruebasArchivoUrl() {
+        return pruebasArchivoUrl;
+    }
+
+    public void setPruebasArchivoUrl(String pruebasArchivoUrl) {
+        this.pruebasArchivoUrl = pruebasArchivoUrl;
+    }
+
+    public String getFirmaArchivoUrl() {
+        return firmaArchivoUrl;
+    }
+
+    public void setFirmaArchivoUrl(String firmaArchivoUrl) {
+        this.firmaArchivoUrl = firmaArchivoUrl;
+    }
+
+    public String getObservacion() {
+        return observacion;
+    }
+
+    public void setObservacion(String observacion) {
+        this.observacion = observacion;
+    }
+
+    public String getOtrasPersonasAlimentario() {
+        return otrasPersonasAlimentario;
+    }
+
+    public void setOtrasPersonasAlimentario(String otrasPersonasAlimentario) {
+        this.otrasPersonasAlimentario = otrasPersonasAlimentario;
+    }
+
+    public UsuarioSistema getConciliador() {
+        return conciliador;
+    }
+
+    public void setConciliador(UsuarioSistema conciliador) {
+        this.conciliador = conciliador;
     }
 }

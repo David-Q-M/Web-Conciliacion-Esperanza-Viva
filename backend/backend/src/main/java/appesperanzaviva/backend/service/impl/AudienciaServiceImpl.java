@@ -1,83 +1,93 @@
 package appesperanzaviva.backend.service.impl;
 
-import appesperanzaviva.backend.entity.Audiencia;
-import appesperanzaviva.backend.entity.AudienciaClausula;
-import appesperanzaviva.backend.repository.AudienciaRepository;
-import appesperanzaviva.backend.repository.AudienciaClausulaRepository;
-import appesperanzaviva.backend.service.AudienciaService;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import appesperanzaviva.backend.entity.Audiencia;
+import appesperanzaviva.backend.entity.AudienciaClausula;
+import appesperanzaviva.backend.entity.Solicitud;
+import appesperanzaviva.backend.repository.AudienciaClausulaRepository;
+import appesperanzaviva.backend.repository.AudienciaRepository;
+import appesperanzaviva.backend.repository.SolicitudRepository;
+import appesperanzaviva.backend.service.AudienciaService;
 
 @Service
+@SuppressWarnings("boxing")
 public class AudienciaServiceImpl implements AudienciaService {
 
     @Autowired
     private AudienciaRepository repository;
+    
     @Autowired
     private AudienciaClausulaRepository clausulaRepo;
+    
     @Autowired
-    private appesperanzaviva.backend.repository.SolicitudRepository solicitudRepository; // 🔹 Inyectamos
-                                                                                         // SolicitudRepository
+    private SolicitudRepository solicitudRepository;
+
+    @Override
+    public List<Audiencia> listarPorConciliador(@NonNull Integer conciliadorId) {
+        return repository.findBySolicitudConciliadorId(conciliadorId);
+    }
+    
+    @Override
+    public Audiencia obtenerPorId(@NonNull Long id) {
+        return repository.findById(id).orElse(null);
+    }
 
     @Override
     @Transactional
     public Audiencia programar(Audiencia audiencia) {
-        // 🔹 Actualizamos estado de la solicitud
-        appesperanzaviva.backend.entity.Solicitud solicitud = solicitudRepository
-                .findById(audiencia.getSolicitud().getId())
-                .orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
+        Solicitud solicitud = audiencia.getSolicitud();
+        if (solicitud == null || solicitud.getId() == null) {
+            throw new RuntimeException("Error: La solicitud vinculada es nula.");
+        }
+        
+        Solicitud solicitudDb = solicitudRepository.findById(solicitud.getId())
+                .orElseThrow(() -> new RuntimeException("Solicitud no encontrada en MariaDB"));
 
-        solicitud.setEstado("AUDIENCIA_PROGRAMADA");
-        solicitudRepository.save(solicitud);
+        solicitudDb.setEstado("AUDIENCIA_PROGRAMADA");
+        solicitudRepository.save(solicitudDb);
 
         return repository.save(audiencia);
     }
 
     @Override
     @Transactional
-    public Audiencia registrarResultado(Long id, Audiencia datos) {
+    public Audiencia registrarResultado(@NonNull Long id, Audiencia datos) {
         return repository.findById(id).map(a -> {
+            // Mapeo de strings profesionales para el Formato D
             a.setAsistenciaSolicitante(datos.getAsistenciaSolicitante());
             a.setAsistenciaInvitado(datos.getAsistenciaInvitado());
             a.setResultadoTipo(datos.getResultadoTipo());
             a.setResultadoDetalle(datos.getResultadoDetalle());
             a.setAbogadoVerificador(datos.getAbogadoVerificador());
 
-            // 🔹 Actualizmos estado según resultado
-            appesperanzaviva.backend.entity.Solicitud solicitud = a.getSolicitud();
-            if ("Acuerdo Total".equals(datos.getResultadoTipo())) {
+            Solicitud solicitud = a.getSolicitud();
+            if (datos.getResultadoTipo() != null && datos.getResultadoTipo().contains("Acuerdo")) {
                 solicitud.setEstado("PENDIENTE_ACTA");
             } else {
-                solicitud.setEstado("CONCLUIDO_SIN_ACUERDO"); // O el estado que prefieras
+                solicitud.setEstado("CONCLUIDO_SIN_ACUERDO");
             }
             solicitudRepository.save(solicitud);
 
             return repository.save(a);
-        }).orElseThrow(() -> new RuntimeException("Audiencia no encontrada"));
+        }).orElseThrow(() -> new RuntimeException("Audiencia no encontrada con ID: " + id));
     }
 
     @Override
     @Transactional
-    public Audiencia finalizar(Long solicitudId, Audiencia datos) {
-        // 🔹 Lógica para finalizar y generar acta
+    public Audiencia finalizar(@NonNull Long solicitudId, Audiencia datos) {
         Audiencia audiencia = repository.findBySolicitudId(solicitudId)
                 .orElseThrow(() -> new RuntimeException("No hay audiencia para esta solicitud"));
 
-        // Actualizamos datos finales si vienen (ej. abogado verificador si no se puso
-        // antes)
         if (datos.getAbogadoVerificador() != null) {
             audiencia.setAbogadoVerificador(datos.getAbogadoVerificador());
         }
 
-        // Si hay cláusulas en el objeto datos, las guardamos
-        // Nota: Esto depende de cómo el controller reciba las cláusulas.
-        // Asumiremos que se manejan aparte o aquí si el DTO tuviera relación.
-        // Por simplicidad, solo actualizamos estado del caso.
-
-        appesperanzaviva.backend.entity.Solicitud solicitud = audiencia.getSolicitud();
+        Solicitud solicitud = audiencia.getSolicitud();
         solicitud.setEstado("CONCLUIDO");
         solicitud.setObservacion("Acta generada. " + datos.getResultadoDetalle());
         solicitudRepository.save(solicitud);
@@ -87,15 +97,14 @@ public class AudienciaServiceImpl implements AudienciaService {
 
     @Override
     @Transactional
-    public void guardarClausulas(Long audienciaId, List<AudienciaClausula> clausulas) {
-        // Limpiamos cláusulas anteriores si existen y guardamos las nuevas
+    public void guardarClausulas(@NonNull Long audienciaId, List<AudienciaClausula> clausulas) {
         Audiencia audiencia = repository.findById(audienciaId).orElseThrow();
         clausulas.forEach(c -> c.setAudiencia(audiencia));
         clausulaRepo.saveAll(clausulas);
     }
 
     @Override
-    public Audiencia obtenerPorSolicitud(Long solicitudId) {
+    public Audiencia obtenerPorSolicitud(@NonNull Long solicitudId) {
         return repository.findBySolicitudId(solicitudId).orElse(null);
     }
 }

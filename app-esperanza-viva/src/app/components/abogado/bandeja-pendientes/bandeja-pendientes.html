@@ -1,0 +1,127 @@
+<div class="admin-container">
+    <aside class="sidebar-viva">
+        <div class="logo-section">
+            <h5 class="m-0 fw-bold text-dark">ESPERANZA VIVA</h5>
+            <small class="text-dark fw-bold">PANEL ABOGADO</small>
+        </div>
+        <nav class="sidebar-nav">
+            <a class="nav-link-viva active" routerLink="/abogado/pendientes" routerLinkActive="active">
+                <i class="bi bi-envelope-fill me-2"></i> Mis Pendientes
+            </a>
+            <a class="nav-link-viva" routerLink="/abogado/historial" routerLinkActive="active">
+                <i class="bi bi-clock-history me-2"></i> Historial
+            </a>
+        </nav>
+        <div class="sidebar-footer px-3">
+            <button class="btn w-100 fw-bold" style="background: #000; color: #fff;" (click)="cerrarSesion()">
+                <i class="bi bi-box-arrow-left"></i> Cerrar Sesión
+            </button>
+        </div>
+    </aside>
+
+    <main class="main-content-viva">
+        <header class="d-flex justify-content-between align-items-center mb-5">
+            <div>
+                <h2 class="text-warning fw-bold m-0">Bandeja de Revisión</h2>
+                <p class="text-secondary small m-0">Gestión de firmas y aprobación de actas</p>
+            </div>
+            <div class="admin-badge text-end">
+                <div class="text-white fw-bold">{{ abogadoNombre }}</div>
+                <small class="text-success">● Abogado</small>
+            </div>
+        </header>
+
+        <!-- Stats Cards -->
+        <div class="row g-4 mb-5">
+            <div class="col-md-4">
+                <div class="glass-card d-flex justify-content-between align-items-center"
+                    style="border-color: #ffc107;">
+                    <div>
+                        <div class="stat-value text-white">{{ porFirmar }}</div>
+                        <div class="stat-label">Por Firmar</div>
+                    </div>
+                    <i class="bi bi-pen-fill text-warning fs-3 opacity-50"></i>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="glass-card d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="stat-value text-white">{{ observadas }}</div>
+                        <div class="stat-label">Observadas</div>
+                    </div>
+                    <i class="bi bi-eye-fill text-info fs-3 opacity-50"></i>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="glass-card d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="stat-value text-white">{{ aprobadas }}</div>
+                        <div class="stat-label">Aprobadas</div>
+                    </div>
+                    <i class="bi bi-check-circle-fill text-success fs-3 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="glass-card p-0 overflow-hidden">
+            <div class="table-responsive">
+                <table class="table table-dark table-hover m-0 align-middle">
+                    <thead>
+                        <tr class="text-secondary small text-uppercase">
+                            <th class="ps-4">N° Expediente</th>
+                            <th>Solicitante</th>
+                            <th>Documento</th>
+                            <th>Fecha Recepción</th>
+                            <th class="text-end pe-4">Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- SKELETON -->
+                        <ng-container *ngIf="isLoading">
+                            <tr *ngFor="let i of [1,2,3,4,5]">
+                                <td class="ps-4">
+                                    <div class="skeleton skeleton-text" style="width: 100px;"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text" style="width: 150px;"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text" style="width: 120px;"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text" style="width: 100px;"></div>
+                                </td>
+                                <td class="text-end pe-4">
+                                    <div class="skeleton skeleton-btn ms-auto"></div>
+                                </td>
+                            </tr>
+                        </ng-container>
+
+                        <!-- DATA -->
+                        <ng-container *ngIf="!isLoading">
+                            <tr *ngFor="let p of pendientes">
+                                <td class="ps-4 fw-bold text-white">{{ p.numeroExpediente }}</td>
+                                <td class="text-white">{{ p.solicitante?.nombres }} {{ p.solicitante?.apellidos }}</td>
+                                <td class="text-secondary small">Acta de Conciliación</td>
+                                <td class="text-secondary small">{{ p.fechaCreacion | date:'dd/MM/yyyy h:mm a' }}</td>
+                                <td class="text-end pe-4">
+                                    <button class="btn btn-warning btn-sm fw-bold px-3"
+                                        [routerLink]="['/abogado/revision', p.id]">
+                                        Revisar <i class="bi bi-chevron-right ms-1"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr *ngIf="pendientes.length === 0">
+                                <td colspan="5" class="text-center text-secondary py-5">
+                                    <i class="bi bi-check2-all fs-1 d-block mb-3 opacity-50"></i>
+                                    ¡Todo al día! No tienes actas pendientes de firma.
+                                </td>
+                            </tr>
+                        </ng-container>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</div>

@@ -1,0 +1,115 @@
+<div class="admin-container">
+    <aside class="sidebar-viva">
+        <div class="logo-section">
+            <h5 class="m-0 fw-bold text-dark">ESPERANZA VIVA</h5>
+            <small class="text-dark fw-bold">PANEL ABOGADO</small>
+        </div>
+        <nav class="sidebar-nav">
+            <a class="nav-link-viva active" routerLink="/abogado/pendientes">
+                <i class="bi bi-envelope-fill me-2"></i> Mis Pendientes
+            </a>
+            <a class="nav-link-viva" routerLink="/abogado/historial" routerLinkActive="active">
+                <i class="bi bi-clock-history me-2"></i> Historial
+            </a>
+        </nav>
+        <div class="sidebar-footer px-3">
+            <button class="btn w-100 fw-bold" style="background: #000; color: #fff;" (click)="cerrarSesion()">
+                <i class="bi bi-box-arrow-left"></i> Cerrar Sesión
+            </button>
+        </div>
+    </aside>
+
+    <main class="main-content-viva" *ngIf="expediente">
+        <header class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="text-warning fw-bold m-0">Revisión de Acta</h2>
+                <p class="text-secondary small m-0">Expediente N° {{ expediente.numeroExpediente }}</p>
+            </div>
+            <div class="admin-badge text-end">
+                <div class="text-white fw-bold">Modo Revisión</div>
+                <small class="text-info">Lectura y Aprobación</small>
+            </div>
+        </header>
+
+        <div class="row g-4 h-100">
+            <!-- Preview Column -->
+            <div class="col-lg-8">
+                <div class="glass-card overflow-auto" style="max-height: 80vh;">
+                    <h5 class="text-white mb-3 text-center opacity-75">Vista Preliminar del Documento</h5>
+                    <div class="acta-preview">
+                        <h3 class="text-center fw-bold mb-4">ACTA DE CONCILIACION {{ expediente.numeroExpediente }}</h3>
+
+                        <p><strong>SOLICITANTE:</strong> {{ expediente.solicitante?.nombres }} {{
+                            expediente.solicitante?.apellidos }}</p>
+                        <p><strong>INVITADO:</strong> {{ expediente.invitado?.nombres }} {{
+                            expediente.invitado?.apellidos }}</p>
+                        <br>
+                        <p class="text-justify">
+                            En la ciudad de Lima, a los {{ expediente.fechaCreacion | date:'dd' }} dias del mes de...
+                            reunidos en el Centro de Conciliacion "Esperanza Viva"...
+                        </p>
+                        <br>
+                        <h5 class="fw-bold">ACUERDOS:</h5>
+                        <ol>
+                            <li>PRIMERO: Las partes acuerdan que el Sr(a). Invitado pagará la suma adeudada en 3 cuotas.
+                            </li>
+                            <li>SEGUNDO: El incumplimiento de una cuota facultará la ejecución total del acta.</li>
+                            <li>TERCERO: Ambas partes declaran su conformidad con lo estipulado.</li>
+                        </ol>
+                        <br><br><br>
+                        <div class="d-flex justify-content-between px-5 mt-5">
+                            <div class="text-center border-top border-dark pt-2" style="width: 200px;">Firma Solicitante
+                            </div>
+                            <div class="text-center border-top border-dark pt-2" style="width: 200px;">Firma Invitado
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions Column -->
+            <div class="col-lg-4">
+                <div class="glass-card d-flex flex-column gap-3">
+                    <h5 class="text-warning fw-bold border-bottom border-secondary pb-2 mb-0">Acciones de Control</h5>
+
+                    <div class="action-group">
+                        <label class="text-white small fw-bold mb-2">1. Verificar Documento</label>
+                        <button class="btn btn-outline-light w-100" (click)="descargarPDF()">
+                            <i class="bi bi-file-earmark-pdf me-2"></i> Descargar PDF Original
+                        </button>
+                    </div>
+
+                    <div class="action-group">
+                        <label class="text-white small fw-bold mb-2">2. Subir Acta Firmada (Opcional)</label>
+                        <div class="upload-box d-flex align-items-center">
+                            <label class="btn btn-sm btn-secondary me-2 cursor-pointer">
+                                Examinar <input type="file" hidden (change)="onFileSelected($event)">
+                            </label>
+                            <small class="text-muted text-truncate" style="max-width: 150px;">{{ nombreArchivo
+                                }}</small>
+                        </div>
+                    </div>
+
+                    <div class="action-group mt-auto">
+                        <label class="text-white small fw-bold mb-2">3. Decisión Legal</label>
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-warning py-2" (click)="aprobarLegalidad()">
+                                <i class="bi bi-check-circle-fill me-2"></i> APROBAR LEGALIDAD
+                            </button>
+                            <button class="btn btn-outline-danger py-2" (click)="observar()">
+                                <i class="bi bi-x-circle me-2"></i> OBSERVAR / DEVOLVER
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-3">
+                        <a routerLink="/abogado/pendientes" class="text-secondary small text-decoration-none">
+                            <i class="bi bi-arrow-left"></i> Volver a la bandeja
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </main>
+</div>

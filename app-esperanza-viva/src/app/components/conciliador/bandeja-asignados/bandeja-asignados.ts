@@ -11,9 +11,12 @@ import { SolicitudService } from '../../../services/solicitud.service';
   styleUrls: ['./bandeja-asignados.css']
 })
 export class BandejaAsignados implements OnInit {
-  expedientes: any[] = [];
+  expedientesOriginales: any[] = []; // Backup de la DB
+  expedientesFiltrados: any[] = [];   // Lo que se muestra en pantalla
   conciliadorNombre: string = '';
+  filtroActual: string = 'TOTAL';
   stats = { total: 0, pendientes: 0, enCurso: 0 };
+  isLoading: boolean = true;
 
   constructor(private solicitudService: SolicitudService, private router: Router) { }
 
@@ -29,33 +32,49 @@ export class BandejaAsignados implements OnInit {
 
     if (user.id) {
       this.cargarExpedientes(user.id);
-    } else {
-      console.warn("No se encontró ID en el usuario logueado, cargando todas (fallback)");
-      // Fallback por si acaso es un admin viendo esto o error de data
-      this.solicitudService.listarSolicitudes().subscribe(res => this.procesarRespuesta(res));
     }
   }
 
   cargarExpedientes(conciliadorId: number) {
+    this.isLoading = true;
     this.solicitudService.listarPorConciliador(conciliadorId).subscribe({
-      next: (res) => this.procesarRespuesta(res),
-      error: (err) => console.error("Error en API:", err)
+      next: (res) => {
+        this.expedientesOriginales = res;
+        this.expedientesFiltrados = res; // Por defecto mostrar todos
+        this.actualizarEstadisticas();
+        setTimeout(() => this.isLoading = false, 500); // UI Smoothness
+      },
+      error: (err) => {
+        console.error("Error cargando expedientes:", err);
+        this.isLoading = false;
+      }
     });
   }
 
-  procesarRespuesta(res: any[]) {
-    // 🔹 Asignamos TODOS los casos devueltos por la API (que ya viene filtrada por conciliador)
-    this.expedientes = res;
+  actualizarEstadisticas() {
+    this.stats.total = this.expedientesOriginales.length;
+    // Pendientes: Aquellos que acaban de ser asignados por el Director
+    this.stats.pendientes = this.expedientesOriginales.filter(e => e.estado === 'ASIGNADO').length;
+    // En Curso: Aquellos que el conciliador ya aceptó (Designación Aceptada)
+    this.stats.enCurso = this.expedientesOriginales.filter(e => e.estado === 'DESIGNACION_ACEPTADA').length;
+  }
 
-    this.stats.total = this.expedientes.length;
-    // Pendientes: Estado exacto de asignación inicial
-    this.stats.pendientes = this.expedientes.filter(e => e.estado === 'ASIGNADO' || e.estado === 'Asignado').length;
-    // En curso: Designación aceptada u otros estados activos si hubieran
-    this.stats.enCurso = this.expedientes.filter(s => s.estado === 'DESIGNACION_ACEPTADA').length;
+  /**
+   * 🖱️ FILTRO POR CLIC EN CUADROS
+   */
+  filtrarPorEstado(criterio: string) {
+    this.filtroActual = criterio;
+    if (criterio === 'TOTAL') {
+      this.expedientesFiltrados = this.expedientesOriginales;
+    } else if (criterio === 'PENDIENTES') {
+      this.expedientesFiltrados = this.expedientesOriginales.filter(e => e.estado === 'ASIGNADO');
+    } else if (criterio === 'CURSO') {
+      this.expedientesFiltrados = this.expedientesOriginales.filter(e => e.estado === 'DESIGNACION_ACEPTADA');
+    }
   }
 
   cerrarSesion() {
-    localStorage.removeItem('currentUser');
+    localStorage.clear();
     this.router.navigate(['/login-admin']);
   }
 }

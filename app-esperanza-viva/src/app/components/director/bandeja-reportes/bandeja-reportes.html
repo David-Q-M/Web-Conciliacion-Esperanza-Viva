@@ -1,86 +1,132 @@
 <div class="admin-container">
   <aside class="sidebar-viva">
-    <div class="logo-section p-3 text-center">
-      <h5 class="m-0 fw-bold text-dark">Esperanza Viva</h5>
-      <small class="text-dark">centro de conciliación</small>
+    <div class="logo-section">
+      <h5 class="m-0 fw-bold text-dark">ESPERANZA VIVA</h5>
+      <small class="text-dark fw-bold">PANEL DIRECTOR</small>
     </div>
     <nav class="sidebar-nav">
-      <a class="nav-link-viva" routerLink="/director/bandeja-solicitudes">Solicitudes</a>
-      <a class="nav-link-viva" routerLink="/director/personal">Personal</a>
-      <a class="nav-link-viva active" routerLink="/director/bandeja-reportes">Reportes</a>
+      <a class="nav-link-viva" routerLink="/director/bandeja-solicitudes" routerLinkActive="active">
+        <i class="bi bi-envelope-fill me-2"></i> Solicitudes
+      </a>
+      <a class="nav-link-viva" routerLink="/director/personal" routerLinkActive="active">
+        <i class="bi bi-people-fill me-2"></i> Personal
+      </a>
+      <a class="nav-link-viva active" routerLink="/director/bandeja-reportes" routerLinkActive="active">
+        <i class="bi bi-bar-chart-fill me-2"></i> Reportes
+      </a>
     </nav>
-    <div class="sidebar-footer">
-      <button class="btn-logout-viva" (click)="cerrarSesion()">
-        <i class="bi bi-arrow-left"></i> Cerrar Sesión
+    <div class="sidebar-footer px-3">
+      <button class="btn w-100 fw-bold" style="background: #000; color: #fff;" (click)="cerrarSesion()">
+        <i class="bi bi-box-arrow-left"></i> Cerrar Sesión
       </button>
     </div>
   </aside>
 
   <main class="main-content-viva">
-    <header class="content-header d-flex justify-content-between align-items-center mb-4">
-      <div>
+    <header class="d-flex justify-content-between align-items-center mb-5">
+      <div class="header-titles">
         <h2 class="text-warning fw-bold m-0">Bandeja de Reportes</h2>
-        <p class="text-secondary small">Panel de gestión de expedientes de conciliación</p>
+        <p class="text-secondary small m-0">Análisis y estadísticas del centro</p>
       </div>
-      <div class="admin-badge"><span>{{ directorNombre }} - Director</span></div>
+      <div class="admin-badge text-end">
+        <div class="text-white fw-bold">{{ directorNombre }}</div>
+        <small class="text-success">● Director</small>
+      </div>
     </header>
 
-    <div class="row g-3 mb-4">
-      <div class="col-md-3">
-        <div class="key-box-report">
-          <small class="text-white d-block mb-1">Total de solicitudes</small>
-          <h3 class="text-success m-0">{{reportData.total}}</h3>
+    <!-- Stats Cards -->
+    <div class="row g-4 mb-5">
+      <div class="col-md-3" (click)="filtrarPorEstado('TOTAL')" style="cursor: pointer;">
+        <div class="glass-card" [style.border-color]="filtroActual === 'TOTAL' ? '#ffc107' : '#333'">
+          <div class="stat-value">{{reportData.total}}</div>
+          <div class="stat-label">Total Gral.</div>
         </div>
       </div>
-      <div class="col-md-3">
-        <div class="key-box-report">
-          <small class="text-white d-block mb-1">Pendientes</small>
-          <h3 class="text-success m-0">{{reportData.pendientes}}</h3>
+      <div class="col-md-3" (click)="filtrarPorEstado('PENDIENTE')" style="cursor: pointer;">
+        <div class="glass-card" [style.border-color]="filtroActual === 'PENDIENTE' ? '#ffc107' : '#333'">
+          <div class="stat-value text-warning">{{reportData.pendientes}}</div>
+          <div class="stat-label">Pendientes</div>
         </div>
       </div>
-      <div class="col-md-3">
-        <div class="key-box-report">
-          <small class="text-white d-block mb-1">En Revision</small>
-          <h3 class="text-success m-0">{{reportData.revision}}</h3>
+      <div class="col-md-3" (click)="filtrarPorEstado('REVISION')" style="cursor: pointer;">
+        <div class="glass-card" [style.border-color]="filtroActual === 'REVISION' ? '#ffc107' : '#333'">
+          <div class="stat-value text-info">{{reportData.revision}}</div>
+          <div class="stat-label">En Revisión</div>
         </div>
       </div>
-      <div class="col-md-3">
-        <div class="key-box-report">
-          <small class="text-white d-block mb-1">Aprobadas</small>
-          <h3 class="text-success m-0">{{reportData.aprobadas}}</h3>
+      <div class="col-md-3" (click)="filtrarPorEstado('APROBADA')" style="cursor: pointer;">
+        <div class="glass-card" [style.border-color]="filtroActual === 'APROBADA' ? '#ffc107' : '#333'">
+          <div class="stat-value text-success">{{reportData.aprobadas}}</div>
+          <div class="stat-label">Aprobadas</div>
         </div>
       </div>
     </div>
 
-    <div class="filter-box-viva p-4 mb-4">
-      <h6 class="text-warning small mb-3 fw-bold">Filtros</h6>
-      <div class="search-input-wrapper">
-        <i class="bi bi-search text-white"></i>
-        <input type="text" placeholder="Buscar..." class="viva-report-input">
+    <!-- Filter Bar -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h5 class="text-white fw-bold m-0">Detalle de Operaciones</h5>
+      <div class="search-input-wrapper"
+        style="width: 300px; background: #000; border: 1px solid #333; border-radius: 6px; padding: 0 10px;">
+        <i class="bi bi-search text-secondary"></i>
+        <input type="text" [(ngModel)]="terminoBusqueda" (keyup)="buscar()" placeholder="Filtrar reporte..."
+          class="form-control border-0 bg-transparent text-white shadow-none">
       </div>
     </div>
 
-    <div class="table-viva-container">
-      <table class="table-viva">
-        <thead>
-          <tr>
-            <th class="text-cian">Nº Expediente</th>
-            <th class="text-cian">Solicitante</th>
-            <th class="text-cian">Invitado</th>
-            <th class="text-cian">Fecha</th>
-            <th class="text-cian">Materia</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let item of reportData.lista">
-            <td class="text-white small">{{item.nroExpediente}}</td>
-            <td class="text-secondary small">{{item.nombreSolicitante}}</td>
-            <td class="text-secondary small">{{item.nombreInvitado}}</td>
-            <td class="text-secondary small">{{item.fechaCreacion | date:'dd/MM/yyyy'}}</td>
-            <td class="text-secondary small">{{item.materia}}</td>
-          </tr>
-        </tbody>
-      </table>
+    <!-- Table -->
+    <div class="glass-card p-0 overflow-hidden">
+      <div class="table-responsive">
+        <table class="table table-dark table-hover m-0 align-middle">
+          <thead>
+            <tr class="text-secondary small text-uppercase">
+              <th class="ps-4">Nº Expediente</th>
+              <th>Solicitante</th>
+              <th>Invitado</th>
+              <th>Fecha de Ingreso</th>
+              <th>Materia</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- SKELETON -->
+            <ng-container *ngIf="isLoading">
+              <tr *ngFor="let i of [1,2,3,4,5]">
+                <td class="ps-4">
+                  <div class="skeleton skeleton-text" style="width: 80px;"></div>
+                </td>
+                <td>
+                  <div class="skeleton skeleton-text" style="width: 150px;"></div>
+                </td>
+                <td>
+                  <div class="skeleton skeleton-text" style="width: 150px;"></div>
+                </td>
+                <td>
+                  <div class="skeleton skeleton-text" style="width: 100px;"></div>
+                </td>
+                <td>
+                  <div class="skeleton skeleton-text" style="width: 120px;"></div>
+                </td>
+              </tr>
+            </ng-container>
+
+            <!-- REAL DATA -->
+            <ng-container *ngIf="!isLoading">
+              <tr *ngFor="let item of reportData.lista">
+                <td class="ps-4 fw-bold text-white">{{item.numeroExpediente}}</td>
+                <td class="text-secondary small">{{item.solicitante?.nombres}} {{item.solicitante?.apellidos}}</td>
+                <td class="text-secondary small">{{item.invitado?.nombres}} {{item.invitado?.apellidos}}</td>
+                <td class="text-secondary small">{{item.fechaPresentacion | date:'dd/MM/yyyy'}}</td>
+                <td class="text-white small">{{item.materiaConciliable}}</td>
+              </tr>
+              <tr *ngIf="reportData.lista.length === 0">
+                <td colspan="5" class="text-center text-secondary py-5">
+                  No se encontraron datos para este filtro.
+                </td>
+              </tr>
+            </ng-container>
+          </tbody>
+        </table>
+      </div>
     </div>
+
   </main>
 </div>

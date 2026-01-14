@@ -1,0 +1,112 @@
+<div class="admin-container">
+    <aside class="sidebar-viva">
+        <div class="logo-section">
+            <h5 class="m-0 fw-bold text-dark">ESPERANZA VIVA</h5>
+            <small class="text-dark fw-bold">PANEL NOTIFICADOR</small>
+        </div>
+        <nav class="sidebar-nav">
+            <a class="nav-link-viva active" routerLink="/notificador/pendientes">
+                <i class="bi bi-envelope-fill me-2"></i> Mis Pendientes
+            </a>
+            <a class="nav-link-viva" routerLink="/notificador/historial" routerLinkActive="active">
+                <i class="bi bi-clock-history me-2"></i> Historial
+            </a>
+        </nav>
+        <div class="sidebar-footer px-3">
+            <button class="btn w-100 fw-bold" style="background: #000; color: #fff;" (click)="cerrarSesion()">
+                <i class="bi bi-box-arrow-left"></i> Cerrar Sesión
+            </button>
+        </div>
+    </aside>
+
+    <main class="main-content-viva" *ngIf="expediente">
+        <header class="d-flex justify-content-between align-items-center mb-5">
+            <div>
+                <h2 class="text-warning fw-bold m-0">Certificación de Notificación</h2>
+                <p class="text-secondary small m-0">Expediente N° {{ expediente.numeroExpediente }}</p>
+            </div>
+            <div class="admin-badge text-end">
+                <div class="text-white fw-bold">{{ notificadorNombre }}</div>
+                <small class="text-success">● Notificador</small>
+            </div>
+        </header>
+
+        <div class="row g-4">
+            <div class="col-12 mb-4">
+                <div class="alert alert-dark border-secondary d-flex align-items-center mb-0">
+                    <i class="bi bi-info-circle-fill text-info me-3 fs-4"></i>
+                    <div>
+                        <h6 class="text-white mb-0 fw-bold">Registro de Fechas de Entrega</h6>
+                        <small class="text-secondary">Ingrese las fechas exactas en que se entregaron las invitaciones a
+                            las partes.</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Solicitante -->
+            <div class="col-md-6">
+                <div class="glass-card">
+                    <h5 class="text-warning fw-bold border-bottom border-secondary pb-3 mb-4">
+                        <i class="bi bi-person-fill me-2"></i> Notificación al Solicitante
+                    </h5>
+
+                    <div class="mb-4">
+                        <label class="text-white mb-2 fw-bold small">Primera Invitación</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-dark border-secondary text-secondary"><i
+                                    class="bi bi-calendar-event"></i></span>
+                            <input type="date" class="form-control bg-dark text-white border-secondary"
+                                [(ngModel)]="entregaSol1">
+                        </div>
+                    </div>
+
+                    <div class="mb-2">
+                        <label class="text-white mb-2 fw-bold small">Segunda Invitación</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-dark border-secondary text-secondary"><i
+                                    class="bi bi-calendar-event"></i></span>
+                            <input type="date" class="form-control bg-dark text-white border-secondary"
+                                [(ngModel)]="entregaSol2">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Invitado -->
+            <div class="col-md-6">
+                <div class="glass-card">
+                    <h5 class="text-info fw-bold border-bottom border-secondary pb-3 mb-4">
+                        <i class="bi bi-person-fill me-2"></i> Notificación al Invitado
+                    </h5>
+
+                    <div class="mb-4">
+                        <label class="text-white mb-2 fw-bold small">Primera Invitación</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-dark border-secondary text-secondary"><i
+                                    class="bi bi-calendar-event"></i></span>
+                            <input type="date" class="form-control bg-dark text-white border-secondary"
+                                [(ngModel)]="entregaInv1">
+                        </div>
+                    </div>
+
+                    <div class="mb-2">
+                        <label class="text-white mb-2 fw-bold small">Segunda Invitación</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-dark border-secondary text-secondary"><i
+                                    class="bi bi-calendar-event"></i></span>
+                            <input type="date" class="form-control bg-dark text-white border-secondary"
+                                [(ngModel)]="entregaInv2">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 mt-4 text-end">
+                <button class="btn btn-warning btn-lg fw-bold px-5 shadow" (click)="generarYFirmar()">
+                    <i class="bi bi-file-earmark-check-fill me-2"></i> Generar y Firmar Certificación
+                </button>
+            </div>
+        </div>
+
+    </main>
+</div>

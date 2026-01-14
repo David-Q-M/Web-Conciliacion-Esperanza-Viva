@@ -1,20 +1,26 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { AudienciaService } from '../../../services/audiencia.service';
 
 @Component({
-  selector: 'app-agenda',
+  selector: 'app-agenda-conciliador',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive],
+  imports: [CommonModule, RouterLink, RouterLinkActive, FormsModule],
   templateUrl: './agenda.html',
   styleUrls: ['./agenda.css']
 })
 export class AgendaConciliador implements OnInit {
-  audiencias: any[] = [];
   conciliadorNombre: string = '';
+  listaOriginal: any[] = [];
+  listaMostrada: any[] = [];
+  stats = { cerrados: 0, hoy: 0, proximos: 0 };
+  filtroSeleccionado: 'todos' | 'cerrados' | 'hoy' | 'proximos' = 'todos';
+  terminoBusqueda: string = '';
+  isLoading: boolean = true;
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private audienciaService: AudienciaService, private router: Router) { }
 
   ngOnInit(): void {
     const userJson = localStorage.getItem('currentUser');
@@ -24,24 +30,62 @@ export class AgendaConciliador implements OnInit {
     }
     const user = JSON.parse(userJson);
     this.conciliadorNombre = user.nombreCompleto;
-    this.cargarAgenda();
+    // 🛡️ Cargamos los datos reales desde la base de datos
+    this.cargarCasosAgenda(user.id);
   }
 
-  cargarAgenda() {
-    // 🔹 Endpoint que trae las audiencias programadas
-    this.http.get<any[]>('http://localhost:8080/api/audiencias').subscribe({
+  cargarCasosAgenda(id: number) {
+    this.isLoading = true;
+    this.audienciaService.listarPorConciliador(id).subscribe({
       next: (res) => {
-        // Ordenar por fecha y hora más cercana
-        this.audiencias = res.sort((a, b) => 
-          new Date(a.fechaAudiencia).getTime() - new Date(b.fechaAudiencia).getTime()
-        );
+        this.listaOriginal = res;
+        this.listaMostrada = res;
+
+        // 📊 Cálculo dinámico de métricas para los cuadros superiores
+        const hoy = new Date().toISOString().split('T')[0];
+
+        // "Cerrados" lo tomaremos como audiencias pasadas (historial) o con resultado
+        this.stats.cerrados = res.filter(a => a.fechaAudiencia < hoy || a.resultado).length;
+        this.stats.hoy = res.filter(a => a.fechaAudiencia === hoy).length;
+        this.stats.proximos = res.filter(a => a.fechaAudiencia > hoy).length;
+        setTimeout(() => this.isLoading = false, 500);
       },
-      error: (err) => console.error("Error al cargar agenda", err)
+      error: (err) => {
+        console.error("Error al conectar con la API de Agenda:", err);
+        this.isLoading = false;
+      }
     });
+  }
+
+  buscar() {
+    const busq = this.terminoBusqueda.toLowerCase();
+    this.listaMostrada = this.listaOriginal.filter(a =>
+      a.solicitud?.numeroExpediente?.toLowerCase().includes(busq) ||
+      a.solicitud?.solicitante?.nombres?.toLowerCase().includes(busq) ||
+      a.solicitud?.invitado?.nombres?.toLowerCase().includes(busq)
+    );
+  }
+
+  filtrarPorEstado(filtro: 'todos' | 'cerrados' | 'hoy' | 'proximos') {
+    this.filtroSeleccionado = filtro;
+    const hoy = new Date().toISOString().split('T')[0];
+
+    // Primero reiniciamos la lista a la original
+    let listaFiltrada = this.listaOriginal;
+
+    if (filtro === 'hoy') {
+      listaFiltrada = this.listaOriginal.filter(a => a.fechaAudiencia === hoy);
+    } else if (filtro === 'proximos') {
+      listaFiltrada = this.listaOriginal.filter(a => a.fechaAudiencia > hoy);
+    } else if (filtro === 'cerrados') {
+      listaFiltrada = this.listaOriginal.filter(a => a.fechaAudiencia < hoy || a.resultado);
+    }
+
+    this.listaMostrada = listaFiltrada;
   }
 
   cerrarSesion() {
     localStorage.clear();
-    this.router.navigate(['/login-admin']);
+    this.router.navigate(['/consulta-expediente']);
   }
 }

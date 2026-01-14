@@ -1,9 +1,12 @@
 package appesperanzaviva.backend.service;
 
-import appesperanzaviva.backend.entity.Solicitud;
-import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.lang.NonNull;
+import org.springframework.web.multipart.MultipartFile;
+
+import appesperanzaviva.backend.entity.Solicitud;
 
 public interface SolicitudService {
     // Registro completo con archivos
@@ -12,16 +15,16 @@ public interface SolicitudService {
 
     List<Solicitud> listarTodas();
 
-    Optional<Solicitud> buscarPorId(Long id); // 🔹 Útil para el detalle del director
+    Optional<Solicitud> buscarPorId(@NonNull Long id); // 🔹 Útil para el detalle del director
 
     Optional<Solicitud> buscarPorNumero(String numero);
 
     // 🔹 Nuevo: Para aprobar/observar desde el panel del director
-    Solicitud actualizarEstado(Long id, String nuevoEstado, String observacion);
+    Solicitud actualizarEstado(@NonNull Long id, String nuevoEstado, String observacion);
 
     // 🔹 Nuevo: Para designar conciliador
-    Solicitud designarConciliador(Long id, Long conciliadorId);
+    Solicitud designarConciliador(@NonNull Long id, @NonNull Long conciliadorId);
 
     // 🔹 Nuevo: Listar por conciliador
-    List<Solicitud> listarPorConciliador(Long conciliadorId);
+    List<Solicitud> listarPorConciliador(@NonNull Long conciliadorId);
 }

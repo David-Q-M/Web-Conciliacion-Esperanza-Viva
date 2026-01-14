@@ -1,81 +1,141 @@
 <div class="admin-container">
+  <!-- Sidebar Esperanza Viva -->
   <aside class="sidebar-viva">
-    <div class="logo-section p-3">
-      <h5 class="m-0 fw-bold text-dark">Esperanza Viva</h5>
-      <small class="text-dark">centro de conciliación</small>
+    <div class="logo-section">
+      <h5 class="m-0 fw-bold text-dark">ESPERANZA VIVA</h5>
+      <small class="text-dark fw-bold">PANEL DIRECTOR</small>
     </div>
     <nav class="sidebar-nav">
       <a class="nav-link-viva active" routerLink="/director/bandeja-solicitudes" routerLinkActive="active">
-        <i class="bi bi-envelope-fill"></i> Solicitudes
+        <i class="bi bi-envelope-fill me-2"></i> Solicitudes
       </a>
       <a class="nav-link-viva" routerLink="/director/personal" routerLinkActive="active">
-        <i class="bi bi-people-fill"></i> Personal
+        <i class="bi bi-people-fill me-2"></i> Personal
       </a>
       <a class="nav-link-viva" routerLink="/director/bandeja-reportes" routerLinkActive="active">
-        <i class="bi bi-bar-chart-fill"></i> Reportes
+        <i class="bi bi-bar-chart-fill me-2"></i> Reportes
       </a>
     </nav>
-    <div class="sidebar-footer p-3">
-      <button class="btn-logout-viva" (click)="cerrarSesion()">
-        <i class="bi bi-arrow-left"></i> Cerrar Sesión
+    <div class="sidebar-footer px-3">
+      <button class="btn w-100 fw-bold" style="background: #000; color: #fff;" (click)="cerrarSesion()">
+        <i class="bi bi-box-arrow-left"></i> Cerrar Sesión
       </button>
     </div>
   </aside>
 
   <main class="main-content-viva">
-    <header class="content-header d-flex justify-content-between align-items-center mb-4">
-      <div>
+    <header class="d-flex justify-content-between align-items-center mb-5">
+      <div class="header-titles">
         <h2 class="text-warning fw-bold m-0">Bandeja de Solicitudes</h2>
-        <p class="text-secondary small">Panel de gestión de expedientes</p>
+        <p class="text-secondary small m-0">Gestión y seguimiento de expedientes</p>
       </div>
-      <div class="admin-badge"><span>{{ directorNombre }} - Director</span></div>
+      <div class="admin-badge text-end">
+        <div class="text-white fw-bold">{{ directorNombre }}</div>
+        <small class="text-success">● Director</small>
+      </div>
     </header>
 
-    <div class="row g-3 mb-4">
-      <div class="col-md-3"><div class="key-box"><small class="text-white">Total solicitudes</small><h3 class="text-success m-0">{{stats.total}}</h3></div></div>
-      <div class="col-md-3"><div class="key-box"><small class="text-white">Pendientes</small><h3 class="text-warning m-0">{{stats.pendientes}}</h3></div></div>
-      <div class="col-md-3"><div class="key-box"><small class="text-white">En Revisión</small><h3 class="text-info m-0">{{stats.revision}}</h3></div></div>
-      <div class="col-md-3"><div class="key-box"><small class="text-white">Aprobadas</small><h3 class="text-success m-0">{{stats.aprobadas}}</h3></div></div>
-    </div>
-
-    <div class="filter-container p-4 mb-4">
-      <h6 class="text-warning small mb-3 fw-bold">Filtros</h6>
-      <div class="search-box-viva">
-        <i class="bi bi-search text-white"></i>
-        <input type="text" placeholder="Buscar por expediente..." class="viva-input-search">
+    <!-- Estadísticas Rápidas -->
+    <div class="row g-4 mb-5">
+      <div class="col-md-3" (click)="filtrarPorEstado('TOTAL')" style="cursor: pointer;">
+        <div class="glass-card d-flex justify-content-between align-items-center"
+          [style.border-color]="estadoSeleccionado === 'TOTAL' ? '#ffc107' : '#333'">
+          <div>
+            <div class="stat-value text-white mb-0" style="font-size: 2rem;">{{stats.total}}</div>
+            <small class="text-secondary text-uppercase fw-bold" style="font-size: 0.7rem;">Total Solicitudes</small>
+          </div>
+          <i class="bi bi-folder2-open text-warning fs-3 opacity-50"></i>
+        </div>
+      </div>
+      <div class="col-md-3" (click)="filtrarPorEstado('PENDIENTE')" style="cursor: pointer;">
+        <div class="glass-card d-flex justify-content-between align-items-center"
+          [style.border-color]="estadoSeleccionado === 'PENDIENTE' ? '#ffc107' : '#333'">
+          <div>
+            <div class="stat-value text-warning mb-0" style="font-size: 2rem;">{{stats.pendientes}}</div>
+            <small class="text-secondary text-uppercase fw-bold" style="font-size: 0.7rem;">Pendientes</small>
+          </div>
+          <i class="bi bi-hourglass-split text-warning fs-3 opacity-50"></i>
+        </div>
+      </div>
+      <div class="col-md-3" (click)="filtrarPorEstado('ASIGNADO')" style="cursor: pointer;">
+        <div class="glass-card d-flex justify-content-between align-items-center"
+          [style.border-color]="estadoSeleccionado === 'ASIGNADO' ? '#ffc107' : '#333'">
+          <div>
+            <div class="stat-value text-info mb-0" style="font-size: 2rem;">{{stats.revision}}</div>
+            <small class="text-secondary text-uppercase fw-bold" style="font-size: 0.7rem;">En Revisión</small>
+          </div>
+          <i class="bi bi-eye text-info fs-3 opacity-50"></i>
+        </div>
+      </div>
+      <div class="col-md-3" (click)="filtrarPorEstado('FINALIZADO')" style="cursor: pointer;">
+        <div class="glass-card d-flex justify-content-between align-items-center"
+          [style.border-color]="estadoSeleccionado === 'FINALIZADO' ? '#ffc107' : '#333'">
+          <div>
+            <div class="stat-value text-success mb-0" style="font-size: 2rem;">{{stats.aprobadas}}</div>
+            <small class="text-secondary text-uppercase fw-bold" style="font-size: 0.7rem;">Finalizadas</small>
+          </div>
+          <i class="bi bi-check-circle text-success fs-3 opacity-50"></i>
+        </div>
       </div>
     </div>
 
-    <div class="table-viva-container">
-      <table class="table-viva">
-        <thead>
-          <tr>
-            <th style="color: #0dcaf0;">Nº Expediente</th>
-            <th style="color: #0dcaf0;">Solicitante</th>
-            <th style="color: #0dcaf0;">Invitado</th>
-            <th style="color: #0dcaf0;">Fecha</th>
-            <th style="color: #0dcaf0;">Materia</th>
-            <th style="color: #0dcaf0;" class="text-center">Acciones</th>
-            <th style="color: #0dcaf0;">Estado</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let s of solicitudes">
-            <td class="text-white small">{{s.numeroExpediente}}</td>
-            <td class="text-secondary small">{{s.solicitante?.nombreCompleto}}</td>
-            <td class="text-secondary small">{{s.invitado?.nombreCompleto}}</td>
-            <td class="text-secondary small">{{s.fechaPresentacion | date:'dd/MM/yyyy'}}</td>
-            <td class="text-secondary small">{{s.materiaConciliable}}</td>
-            <td class="text-center">
-              <button class="btn-detail-viva" [routerLink]="['/director/detalle', s.id]">Ver Detalles</button>
-            </td>
-            <td><span class="role-pill" style="background-color: #6a1b9a;">{{s.estado}}</span></td>
-          </tr>
-          <tr *ngIf="solicitudes.length === 0">
-            <td colspan="7" class="text-center text-secondary py-4">No hay expedientes en la base de datos.</td>
-          </tr>
-        </tbody>
-      </table>
+    <!-- Filtros -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h5 class="text-white fw-bold m-0">Expedientes Recientes</h5>
+      <div class="search-input-wrapper"
+        style="width: 300px; background: #000; border: 1px solid #333; border-radius: 6px; padding: 0 10px;">
+        <i class="bi bi-search text-secondary"></i>
+        <input type="text" [(ngModel)]="filtroTexto" (input)="buscar()" placeholder="Buscar expediente..."
+          class="form-control border-0 bg-transparent text-white shadow-none">
+      </div>
+    </div>
+
+    <!-- Tabla -->
+    <div class="glass-card p-0 overflow-hidden">
+      <div class="table-responsive">
+        <table class="table table-dark table-hover m-0 align-middle">
+          <thead>
+            <tr class="text-secondary small text-uppercase">
+              <th class="ps-4">Nº Expediente</th>
+              <th>Solicitante</th>
+              <th>Invitado</th>
+              <th>Fecha</th>
+              <th>Materia</th>
+              <th>Estado</th>
+              <th class="text-end pe-4">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let s of solicitudesFiltradas">
+              <td class="ps-4 fw-bold text-white">{{s.numeroExpediente}}</td>
+              <td>{{s.solicitante?.nombres}} {{s.solicitante?.apellidos}}</td>
+              <td>{{s.invitado?.nombres}} {{s.invitado?.apellidos}}</td>
+              <td class="text-secondary small">{{s.fechaPresentacion | date:'dd/MM/yyyy'}}</td>
+              <td class="text-secondary small">{{s.materiaConciliable}}</td>
+              <td>
+                <span class="badge-status" [ngClass]="{
+                        'bg-pendiente': s.estado === 'PENDIENTE',
+                        'bg-asignado': s.estado !== 'PENDIENTE' && s.estado !== 'FINALIZADO',
+                        'bg-finalizado': s.estado === 'FINALIZADO'
+                      }">
+                  {{s.estado}}
+                </span>
+              </td>
+              <td class="text-end pe-4">
+                <button class="btn-detail-viva" [routerLink]="['/director/detalle', s.id]">
+                  Ver Detalle
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="solicitudesFiltradas.length === 0">
+              <td colspan="7" class="text-center text-secondary py-5">
+                <i class="bi bi-inbox fs-1 d-block mb-3 opacity-50"></i>
+                No se encontraron expedientes con este filtro.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </main>
 </div>

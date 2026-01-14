@@ -1,0 +1,206 @@
+/* Global Layout */
+.admin-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: #000;
+  color: white;
+}
+
+.sidebar-viva {
+  width: 260px;
+  background-color: #FFC107;
+  position: fixed;
+  height: 100vh;
+  z-index: 1000;
+}
+
+.main-content-viva {
+  margin-left: 260px;
+  flex: 1;
+  background-color: #0d0d0d;
+}
+
+.dashboard-box {
+  background-color: #1a1a1a;
+  border-radius: 12px;
+  border: 1px solid #333;
+  position: relative;
+}
+
+.border-neon {
+  border: 1px solid #FFC107 !important;
+  box-shadow: 0 0 10px rgba(255, 193, 7, 0.1);
+}
+
+/* Radio Button Options */
+.radio-option {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.radio-option input {
+  display: none;
+}
+
+.radio-circle {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #FFC107;
+  border-radius: 50%;
+  position: relative;
+}
+
+.radio-circle.active {
+  background-color: #FFC107;
+}
+
+.radio-option.selected .radio-circle::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 8px;
+  background-color: #000;
+  border-radius: 50%;
+}
+
+/* Attendance Row */
+.attendance-row {
+  background-color: #000;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 10px 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Inputs */
+.border-neon-input {
+  background-color: #000 !important;
+  border: 1px solid #FFC107 !important;
+  border-radius: 6px;
+  padding: 8px;
+  color: #fff;
+  outline: none;
+}
+
+.border-neon-input:focus {
+  box-shadow: 0 0 5px rgba(255, 193, 7, 0.5);
+}
+
+.viva-input-black {
+  background-color: #000 !important;
+}
+
+.label-viva {
+  color: #fff;
+  font-size: 0.75rem;
+  margin-bottom: 8px;
+  display: block;
+  opacity: 0.8;
+}
+
+.tiny {
+  font-size: 0.65rem;
+  letter-spacing: 1px;
+}
+
+.btn-warning {
+  background-color: #FFC107;
+  border: none;
+  color: #000;
+  border-radius: 10px;
+}
+
+.btn-light {
+  background-color: #fff;
+  color: #000;
+  border: none;
+}
+
+.btn-sm.btn-success {
+  background-color: #28a745;
+  /* Bootstrap success green */
+  border: none;
+  color: #fff;
+}
+
+/* Modal Vista Previa Styles */
+.modal-backdrop-viva {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  backdrop-filter: blur(5px);
+}
+
+.modal-content-viva {
+  background-color: #1a1a1a;
+  padding: 20px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 600px;
+  border: 1px solid #FFC107;
+  box-shadow: 0 0 30px rgba(255, 193, 7, 0.2);
+}
+
+.pdf-preview-box {
+  background-color: #fff;
+  color: #000;
+  border-radius: 4px;
+  min-height: 400px;
+  font-family: 'Times New Roman', Times, serif;
+}
+
+/* Animation utilities */
+.animate__animated {
+  animation-duration: 0.5s;
+  animation-fill-mode: both;
+}
+
+.animate__zoomIn {
+  animation-name: zoomIn;
+}
+
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale3d(0.3, 0.3, 0.3);
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+.nav-link-viva {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px 25px;
+  color: #212529;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.05rem;
+  transition: all 0.3s ease;
+  border-left: 5px solid transparent;
+}
+
+.nav-link-viva:hover,
+.nav-link-viva.active {
+  background-color: rgba(0, 0, 0, 0.05);
+  padding-left: 30px;
+  border-left-color: #000;
+}

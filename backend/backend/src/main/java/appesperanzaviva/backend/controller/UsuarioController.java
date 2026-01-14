@@ -1,17 +1,18 @@
 package appesperanzaviva.backend.controller;
 
+import java.util.List;
+import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
+import org.springframework.web.bind.annotation.*;
+
 import appesperanzaviva.backend.entity.UsuarioSistema;
 import appesperanzaviva.backend.repository.UsuarioSistemaRepository;
 import appesperanzaviva.backend.service.AuditoriaService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Map;
 
 @RestController
-@RequestMapping("/api/usuarios")
+@RequestMapping("/api/usuarios-sistema")
 @CrossOrigin(origins = "http://localhost:4200")
 public class UsuarioController {
 
@@ -27,36 +28,41 @@ public class UsuarioController {
     }
 
     @PostMapping("/registrar")
-    public UsuarioSistema registrar(@RequestBody UsuarioSistema usuario) {
+    public UsuarioSistema registrar(@RequestBody @NonNull UsuarioSistema usuario) {
         UsuarioSistema nuevo = repository.save(usuario);
-        // Registramos el evento en la Auditoría (Wireframe 35)
         auditoriaService.registrarAccion(
-            "Administrador", 
-            "REGISTRO", 
-            "Se registró nuevo personal: " + nuevo.getNombreCompleto() + " (" + nuevo.getRol() + ")", 
-            null
-        );
+                "Administrador",
+                "REGISTRO",
+                "Se registró nuevo personal: " + nuevo.getNombreCompleto() + " (" + nuevo.getRoles() + ")",
+                null);
         return nuevo;
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UsuarioSistema> actualizar(@PathVariable Integer id, @RequestBody UsuarioSistema detalles) {
+    public ResponseEntity<UsuarioSistema> actualizar(@PathVariable @NonNull Integer id,
+            @RequestBody UsuarioSistema detalles) {
         return repository.findById(id)
-                .map(u -> {
+                .map((@NonNull UsuarioSistema u) -> {
+                    // Sincronización de campos personales (Wireframe 13)
                     u.setNombreCompleto(detalles.getNombreCompleto());
+                    u.setDni(detalles.getDni());
+                    u.setTelefono(detalles.getTelefono());
+                    u.setDireccion(detalles.getDireccion());
+                    u.setCorreoElectronico(detalles.getCorreoElectronico());
+
                     u.setUsuario(detalles.getUsuario());
-                    // Solo actualizamos contraseña si se envía una nueva
-                    if(detalles.getContrasena() != null && !detalles.getContrasena().isEmpty()){
+                    if (detalles.getContrasena() != null && !detalles.getContrasena().isEmpty()) {
                         u.setContrasena(detalles.getContrasena());
                     }
-                    u.setRol(detalles.getRol());
-                    // Campos profesionales para Conciliadores y Abogados
+
+                    u.setRoles(detalles.getRoles());
+                    u.setEstado(detalles.getEstado());
                     u.setNroRegistro(detalles.getNroRegistro());
-                    u.setNroEspecializacion(detalles.getNroEspecializacion());
                     u.setNroColegiatura(detalles.getNroColegiatura());
-                    
+
                     UsuarioSistema actualizado = repository.save(u);
-                    auditoriaService.registrarAccion("Administrador", "ACTUALIZACIÓN", "Se actualizaron datos de: " + u.getUsuario(), null);
+                    auditoriaService.registrarAccion("Administrador", "ACTUALIZACIÓN",
+                            "Se actualizaron datos de: " + u.getUsuario(), null);
                     return ResponseEntity.ok(actualizado);
                 }).orElse(ResponseEntity.notFound().build());
     }
@@ -68,27 +74,26 @@ public class UsuarioController {
 
         return repository.findByUsuario(user)
                 .filter(u -> u.getContrasena().equals(pass))
-                .map(u -> {
-                    // El log de auditoría ahora muestra quién entró realmente
-                    auditoriaService.registrarAccion(u.getUsuario(), "LOGIN", "Ingreso exitoso al sistema", null);
+                .map((@NonNull UsuarioSistema u) -> {
+                    auditoriaService.registrarAccion(u.getUsuario(), "LOGIN", "Ingreso exitoso", null);
                     return ResponseEntity.ok(u);
                 })
                 .orElse(ResponseEntity.status(401).build());
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Integer id) {
+    public ResponseEntity<Void> eliminar(@PathVariable @NonNull Integer id) {
         return repository.findById(id)
-                .map(u -> {
+                .map((@NonNull UsuarioSistema u) -> {
+                    String nombre = u.getUsuario();
                     repository.delete(u);
-                    auditoriaService.registrarAccion("Administrador", "ELIMINACIÓN", "Se eliminó al usuario: " + u.getUsuario(), null);
+                    auditoriaService.registrarAccion("Administrador", "ELIMINACIÓN", "Se eliminó a: " + nombre, null);
                     return ResponseEntity.noContent().<Void>build();
                 }).orElse(ResponseEntity.notFound().build());
     }
 
-    // 🔹 NUEVO: Endpoint para listar por rol (Necesario para el Director - Wireframe 19)
     @GetMapping("/rol/{rol}")
     public List<UsuarioSistema> listarPorRol(@PathVariable String rol) {
-        return repository.findByRol(rol);
+        return repository.findByRoles(rol.toUpperCase());
     }
 }

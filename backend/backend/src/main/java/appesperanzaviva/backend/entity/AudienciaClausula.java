@@ -1,11 +1,9 @@
 package appesperanzaviva.backend.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
 
 @Entity
 @Table(name = "audiencia_clausulas")
-@Data
 public class AudienciaClausula {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,4 +17,36 @@ public class AudienciaClausula {
     
     @Column(columnDefinition = "TEXT")
     private String descripcion;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Audiencia getAudiencia() {
+        return audiencia;
+    }
+
+    public void setAudiencia(Audiencia audiencia) {
+        this.audiencia = audiencia;
+    }
+
+    public Integer getOrden() {
+        return orden;
+    }
+
+    public void setOrden(Integer orden) {
+        this.orden = orden;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
 }

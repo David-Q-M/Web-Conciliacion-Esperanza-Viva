@@ -1,27 +1,86 @@
-.admin-container { display: flex; min-height: 100vh; background-color: #000; }
-.sidebar-viva { width: 260px; background-color: #ffc107; display: flex; flex-direction: column; }
-.main-content-viva { flex: 1; padding: 40px; background-color: #0d0d0d; overflow-y: auto; }
+/* Panel Director - Estilo Standard Esperanza Viva */
+.admin-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: #000;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
 
-/* 🔹 CAJAS DE MÉTRICAS */
-.key-box-report {
+.sidebar-viva {
+  width: 260px;
+  background-color: #ffc107;
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  padding: 20px 0;
+}
+
+.logo-section {
+  padding: 0 20px 30px 20px;
+  border-bottom: 2px solid #000;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.nav-link-viva {
+  display: block;
+  padding: 12px 20px;
+  color: #000;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1rem;
+  border-left: 4px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.nav-link-viva:hover,
+.nav-link-viva.active {
+  background-color: #000;
+  color: #ffc107;
+  border-left-color: #fff;
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: 20px;
+}
+
+.main-content-viva {
+  flex: 1;
+  padding: 30px;
+  background-color: #0d0d0d;
+  overflow-y: auto;
+}
+
+.glass-card {
   background-color: #1a1a1a;
   border: 1px solid #333;
   border-radius: 12px;
   padding: 20px;
+  height: 100%;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
 }
-.key-box-report h3 { font-weight: bold; }
 
-/* 🔹 FILTROS Y BUSQUEDA */
-.filter-box-viva {
-  background-color: #141414;
-  border: 1px solid #333;
-  border-radius: 15px;
+.stat-value {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin: 10px 0;
+  color: #fff;
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  color: #ccc;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .search-input-wrapper {
-  background-color: #000;
-  border: 1px solid #ffc107;
-  border-radius: 10px;
+  background-color: #111;
+  border: 1px solid #333;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   padding: 0 15px;
@@ -36,13 +95,29 @@
   outline: none;
 }
 
-/* 🔹 TABLA */
-.text-cian { color: #00ffd5 !important; font-weight: normal; }
+.viva-report-input:focus {
+  color: #ffc107;
+}
 
-.table-viva-container { background-color: #121212; border-radius: 12px; padding: 15px; border: 1px solid #222; }
-.table-viva { width: 100%; border-collapse: collapse; }
-.table-viva th { text-align: left; padding: 15px; border-bottom: 1px solid #333; font-size: 0.85rem; }
-.table-viva td { padding: 15px; border-bottom: 1px solid #222; }
+/* Table Styles */
+.table-dark {
+  background-color: transparent !important;
+}
 
-.admin-badge span { border: 1px solid #ffc107; color: #ffc107; padding: 5px 15px; border-radius: 5px; font-size: 0.8rem; }
-.btn-logout-viva { background: none; border: none; font-weight: bold; color: #000; cursor: pointer; padding: 20px; }
+.table-hover tbody tr:hover {
+  background-color: rgba(255, 193, 7, 0.05);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #000;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ffc107;
+  border-radius: 4px;
+}

@@ -1,51 +1,123 @@
 <div class="admin-container">
   <aside class="sidebar-viva">
-    <div class="logo-section p-4 text-center">
+    <div class="logo-section">
       <h5 class="m-0 fw-bold text-dark">ESPERANZA VIVA</h5>
+      <small class="text-dark fw-bold">PANEL CONCILIADOR</small>
     </div>
     <nav class="sidebar-nav">
-        <a class="nav-link-viva" routerLink="/conciliador/mis-casos" routerLinkActive="active">
-            <i class="bi bi-folder-fill"></i> Mis Casos
-        </a>
-        <a class="nav-link-viva" routerLink="/conciliador/agenda" routerLinkActive="active">
-            <i class="bi bi-calendar3"></i> Mi Agenda
-        </a>
-        <a class="nav-link-viva" routerLink="/conciliador/historial" routerLinkActive="active">
-            <i class="bi bi-clock-history"></i> Historial
-        </a>
+      <a class="nav-link-viva" routerLink="/conciliador/mis-casos" routerLinkActive="active">
+        <i class="bi bi-envelope-fill me-2"></i> Mis Casos
+      </a>
+      <a class="nav-link-viva active" routerLink="/conciliador/agenda">
+        <i class="bi bi-calendar-event me-2"></i> Mi Agenda
+      </a>
+      <a class="nav-link-viva" routerLink="/conciliador/historial" routerLinkActive="active">
+        <i class="bi bi-clock-history me-2"></i> Historial
+      </a>
     </nav>
-    <div class="sidebar-footer p-3">
-      <button class="btn-logout-viva w-100" (click)="cerrarSesion()">Cerrar Sesión</button>
+    <div class="sidebar-footer px-3">
+      <button class="btn w-100 fw-bold" style="background: #000; color: #fff;" (click)="cerrarSesion()">
+        <i class="bi bi-box-arrow-left"></i> Cerrar Sesión
+      </button>
     </div>
   </aside>
 
-  <main class="main-content-viva p-4">
-    <header class="mb-4 d-flex justify-content-between align-items-center">
-      <h2 class="text-warning fw-bold m-0">Mi Agenda de Audiencias</h2>
-      <div class="admin-badge"><span>{{ conciliadorNombre }}</span></div>
+  <main class="main-content-viva">
+    <header class="d-flex justify-content-between align-items-center mb-5">
+      <div>
+        <h2 class="text-warning fw-bold m-0">Mi Agenda</h2>
+        <p class="text-secondary small m-0">Programación de audiencias y citas</p>
+      </div>
+      <div class="admin-badge text-end">
+        <div class="text-white fw-bold">{{ conciliadorNombre }}</div>
+        <small class="text-success">● Conciliador</small>
+      </div>
     </header>
 
-    <div class="row g-3">
-      <div class="col-md-4" *ngFor="let aud of audiencias">
-        <div class="info-card-wireframe p-3 border-start border-warning border-4">
-          <div class="d-flex justify-content-between">
-            <span class="badge bg-warning text-dark">{{ aud.fechaAudiencia | date:'dd/MM/yyyy' }}</span>
-            <span class="text-white fw-bold">{{ aud.horaAudiencia }}</span>
+    <div class="row g-4 mb-5">
+      <div class="col-md-4" (click)="filtrarPorEstado('cerrados')" style="cursor: pointer;">
+        <div class="glass-card d-flex justify-content-between align-items-center"
+          [style.border-color]="filtroSeleccionado === 'cerrados' ? '#ffc107' : '#333'">
+          <div>
+            <div class="stat-value text-secondary mb-0">{{stats.cerrados}}</div>
+            <small class="stat-label">Cerrados/Pasados</small>
           </div>
-          <hr class="border-secondary">
-          <p class="text-info small mb-1">EXP: {{ aud.solicitud?.numeroExpediente }}</p>
-          <h6 class="text-white mb-3">{{ aud.solicitud?.solicitante?.nombres }} vs {{ aud.solicitud?.invitado?.nombres }}</h6>
-          
-          <button class="btn btn-sm btn-outline-light w-100" [routerLink]="['/conciliador/registro', aud.solicitud?.id]">
-            Abrir Sala / Registrar
-          </button>
+          <i class="bi bi-archive-fill text-secondary fs-3 opacity-50"></i>
         </div>
       </div>
-
-      <div *ngIf="audiencias.length === 0" class="col-12 text-center p-5">
-        <i class="bi bi-calendar-x text-secondary display-1"></i>
-        <p class="text-secondary mt-3">No tienes audiencias programadas próximamente.</p>
+      <div class="col-md-4" (click)="filtrarPorEstado('hoy')" style="cursor: pointer;">
+        <div class="glass-card d-flex justify-content-between align-items-center"
+          [style.border-color]="filtroSeleccionado === 'hoy' ? '#ffc107' : '#333'">
+          <div>
+            <div class="stat-value text-warning mb-0">{{stats.hoy}}</div>
+            <small class="stat-label">Audiencias Hoy</small>
+          </div>
+          <i class="bi bi-bell-fill text-warning fs-3 opacity-50"></i>
+        </div>
       </div>
+      <div class="col-md-4" (click)="filtrarPorEstado('proximos')" style="cursor: pointer;">
+        <div class="glass-card d-flex justify-content-between align-items-center"
+          [style.border-color]="filtroSeleccionado === 'proximos' ? '#ffc107' : '#333'">
+          <div>
+            <div class="stat-value text-info mb-0">{{stats.proximos}}</div>
+            <small class="stat-label">Próximos</small>
+          </div>
+          <i class="bi bi-calendar-plus-fill text-info fs-3 opacity-50"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="search-input-wrapper mb-4">
+      <i class="bi bi-search text-secondary me-2"></i>
+      <input type="text" [(ngModel)]="terminoBusqueda" (keyup)="buscar()"
+        placeholder="Buscar por expediente, nombres..." class="viva-report-input">
+    </div>
+
+    <div class="row g-4">
+      <!-- SKELETON LOADER -->
+      <ng-container *ngIf="isLoading">
+        <div class="col-md-6" *ngFor="let i of [1,2,3,4]">
+          <div class="case-card-agenda">
+            <div class="skeleton skeleton-text" style="width: 200px; height: 20px;"></div>
+            <div class="skeleton skeleton-text mt-3" style="width: 150px;"></div>
+            <div class="skeleton skeleton-text mt-2" style="width: 250px;"></div>
+            <div class="text-center mt-4">
+              <div class="skeleton skeleton-btn mx-auto"></div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="!isLoading">
+        <div class="col-md-6" *ngFor="let a of listaMostrada">
+          <div class="case-card-agenda animate__animated animate__fadeIn">
+            <h6 class="text-warning fw-bold mb-2">
+              {{ a.solicitud?.numeroExpediente }}
+            </h6>
+            <small class="text-white d-block mb-3">{{ a.solicitud?.materiaConciliable }}</small>
+
+            <p class="text-info small mb-1">
+              <i class="bi bi-calendar-check me-2"></i>
+              {{ a.fechaAudiencia | date:'dd/MM/yyyy' }} - {{ a.horaAudiencia }}
+            </p>
+            <p class="text-secondary small mb-3">
+              <i class="bi bi-person me-2"></i> {{ a.solicitud?.solicitante?.nombres }} {{
+              a.solicitud?.solicitante?.apellidos }}
+            </p>
+
+            <div class="text-center mt-3">
+              <button class="btn-solucionar-viva shadow w-100" [routerLink]="['/conciliador/registro-audiencia', a.id]">
+                <i class="bi bi-pencil-square me-2"></i> Gestionar Audiencia
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="listaMostrada.length === 0" class="col-12 text-center p-5">
+          <i class="bi bi-calendar-x text-secondary display-1 opacity-25"></i>
+          <p class="text-secondary mt-3">No hay audiencias con este filtro.</p>
+        </div>
+      </ng-container>
     </div>
   </main>
 </div>

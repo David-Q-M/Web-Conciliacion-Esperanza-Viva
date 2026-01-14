@@ -1,11 +1,35 @@
-.admin-container { display: flex; min-height: 100vh; background-color: #000; }
-.sidebar-viva { width: 260px; background-color: #ffc107; display: flex; flex-direction: column; }
-.main-content-viva { flex: 1; padding: 40px; background-color: #0d0d0d; overflow-y: auto; }
+.admin-container { background-color: #000; min-height: 100vh; display: flex; font-family: 'Segoe UI', sans-serif; }
+.sidebar-viva { width: 260px; background-color: #ffc107; height: 100vh; position: fixed; }
+.main-content-viva { flex: 1; margin-left: 260px; padding: 40px; color: #fff; background-color: #0d0d0d; overflow-y: auto; }
 
-.info-card-wireframe { background-color: #161616; border: 1px solid #333; border-radius: 12px; }
-.viva-data-box { background-color: #000; border: 1px solid #222; padding: 12px; border-radius: 8px; color: #fff; font-size: 0.9rem; }
-.designacion-box { background-color: #1a1a1a; border: 2px dashed #ffc107; border-radius: 15px; }
+/* 🔹 TARJETAS Y DATOS */
+.info-card-wireframe { background-color: #1a1a1a; border: 1px solid #ffc107; border-radius: 12px; }
+.viva-data-box { background-color: #000; border: 1px solid #333; padding: 12px; border-radius: 8px; color: #fff; font-size: 0.95rem; }
 
-.btn-success { background-color: #198754; border: none; font-weight: bold; }
-.btn-danger { background-color: #dc3545; border: none; font-weight: bold; }
-.admin-badge span { border: 1px solid #ffc107; color: #ffc107; padding: 5px 15px; border-radius: 5px; }
+/* 🔹 CUADRO AMARILLO DE DESIGNACIÓN */
+.designacion-alert-box {
+  background-color: #ffc107;
+  border-radius: 15px;
+}
+
+.btn-decline {
+  background-color: #ff0000; /* Rojo profesional */
+  color: #fff;
+  border: none;
+  font-weight: bold;
+  border-radius: 8px;
+  transition: 0.3s;
+}
+.btn-decline:hover { background-color: #cc0000; transform: scale(1.02); }
+
+.btn-accept {
+  background-color: #28a745; /* Verde profesional */
+  color: #fff;
+  border: none;
+  font-weight: bold;
+  border-radius: 8px;
+  transition: 0.3s;
+}
+.btn-accept:hover { background-color: #218838; transform: scale(1.02); }
+
+.admin-badge span { border: 1px solid #ffc107; color: #ffc107; padding: 5px 15px; border-radius: 5px; font-weight: bold; }

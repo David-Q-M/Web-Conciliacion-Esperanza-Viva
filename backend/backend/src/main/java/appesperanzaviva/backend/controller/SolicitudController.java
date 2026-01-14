@@ -7,7 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.lang.NonNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -17,6 +21,8 @@ import java.util.Map;
 @CrossOrigin(origins = "http://localhost:4200", allowedHeaders = "*", methods = { RequestMethod.GET, RequestMethod.POST,
         RequestMethod.PUT, RequestMethod.OPTIONS })
 public class SolicitudController {
+
+    private static final Logger logger = LoggerFactory.getLogger(SolicitudController.class);
 
     @Autowired
     private SolicitudService service;
@@ -33,8 +39,8 @@ public class SolicitudController {
             Solicitud nuevaSolicitud = objectMapper.readValue(solicitudJson, Solicitud.class);
             Solicitud guardada = service.crearSolicitudConArchivos(nuevaSolicitud, dni, pruebas, firma);
             return ResponseEntity.ok(guardada);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (IOException e) {
+            logger.error("Error procesando solicitud", e);
             return ResponseEntity.internalServerError().build();
         }
     }
@@ -47,7 +53,7 @@ public class SolicitudController {
     // 🔹 NUEVO: Obtener detalle por ID (Para el panel del director:
     // director/detalle/{id})
     @GetMapping("/{id}")
-    public ResponseEntity<Solicitud> obtenerPorId(@PathVariable Long id) {
+    public ResponseEntity<Solicitud> obtenerPorId(@PathVariable @NonNull Long id) {
         return service.buscarPorId(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -62,8 +68,8 @@ public class SolicitudController {
 
     // 🔹 NUEVO: Actualizar estado y observaciones (Para aprobar/observar/rechazar)
     @PutMapping("/{id}/estado")
-    public ResponseEntity<Solicitud> actualizarEstado(
-            @PathVariable Long id,
+        public ResponseEntity<Solicitud> actualizarEstado(
+            @PathVariable @NonNull Long id,
             @RequestBody Map<String, String> payload) {
 
         try {
@@ -78,23 +84,34 @@ public class SolicitudController {
 
     // 🔹 NUEVO: Asignar conciliador (Para el Director - Wireframe 19/20)
     @PostMapping("/{id}/designar")
-    public ResponseEntity<Solicitud> designarConciliador(
-            @PathVariable Long id,
+        public ResponseEntity<Solicitud> designarConciliador(
+            @PathVariable @NonNull Long id,
             @RequestBody Map<String, Object> payload) {
 
         try {
-            Long conciliadorId = Long.valueOf(payload.get("conciliadorId").toString());
+            Object obj = payload.get("conciliadorId");
+            Long conciliadorId = null;
+            if (obj instanceof Number) {
+                conciliadorId = ((Number) obj).longValue();
+            } else if (obj instanceof String) {
+                conciliadorId = Long.parseLong((String) obj);
+            }
+            
+            if (conciliadorId == null) {
+                return ResponseEntity.badRequest().build();
+            }
+            
             Solicitud actualizada = service.designarConciliador(id, conciliadorId);
             return ResponseEntity.ok(actualizada);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().build();
+        } catch (NumberFormatException | NullPointerException e) {
+            logger.error("Error designando conciliador", e);
+            return ResponseEntity.badRequest().build();
         }
     }
 
     // 🔹 NUEVO: Obtener solicitudes por conciliador
     @GetMapping("/conciliador/{conciliadorId}")
-    public ResponseEntity<List<Solicitud>> listarPorConciliador(@PathVariable Long conciliadorId) {
+    public ResponseEntity<List<Solicitud>> listarPorConciliador(@PathVariable @NonNull Long conciliadorId) {
         return ResponseEntity.ok(service.listarPorConciliador(conciliadorId));
     }
 }

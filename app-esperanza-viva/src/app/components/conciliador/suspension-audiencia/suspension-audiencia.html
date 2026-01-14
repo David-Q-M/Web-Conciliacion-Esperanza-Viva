@@ -1,0 +1,162 @@
+<div class="admin-container">
+  <aside class="sidebar-viva">
+    <div class="logo-section p-4 text-center">
+      <h5 class="m-0 fw-bold text-dark">Esperanza Viva</h5>
+      <small class="text-dark fw-bold">centro de conciliacion</small>
+    </div>
+    <nav class="sidebar-nav">
+      <a class="nav-link-viva" routerLink="/conciliador/mis-casos"><i class="bi bi-envelope"></i> Mis Casos</a>
+      <a class="nav-link-viva active"><i class="bi bi-people"></i> Mi Agenda</a>
+      <a class="nav-link-viva" routerLink="/conciliador/historial"><i class="bi bi-clock-history"></i> Historial</a>
+    </nav>
+  </aside>
+
+  <main class="main-content-viva p-4">
+    <header class="d-flex justify-content-between align-items-center mb-4 border-bottom border-warning pb-2">
+      <div>
+        <h4 class="text-warning fw-bold m-0">Registro de Audiencia</h4>
+        <p class="text-secondary small mb-0">Evaluacion de Designacion</p>
+      </div>
+      <div class="admin-badge text-end">
+        <small class="d-block text-white">Dr. {{conciliadorNombre}}</small>
+        <small class="text-secondary">Director <i class="bi bi-person-circle fs-5 text-warning ms-2"></i></small>
+      </div>
+    </header>
+
+    <p class="text-white small mb-3">Suspencion por mutuo acuerdo</p>
+
+    <div class="row g-4">
+      <!-- Left Column -->
+      <div class="col-md-6 d-flex flex-column gap-4">
+
+        <!-- Control de Asistencia -->
+        <div class="dashboard-box p-3 border-neon">
+          <h6 class="text-secondary tiny fw-bold mb-1">Control de Asistencia</h6>
+          <p class="text-secondary tiny mb-3">Hora programada: 10:00 AM. (se recomienda esperar 10-15 min)</p>
+
+          <div class="attendance-row mb-2">
+            <span class="text-white small">1. SOLICITANTE: {{expediente.solicitante.nombre}}</span>
+            <div class="d-flex align-items-center gap-2">
+              <span class="text-secondary tiny">Estado:</span>
+              <button class="btn btn-sm btn-success fw-bold px-3" style="border-radius: 6px;">Asistio</button>
+            </div>
+          </div>
+          <div class="attendance-row">
+            <span class="text-white small">1. INVITADO: {{expediente.invitado.nombre}}</span>
+            <div class="d-flex align-items-center gap-2">
+              <span class="text-secondary tiny">Estado:</span>
+              <button class="btn btn-sm btn-success fw-bold px-3" style="border-radius: 6px;">Asistio</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Resultados de la Sesion -->
+        <div class="dashboard-box p-4 border-neon flex-fill">
+          <h6 class="text-center text-white small mb-1">Resultados de la Sesion</h6>
+          <p class="text-center text-secondary tiny mb-4">Selecciona el desenlace de la audiencia de hoy</p>
+
+          <div class="d-flex flex-column gap-3">
+            <label class="radio-option">
+              <input type="radio" name="resultado" disabled>
+              <span class="radio-circle"></span>
+              <span class="text-white small">Acuerdo Total</span>
+              <i class="bi bi-chevron-down ms-auto text-secondary"></i>
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="resultado" disabled>
+              <span class="radio-circle"></span>
+              <span class="text-white small">Acuerdo Parcial</span>
+              <i class="bi bi-chevron-down ms-auto text-secondary"></i>
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="resultado" disabled>
+              <span class="radio-circle"></span>
+              <span class="text-white small">Falta de Acuerdo</span>
+              <i class="bi bi-chevron-down ms-auto text-secondary"></i>
+            </label>
+            <label class="radio-option selected">
+              <input type="radio" name="resultado" checked>
+              <span class="radio-circle active"></span>
+              <span class="text-white small">Suspencion de Audiencia (Mutuo Acuerdo)</span>
+            </label>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right Column: Reprogramacion -->
+      <div class="col-md-6">
+        <div class="dashboard-box p-4 border-neon h-100">
+          <h6 class="text-white small mb-3">Reprogramacion</h6>
+
+          <div class="info-card-wireframe p-4 mb-4" style="border: 1px solid #FFC107;">
+            <p class="text-white small mb-0">DATOS PARA EL FORMATO E</p>
+            <p class="text-white small mb-3">Por mutuo acuerdo</p>
+
+            <div class="mb-3">
+              <label class="text-secondary tiny mb-1">Motivo (interno)</label>
+              <input type="text" class="viva-input-black w-100 border-neon-input" [(ngModel)]="formE.motivo"
+                placeholder="Faltan documentos de propiedad">
+            </div>
+
+            <div class="row g-3 mb-3">
+              <div class="col-6">
+                <label class="text-secondary tiny mb-1">Nueva Fecha de continuacion</label>
+                <input type="date" class="viva-input-black w-100 border-neon-input" [(ngModel)]="formE.nuevaFecha">
+              </div>
+              <div class="col-6">
+                <label class="text-secondary tiny mb-1">Nueva Hora</label>
+                <input type="time" class="viva-input-black w-100 border-neon-input" [(ngModel)]="formE.nuevaHora">
+              </div>
+            </div>
+
+            <div class="mb-2">
+              <label class="text-secondary tiny mb-1">Lugar de la Audiencia (Direccion del Centro)</label>
+              <input type="text" class="viva-input-black w-100 border-neon-input" [(ngModel)]="formE.lugar">
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center mt-5">
+            <button class="btn btn-light fw-bold px-4" style="border-radius: 8px;" (click)="toggleVistaPrevia()">Vista
+              previa formato E</button>
+            <button class="btn btn-warning fw-bold px-4 shadow-warning" style="border-radius: 8px;"
+              (click)="finalizarYDescargar()">Finalizar y Descargar</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Modal Vista Previa -->
+  <div class="modal-backdrop-viva" *ngIf="mostrarVistaPrevia">
+    <div class="modal-content-viva animate__animated animate__zoomIn">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="text-warning m-0">Vista Previa - Formato E</h5>
+        <button class="btn btn-sm btn-outline-light" (click)="toggleVistaPrevia()"><i class="bi bi-x-lg"></i></button>
+      </div>
+      <div class="pdf-preview-box p-4 bg-white text-dark">
+        <div class="text-end fw-bold small">FORMATO E</div>
+        <div class="text-center fw-bold mt-2">CONSTANCIA DE SUSPENSIÓN DE AUDIENCIA DE CONCILIACIÓN</div>
+        <div class="text-center small mt-1">CENTRO DE CONCILIACIÓN ESPERANZA VIVA</div>
+
+        <div class="mt-4 text-justify small font-monospace">
+          A horas <strong>{{acta.hora}}</strong> del día <strong>{{acta.dia}} de {{acta.mes}} del
+            {{acta.anio}}</strong>,
+          las partes asistentes <strong>{{expediente.solicitante.nombre}}</strong> y
+          <strong>{{expediente.invitado.nombre}}</strong>...
+          <br><br>
+          Acordaron SUSPENDER la audiencia por <strong>{{formE.motivo || '.......'}}</strong>.
+          <br><br>
+          Fijando una nueva fecha para el:
+          <br>
+          <strong>Día: {{formE.nuevaFecha || '........'}}</strong>
+          <br>
+          <strong>Hora: {{formE.nuevaHora || '........'}}</strong>
+          <br>
+          <strong>Lugar: {{formE.lugar || '........'}}</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

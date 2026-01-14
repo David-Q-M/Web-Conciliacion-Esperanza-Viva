@@ -1,0 +1,114 @@
+/* Mismo estilo base que generar-acta para consistencia */
+.admin-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: #121212;
+  color: white;
+}
+
+.sidebar-viva {
+  width: 250px;
+  background-color: #FFC107; /* Amarillo */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: fixed;
+  height: 100vh;
+  z-index: 1000;
+}
+
+.main-content-viva {
+  margin-left: 250px;
+  flex: 1;
+  background-color: #121212;
+}
+
+.nav-link-viva {
+  display: block;
+  padding: 15px 20px;
+  color: #333;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+}
+
+.nav-link-viva:hover, .nav-link-viva.active {
+  background-color: rgba(0,0,0,0.1);
+  padding-left: 25px;
+}
+
+.btn-logout-viva {
+  background: transparent;
+  border: 2px solid #333;
+  color: #333;
+  font-weight: bold;
+  padding: 10px;
+  border-radius: 8px;
+  transition: all 0.3s;
+}
+
+.btn-logout-viva:hover {
+  background: #333;
+  color: #FFC107;
+}
+
+.info-card-wireframe {
+  background-color: #1E1E1E;
+  border: 1px solid #333;
+  border-radius: 12px;
+  height: 100%;
+}
+
+.viva-textarea {
+  width: 100%;
+  background-color: #000;
+  border: 1px solid #444;
+  color: #ddd;
+  padding: 10px;
+  border-radius: 8px;
+  min-height: 120px;
+  resize: vertical;
+}
+
+.viva-input-black {
+  width: 100%;
+  background-color: #000;
+  border: 1px solid #444;
+  color: #ddd;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.declaracion-box {
+  background-color: #000;
+  border: 1px solid #444;
+  color: #ddd;
+  padding: 15px;
+  border-radius: 8px;
+  font-style: italic;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.btn-warning {
+  background-color: #FFC107;
+  color: #000;
+  border: none;
+  font-size: 1.1rem;
+  transition: transform 0.2s;
+}
+
+.btn-warning:hover {
+  transform: scale(1.02);
+  background-color: #ffca2c;
+}
+
+.admin-badge span {
+  background-color: #333;
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  color: #FFC107;
+  border: 1px solid #444;
+}

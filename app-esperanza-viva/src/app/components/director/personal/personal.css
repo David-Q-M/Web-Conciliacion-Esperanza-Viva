@@ -1,31 +1,117 @@
-.admin-container { display: flex; min-height: 100vh; background-color: #000; }
-.sidebar-viva { width: 260px; background-color: #ffc107; display: flex; flex-direction: column; }
-.main-content-viva { flex: 1; padding: 40px; background-color: #0d0d0d; overflow-y: auto; }
-
-/* 🔹 CAJAS DE INDICADORES */
-.key-box-viva {
-  background-color: #1a1a1a;
-  border: 1px solid #333;
-  border-radius: 12px;
-  padding: 20px;
-  text-align: center;
+/* Panel Director - Estilo Standard Esperanza Viva */
+.admin-container {
+    display: flex;
+    min-height: 100vh;
+    background-color: #000;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* 🔹 TARJETAS DE PERSONAL */
-.info-card-wireframe {
-  background-color: #1a1a1a;
-  border: 1px solid #333;
-  border-radius: 12px;
+.sidebar-viva {
+    width: 260px;
+    background-color: #ffc107;
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    padding: 20px 0;
 }
-.info-card-wireframe:hover { border-color: #ffc107; transition: 0.3s; }
 
-/* 🔹 PÍLDORAS DE ESTADO */
-.pill-green { background-color: #198754; color: #fff; padding: 4px 12px; border-radius: 6px; font-size: 0.75rem; }
-.pill-red { background-color: #dc3545; color: #fff; padding: 4px 12px; border-radius: 6px; font-size: 0.75rem; }
+.logo-section {
+    padding: 0 20px 30px 20px;
+    border-bottom: 2px solid #000;
+    margin-bottom: 20px;
+    text-align: center;
+}
 
-/* 🔹 BARRAS DE PROGRESO */
-.progress-wire-bg { background-color: #000; height: 6px; border-radius: 10px; border: 1px solid #222; }
-.progress-wire-bar { background-color: #ffc107; height: 100%; border-radius: 10px; }
+.nav-link-viva {
+    display: block;
+    padding: 12px 20px;
+    color: #000;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1rem;
+    border-left: 4px solid transparent;
+    transition: all 0.2s ease;
+}
 
-.admin-badge span { border: 1px solid #ffc107; color: #ffc107; padding: 5px 15px; border-radius: 5px; font-size: 0.8rem; }
-.btn-logout-viva { background: none; border: none; font-weight: bold; color: #000; cursor: pointer; padding: 10px; text-align: left; width: 100%; }
+.nav-link-viva:hover,
+.nav-link-viva.active {
+    background-color: #000;
+    color: #ffc107;
+    border-left-color: #fff;
+}
+
+.sidebar-footer {
+    margin-top: auto;
+    padding: 20px;
+}
+
+.main-content-viva {
+    flex: 1;
+    padding: 30px;
+    background-color: #0d0d0d;
+    overflow-y: auto;
+}
+
+.glass-card {
+    background-color: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 12px;
+    padding: 25px;
+    height: 100%;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    transition: transform 0.2s ease;
+}
+
+.glass-card:hover {
+    transform: translateY(-5px);
+    border-color: #ffc107;
+}
+
+.role-pill {
+    padding: 4px 10px;
+    border-radius: 5px;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+.pill-green {
+    background-color: #198754;
+    color: white;
+}
+
+.pill-red {
+    background-color: #dc3545;
+    color: white;
+}
+
+.progress-section {
+    margin-top: 15px;
+}
+
+.progress-wire-bg {
+    background-color: #333;
+    height: 6px;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progress-wire-bar {
+    background-color: #ffc107;
+    height: 100%;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #000;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #ffc107;
+    border-radius: 4px;
+}

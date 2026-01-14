@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, Router } from '@angular/router';
-import { DatosSolicitudService } from '../../services/datos-solicitud.service';
+import { DatosSolicitudService } from '../../../services/datos-solicitud.service';
 
 @Component({
   selector: 'app-descripcion-conflicto',
@@ -83,7 +83,7 @@ export class DescripcionConflicto {
       subMateria: this.subMateriaSeleccionada,
       hechos: this.hechosTexto,
       pretension: this.pretensionTexto,
-      otrasPersonasAlimentario: this.otrasPersonasAlimentario
+      otrasPersonasAlimentario: this.otrasPersonasAlimentario,
     });
 
     this.router.navigate(['/documentos-adjuntos']);

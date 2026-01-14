@@ -1,62 +1,143 @@
 <div class="admin-container">
   <aside class="sidebar-viva">
-    <div class="logo-section p-3">
-      <h5 class="m-0 fw-bold text-dark">Esperanza Viva</h5>
-      <small class="text-dark">centro de conciliación</small>
+    <div class="logo-section">
+      <h5 class="m-0 fw-bold text-dark">ESPERANZA VIVA</h5>
+      <small class="text-dark fw-bold">PANEL DIRECTOR</small>
     </div>
     <nav class="sidebar-nav">
       <a class="nav-link-viva" routerLink="/director/bandeja-solicitudes" routerLinkActive="active">
-        <i class="bi bi-envelope-fill"></i> Solicitudes
+        <i class="bi bi-envelope-fill me-2"></i> Solicitudes
       </a>
       <a class="nav-link-viva active" routerLink="/director/personal" routerLinkActive="active">
-        <i class="bi bi-people-fill"></i> Personal
+        <i class="bi bi-people-fill me-2"></i> Personal
       </a>
       <a class="nav-link-viva" routerLink="/director/bandeja-reportes" routerLinkActive="active">
-        <i class="bi bi-bar-chart-fill"></i> Reportes
+        <i class="bi bi-bar-chart-fill me-2"></i> Reportes
       </a>
     </nav>
-    <div class="sidebar-footer p-3">
-      <button class="btn-logout-viva" (click)="cerrarSesion()">
-        <i class="bi bi-arrow-left"></i> Cerrar Sesión
+    <div class="sidebar-footer px-3">
+      <button class="btn w-100 fw-bold" style="background: #000; color: #fff;" (click)="cerrarSesion()">
+        <i class="bi bi-box-arrow-left"></i> Cerrar Sesión
       </button>
     </div>
   </aside>
 
   <main class="main-content-viva">
-    <header class="content-header d-flex justify-content-between align-items-center mb-4">
-      <div>
+    <header class="d-flex justify-content-between align-items-center mb-5">
+      <div class="header-titles">
         <h2 class="text-warning fw-bold m-0">Gestión de Personal</h2>
-        <p class="text-secondary small">Centro de Conciliación Extrajudicial</p>
+        <p class="text-secondary small m-0">Supervisión de conciliadores y equipo legal</p>
       </div>
-      <div class="admin-badge"><span>{{ directorNombre }} - Director</span></div>
+      <div class="admin-badge text-end">
+        <div class="text-white fw-bold">{{ directorNombre }}</div>
+        <small class="text-success">● Director</small>
+      </div>
     </header>
 
-    <div class="row g-3 mb-4">
-      <div class="col-md-3"><div class="key-box-viva"><h3 class="text-success m-0">{{stats.total}}</h3><small class="text-white">Total Personal</small></div></div>
-      <div class="col-md-3"><div class="key-box-viva"><h3 class="text-success m-0">{{stats.activos}}</h3><small class="text-white">Personal Activo</small></div></div>
-      <div class="col-md-3"><div class="key-box-viva"><h3 class="text-success m-0">{{stats.conciliadores}}</h3><small class="text-white">Conciliadores</small></div></div>
-      <div class="col-md-3"><div class="key-box-viva"><h3 class="text-success m-0">{{stats.abogados}}</h3><small class="text-white">Abogados</small></div></div>
-    </div>
-
-    <h5 class="text-warning fw-bold mb-3">Personal del Centro</h5>
-    <p class="text-secondary small mb-4">Gestiona conciliadores y abogados registrados en el sistema</p>
-
-    <div class="row g-4">
-      <div class="col-md-6" *ngFor="let p of personal">
-        <div class="info-card-wireframe p-4">
-          <div class="d-flex justify-content-between align-items-center mb-2">
-            <h6 class="text-white m-0 fw-bold">{{p.nombreCompleto}}</h6>
-            <span class="role-pill" [ngClass]="p.estado === 'ACTIVO' ? 'pill-green' : 'pill-red'">{{p.estado}}</span>
+    <!-- Stats Filter Row -->
+    <div class="row g-4 mb-5">
+      <div class="col-md-3" (click)="filtrarPersonal('TOTAL')" style="cursor: pointer;">
+        <div class="glass-card d-flex justify-content-between align-items-center"
+          [style.border-color]="filtroActual === 'TOTAL' ? '#ffc107' : '#333'">
+          <div>
+            <div class="stat-value text-white mb-0">{{stats.total}}</div>
+            <small class="text-secondary text-uppercase fw-bold" style="font-size:0.7rem">Total Personal</small>
           </div>
-          <p class="text-secondary small mb-2">{{p.rol}} - Derecho Civil y Comercial</p>
-          <p class="text-white small mb-3"><i class="bi bi-telephone text-warning me-2"></i> +51 999 111 222</p>
-          
-          <div class="progress-wire-bg">
-            <div class="progress-wire-bar" style="width: 53%;"></div>
-          </div>
-          <small class="text-secondary mt-2 d-block">Carga de Trabajo: 8 / 15 casos (53%)</small>
+          <i class="bi bi-people text-secondary fs-3 opacity-50"></i>
         </div>
       </div>
+      <div class="col-md-3" (click)="filtrarPersonal('ACTIVO')" style="cursor: pointer;">
+        <div class="glass-card d-flex justify-content-between align-items-center"
+          [style.border-color]="filtroActual === 'ACTIVO' ? '#ffc107' : '#333'">
+          <div>
+            <div class="stat-value text-success mb-0">{{stats.activos}}</div>
+            <small class="text-secondary text-uppercase fw-bold" style="font-size:0.7rem">Activos</small>
+          </div>
+          <i class="bi bi-check-circle-fill text-success fs-3 opacity-50"></i>
+        </div>
+      </div>
+      <div class="col-md-3" (click)="filtrarPersonal('CONCILIADOR')" style="cursor: pointer;">
+        <div class="glass-card d-flex justify-content-between align-items-center"
+          [style.border-color]="filtroActual === 'CONCILIADOR' ? '#ffc107' : '#333'">
+          <div>
+            <div class="stat-value text-info mb-0">{{stats.conciliadores}}</div>
+            <small class="text-secondary text-uppercase fw-bold" style="font-size:0.7rem">Conciliadores</small>
+          </div>
+          <i class="bi bi-briefcase-fill text-info fs-3 opacity-50"></i>
+        </div>
+      </div>
+      <div class="col-md-3" (click)="filtrarPersonal('ABOGADO')" style="cursor: pointer;">
+        <div class="glass-card d-flex justify-content-between align-items-center"
+          [style.border-color]="filtroActual === 'ABOGADO' ? '#ffc107' : '#333'">
+          <div>
+            <div class="stat-value text-warning mb-0">{{stats.abogados}}</div>
+            <small class="text-secondary text-uppercase fw-bold" style="font-size:0.7rem">Abogados</small>
+          </div>
+          <i class="bi bi-award-fill text-warning fs-3 opacity-50"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Personal Grid -->
+    <div class="row g-4">
+
+      <!-- SKELETON LOADER -->
+      <ng-container *ngIf="isLoading">
+        <div class="col-md-6 col-lg-4" *ngFor="let i of [1,2,3]">
+          <div class="glass-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <div class="skeleton skeleton-text" style="width: 150px; height: 20px;"></div>
+              <div class="skeleton skeleton-badge" style="width: 60px;"></div>
+            </div>
+            <div class="skeleton skeleton-text mb-2" style="width: 100px;"></div>
+            <div class="skeleton skeleton-text mb-2" style="width: 180px;"></div>
+            <div class="skeleton skeleton-text mb-2" style="width: 200px;"></div>
+            <div class="mt-4 skeleton skeleton-text" style="width: 100%; height: 10px;"></div>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="!isLoading">
+        <div class="col-md-6 col-lg-4" *ngFor="let p of personalFiltrado">
+          <div class="glass-card animate__animated animate__fadeIn">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+              <div>
+                <h5 class="text-white m-0 fw-bold">{{p.nombre_completo || p.nombreCompleto}}</h5>
+                <small class="text-warning text-uppercase"
+                  style="font-size: 0.75rem; letter-spacing: 1px;">{{p.rol}}</small>
+              </div>
+              <span class="role-pill" [ngClass]="p.estado === 'ACTIVO' ? 'pill-green' : 'pill-red'">
+                {{p.estado}}
+              </span>
+            </div>
+
+            <hr style="border-color: #333;">
+
+            <div class="mb-2">
+              <small class="text-secondary d-block">Contacto</small>
+              <div class="text-white small"><i class="bi bi-telephone me-2"></i> +51 {{p.telefono}}</div>
+              <div class="text-white small"><i class="bi bi-envelope me-2"></i> {{p.correo_electronico ||
+                p.correoElectronico}}</div>
+            </div>
+
+            <div class="progress-section mt-4">
+              <div class="d-flex justify-content-between mb-1">
+                <small class="text-secondary small">Carga asignada</small>
+                <small class="text-warning fw-bold">8 / 15</small>
+              </div>
+              <div class="progress-wire-bg">
+                <div class="progress-wire-bar" style="width: 53%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12" *ngIf="personalFiltrado.length === 0">
+          <div class="glass-card text-center py-5">
+            <h5 class="text-secondary m-0">No se encontró personal con los filtros seleccionados.</h5>
+          </div>
+        </div>
+      </ng-container>
     </div>
   </main>
 </div>

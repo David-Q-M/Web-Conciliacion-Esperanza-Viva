@@ -1,23 +1,146 @@
-.admin-container { background-color: #000; min-height: 100vh; display: flex; }
-.sidebar-viva { width: 260px; background-color: #ffc107; display: flex; flex-direction: column; }
-.main-content-viva { flex: 1; background-color: #0d0d0d; overflow-y: auto; }
-
-.key-box { background-color: #1a1a1a; border: 1px solid #333; border-radius: 12px; padding: 20px; text-align: center; }
-.info-card-wireframe { background-color: #1a1a1a; border: 1px solid #333; border-radius: 12px; }
-.info-card-wireframe:hover { border-color: #ffc107; transition: 0.3s; }
-
-.viva-input-search, .viva-input-black, .viva-textarea { 
-  background: #000; border: 1px solid #333; color: #fff; width: 100%; padding: 10px; border-radius: 8px; outline: none; 
+/* Panel Director - Estilo Standard Esperanza Viva */
+.admin-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: #000;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
-.search-box-viva { background: #000; border: 1px solid #ffc107; border-radius: 10px; display: flex; align-items: center; padding: 0 15px; }
 
-.btn-detail-viva { background: #8b7400; color: #fff; border: none; padding: 5px 15px; border-radius: 5px; cursor: pointer; }
-.btn-viva-white, .btn-action-white { background: #fff; color: #000; border: none; font-weight: bold; padding: 10px; border-radius: 8px; cursor: pointer; }
-.btn-register-viva, .btn-modal-send { background: #ffc107; color: #000; border: none; font-weight: bold; padding: 10px; border-radius: 8px; cursor: pointer; }
+/* Sidebar Amarillo Original */
+.sidebar-viva {
+  width: 260px;
+  background-color: #ffc107;
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  padding: 20px 0;
+}
 
-.viva-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: flex; justify-content: center; align-items: center; z-index: 2000; }
-.viva-modal-card { background-color: #1a1a1a; padding: 30px; border-radius: 20px; border: 1px solid #ffc107; width: 500px; }
+.logo-section {
+  padding: 0 20px 30px 20px;
+  border-bottom: 2px solid #000;
+  margin-bottom: 20px;
+  text-align: center;
+}
 
-.table-viva { width: 100%; border-collapse: collapse; color: #fff; }
-.table-viva th, .table-viva td { padding: 15px; border-bottom: 1px solid #222; text-align: left; }
-.role-pill { padding: 4px 12px; border-radius: 20px; color: #fff; font-weight: bold; font-size: 0.8rem; }
+.nav-link-viva {
+  display: block;
+  padding: 12px 20px;
+  color: #000;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1rem;
+  border-left: 4px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.nav-link-viva:hover,
+.nav-link-viva.active {
+  background-color: #000;
+  color: #ffc107;
+  border-left-color: #fff;
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: 20px;
+}
+
+/* Contenido Principal Oscuro */
+.main-content-viva {
+  flex: 1;
+  padding: 30px;
+  background-color: #0d0d0d;
+  overflow-y: auto;
+}
+
+/* Cards (Standardized) */
+.glass-card {
+  background-color: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 20px;
+  height: 100%;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+/* Botones & Inputs */
+.btn-detail-viva {
+  background-color: #ffc107;
+  color: #000;
+  border: none;
+  padding: 6px 15px;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 0.85rem;
+  transition: 0.2s;
+}
+
+.btn-detail-viva:hover {
+  background-color: #e0ac00;
+  transform: translateY(-2px);
+}
+
+.form-control,
+.viva-input,
+.form-select {
+  background-color: #000 !important;
+  border: 1px solid #333 !important;
+  color: #fff !important;
+}
+
+.form-control:focus,
+.viva-input:focus,
+.form-select:focus {
+  border-color: #ffc107 !important;
+  box-shadow: 0 0 5px rgba(255, 193, 7, 0.5);
+}
+
+/* Table Styles (Standard Bootstrap Dark) */
+.table-dark {
+  background-color: transparent !important;
+}
+
+.table-hover tbody tr:hover {
+  background-color: rgba(255, 193, 7, 0.05);
+}
+
+/* Status Badges */
+.badge-status {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+
+.bg-pendiente {
+  background-color: #856404;
+  color: #fff;
+}
+
+.bg-asignado {
+  background-color: #0d6efd;
+  color: #fff;
+}
+
+.bg-finalizado {
+  background-color: #198754;
+  color: #fff;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #000;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ffc107;
+  border-radius: 4px;
+}

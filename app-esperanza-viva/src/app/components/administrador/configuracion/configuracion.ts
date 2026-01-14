@@ -15,18 +15,32 @@ export class Configuracion implements OnInit {
   estados: any[] = [];
   materias: any[] = [];
   rechazos: any[] = [];
-  horario: string = '09:00 - 17:00';
-  usuarioActivo: string = ''; // 🔹 Para el admin-badge
+
+  usuarioActivo: string = '';
+
+  // Configuración de Documentos (Headers)
+  headers: any = {
+    direccion: 'Av. Esperanza 123, Oficina 404',
+    telefono: '(01) 555-1234',
+    resolucion: 'Resolución Directoral N° 001-2024-MINJUS',
+    piePagina: 'Comprometidos con la paz social.'
+  };
+
+  // Inputs para nuevos registros
+  nuevoEstado: string = '';
+  nuevaMateria: string = '';
 
   constructor(
     private configService: ConfiguracionService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
     this.usuarioActivo = user.nombreCompleto || 'Administrador';
+
     this.cargarDatosSistema();
+    this.cargarHeadersLocales();
   }
 
   cargarDatosSistema() {
@@ -35,8 +49,39 @@ export class Configuracion implements OnInit {
     this.configService.listarPorCategoria('RECHAZO').subscribe(res => this.rechazos = res);
   }
 
+  cargarHeadersLocales() {
+    const stored = localStorage.getItem('config_headers');
+    if (stored) {
+      this.headers = JSON.parse(stored);
+    }
+  }
+
+  guardarHeaders() {
+    localStorage.setItem('config_headers', JSON.stringify(this.headers));
+    alert("✅ Encabezados y datos institucionales actualizados correctamente.");
+  }
+
+  agregarItem(categoria: string, valor: string) {
+    if (!valor.trim()) return;
+
+    const item = { categoria, valor: valor.toUpperCase(), descripcion: valor };
+    this.configService.guardarConfiguracion(item).subscribe({
+      next: () => {
+        alert("Agregado exitosamente");
+        this.cargarDatosSistema();
+        if (categoria === 'ESTADO') this.nuevoEstado = '';
+        if (categoria === 'MATERIA') this.nuevaMateria = '';
+      },
+      error: (err) => alert("Error al guardar")
+    });
+  }
+
+  subirFirma() {
+    alert("Funcionalidad de carga de imagen simulada. La firma se actualizaría en el servidor.");
+  }
+
   cerrarSesion() {
     localStorage.clear();
-    this.router.navigate(['/']);
+    this.router.navigate(['/consulta-expediente']);
   }
 }

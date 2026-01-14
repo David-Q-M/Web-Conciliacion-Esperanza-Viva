@@ -1,12 +1,22 @@
 package appesperanzaviva.backend.controller;
 
-import appesperanzaviva.backend.entity.ConfiguracionSistema;
-import appesperanzaviva.backend.repository.ConfiguracionRepository;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.lang.NonNull;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import appesperanzaviva.backend.entity.ConfiguracionSistema;
+import appesperanzaviva.backend.repository.ConfiguracionRepository;
 
 @RestController
 @RequestMapping("/api/configuracion")
@@ -28,13 +38,13 @@ public class ConfiguracionController {
     }
 
     @PostMapping
-    public ConfiguracionSistema guardar(@RequestBody ConfiguracionSistema config) {
+    public ConfiguracionSistema guardar(@RequestBody @NonNull ConfiguracionSistema config) {
         return repository.save(config);
     }
 
     // 🔹 NUEVO: Método para actualizar configuraciones existentes (Edición de Estados)
     @PutMapping("/{id}")
-    public ResponseEntity<ConfiguracionSistema> actualizar(@PathVariable Integer id, @RequestBody ConfiguracionSistema configDetails) {
+    public ResponseEntity<ConfiguracionSistema> actualizar(@PathVariable @NonNull Integer id, @RequestBody @NonNull ConfiguracionSistema configDetails) {
         return repository.findById(id).map(config -> {
             config.setClave(configDetails.getClave());
             config.setValor(configDetails.getValor());

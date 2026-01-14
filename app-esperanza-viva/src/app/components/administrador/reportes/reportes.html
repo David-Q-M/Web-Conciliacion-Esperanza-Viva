@@ -1,116 +1,146 @@
 <div class="admin-container">
   <aside class="sidebar-viva">
     <div class="logo-section">
-      <h5 class="m-0 fw-bold text-dark">Esperanza Viva</h5>
-      <small class="text-dark">centro de conciliación</small>
+      <h5 class="m-0 fw-bold text-dark">ESPERANZA VIVA</h5>
+      <small class="text-dark fw-bold">ADMINISTRACIÓN</small>
     </div>
     <nav class="sidebar-nav">
-      <a class="nav-link-viva" routerLink="/admin-dashboard" routerLinkActive="active">Inicio</a>
-      <a class="nav-link-viva" routerLink="/gestion-usuarios" routerLinkActive="active">Gestión de usuarios</a>
-      <a class="nav-link-viva" routerLink="/configuracion" routerLinkActive="active">Configuración</a>
-      <a class="nav-link-viva" routerLink="/auditoria" routerLinkActive="active">Auditoría</a>
-      <a class="nav-link-viva active" routerLink="/reportes" routerLinkActive="active">Reportes</a>
+      <a class="nav-link-viva" routerLink="/admin-dashboard" routerLinkActive="active">
+        <i class="bi bi-speedometer2 me-2"></i> Inicio
+      </a>
+      <a class="nav-link-viva" routerLink="/gestion-usuarios" routerLinkActive="active">
+        <i class="bi bi-people-fill me-2"></i> Gestión de usuarios
+      </a>
+      <a class="nav-link-viva" routerLink="/configuracion" routerLinkActive="active">
+        <i class="bi bi-sliders me-2"></i> Configuración
+      </a>
+      <a class="nav-link-viva" routerLink="/auditoria" routerLinkActive="active">
+        <i class="bi bi-shield-lock-fill me-2"></i> Auditoría
+      </a>
+      <a class="nav-link-viva active" routerLink="/reportes" routerLinkActive="active">
+        <i class="bi bi-bar-chart-fill me-2"></i> Reportes
+      </a>
     </nav>
-    <div class="sidebar-footer">
-      <button class="btn-logout-viva" (click)="cerrarSesion()">
-        <i class="bi bi-arrow-left"></i> Cerrar Sesión
+    <div class="sidebar-footer px-3">
+      <button class="btn w-100 fw-bold" style="background: #000; color: #fff;" (click)="cerrarSesion()">
+        <i class="bi bi-box-arrow-left"></i> Cerrar Sesión
       </button>
     </div>
   </aside>
 
   <main class="main-content-viva">
-    <header class="content-header d-flex justify-content-between align-items-center">
+    <header class="d-flex justify-content-between align-items-center mb-5">
       <div class="header-titles">
-        <h2 class="text-warning fw-bold m-0">Reportes Institucionales</h2>
-        <p class="text-secondary small m-0">Indicadores reales del sistema</p>
+        <h2 class="text-warning fw-bold m-0">Reportes e Inteligencia</h2>
+        <p class="text-secondary small m-0">Análisis detallado del rendimiento institucional</p>
       </div>
-      <div class="admin-badge"><span>{{ usuarioActivo }}</span></div>
+      <div class="admin-badge text-end">
+        <div class="text-white fw-bold">{{ usuarioActivo }}</div>
+        <small class="text-success">● En línea</small>
+      </div>
     </header>
 
+    <!-- Filtros y Acciones -->
+    <div class="glass-card mb-4 p-3 d-flex align-items-center gap-3 flex-wrap">
+      <div class="d-flex align-items-center gap-2">
+        <label class="text-secondary small">Desde:</label>
+        <input type="date" [(ngModel)]="fechaInicio"
+          class="form-control form-control-sm bg-dark text-white border-secondary">
+      </div>
+      <div class="d-flex align-items-center gap-2">
+        <label class="text-secondary small">Hasta:</label>
+        <input type="date" [(ngModel)]="fechaFin"
+          class="form-control form-control-sm bg-dark text-white border-secondary">
+      </div>
+      <button class="btn btn-warning btn-sm fw-bold" (click)="filtrarReportes()">
+        <i class="bi bi-funnel-fill"></i> Filtrar
+      </button>
+      <div class="ms-auto">
+        <button class="btn btn-outline-success btn-sm" (click)="exportarReporte()">
+          <i class="bi bi-file-earmark-excel-fill"></i> Exportar Excel
+        </button>
+      </div>
+    </div>
+
     <div class="row g-4 mt-2">
+      <!-- Gráfico de Barras (Simulado con CSS) -->
       <div class="col-md-6">
-        <div class="info-card-wireframe p-4 h-100">
-          <h6 class="text-warning mb-4">Solicitudes por estado</h6>
-          
+        <div class="glass-card h-100">
+          <h6 class="text-warning-neon mb-4">📊 Estado de Solicitudes</h6>
+
           <div class="mb-4">
-            <div class="d-flex justify-content-between small mb-2 text-white">
-              <span>Pendiente</span> 
+            <div class="d-flex justify-content-between small mb-1 text-white">
+              <span>Pendientes</span>
               <span class="fw-bold">{{ data.pendientes }}</span>
             </div>
-            <div class="progress-wire-bg">
-              <div class="progress-wire-bar" 
-                   [style.width.%]="(data.pendientes / (data.totalSolicitudes || 1)) * 100">
-              </div>
+            <div class="progress" style="height: 10px; background: #333;">
+              <div class="progress-bar bg-danger" role="progressbar"
+                [style.width.%]="(data.pendientes / (data.totalSolicitudes || 1)) * 100"></div>
             </div>
           </div>
 
           <div class="mb-4">
-            <div class="d-flex justify-content-between small mb-2 text-white">
-              <span>Asignado</span> 
+            <div class="d-flex justify-content-between small mb-1 text-white">
+              <span>En Proceso (Asignados)</span>
               <span class="fw-bold">{{ data.asignados }}</span>
             </div>
-            <div class="progress-wire-bg">
-              <div class="progress-wire-bar" 
-                   [style.width.%]="(data.asignados / (data.totalSolicitudes || 1)) * 100">
-              </div>
+            <div class="progress" style="height: 10px; background: #333;">
+              <div class="progress-bar bg-warning" role="progressbar"
+                [style.width.%]="(data.asignados / (data.totalSolicitudes || 1)) * 100"></div>
             </div>
           </div>
 
           <div class="mb-2">
-            <div class="d-flex justify-content-between small mb-2 text-white">
-              <span>Finalizado</span> 
+            <div class="d-flex justify-content-between small mb-1 text-white">
+              <span>Finalizados</span>
               <span class="fw-bold">{{ data.finalizadosContador }}</span>
             </div>
-            <div class="progress-wire-bg">
-              <div class="progress-wire-bar" 
-                   [style.width.%]="(data.finalizadosContador / (data.totalSolicitudes || 1)) * 100">
-              </div>
+            <div class="progress" style="height: 10px; background: #333;">
+              <div class="progress-bar bg-success" role="progressbar"
+                [style.width.%]="(data.finalizadosContador / (data.totalSolicitudes || 1)) * 100"></div>
             </div>
           </div>
         </div>
       </div>
 
+      <!-- Carga de Trabajo -->
       <div class="col-md-6">
-        <div class="info-card-wireframe p-4 h-100">
-          <h6 class="text-warning mb-4">Carga de trabajo</h6>
+        <div class="glass-card h-100">
+          <h6 class="text-warning mb-4">👥 Carga de Trabajo (Personal Activo)</h6>
           <div class="scroll-carga" style="max-height: 250px; overflow-y: auto;">
-            <div *ngFor="let p of listaPersonalCarga" class="work-item-black-wire d-flex justify-content-between align-items-center mb-2">
+            <div *ngFor="let p of listaPersonalCarga"
+              class="d-flex justify-content-between align-items-center mb-3 p-2 bg-dark rounded border border-secondary">
               <div>
                 <div class="fw-bold text-white">{{ p.nombreCompleto }}</div>
-                <small class="text-secondary">{{ p.usuario }} | {{ p.rol }}</small>
+                <small class="text-secondary">{{ p.usuario }} | {{ p.roles?.join(', ') || p.rol }}</small>
               </div>
-              <span class="text-warning fw-bold">{{ p.cantidadCasos || 0 }} casos</span>
+              <span class="badge bg-primary rounded-pill">{{ p.cantidadCasos || 0 }} casos</span>
             </div>
             <p *ngIf="listaPersonalCarga.length === 0" class="text-secondary small text-center mt-5">
-              No hay personal operativo registrado.
+              No hay personal operativo activo en este momento.
             </p>
           </div>
         </div>
       </div>
     </div>
 
+    <!-- Overview Cards -->
     <div class="row mt-4">
       <div class="col-12">
-        <div class="info-card-wireframe p-4">
-          <h6 class="text-warning mb-4">Indicadores Clave</h6>
-          <div class="row g-3">
-            <div class="col-md-4">
-              <div class="indicator-box-black">
-                <h2 class="text-warning fw-bold m-0">{{ data.totalSolicitudes }}</h2>
-                <small class="text-secondary">Total Solicitudes</small>
-              </div>
+        <div class="glass-card">
+          <h6 class="text-warning mb-4">📈 Resumen del Periodo</h6>
+          <div class="row g-3 text-center">
+            <div class="col-md-4 border-end border-secondary">
+              <h2 class="text-white fw-bold m-0">{{ data.totalSolicitudes }}</h2>
+              <small class="text-secondary text-uppercase">Solicitudes Totales</small>
+            </div>
+            <div class="col-md-4 border-end border-secondary">
+              <h2 class="text-success fw-bold m-0">{{ data.tasaFinalizacion }}%</h2>
+              <small class="text-secondary text-uppercase">Tasa de Resolución</small>
             </div>
             <div class="col-md-4">
-              <div class="indicator-box-black">
-                <h2 class="text-success fw-bold m-0">{{ data.tasaFinalizacion }}%</h2>
-                <small class="text-secondary">Tasa de Finalizacion</small>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="indicator-box-black">
-                <h2 class="text-primary fw-bold m-0">{{ data.personalActivo }}</h2>
-                <small class="text-secondary">Personal Activo</small>
-              </div>
+              <h2 class="text-primary fw-bold m-0">{{ data.personalActivo }}</h2>
+              <small class="text-secondary text-uppercase">Conciliadores/Abogados</small>
             </div>
           </div>
         </div>

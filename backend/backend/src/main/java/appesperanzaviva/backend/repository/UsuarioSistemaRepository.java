@@ -2,17 +2,19 @@ package appesperanzaviva.backend.repository;
 
 import appesperanzaviva.backend.entity.UsuarioSistema;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 import java.util.Optional;
 import java.util.List;
 
+@Repository
 public interface UsuarioSistemaRepository extends JpaRepository<UsuarioSistema, Integer> {
-    
-    // Para el proceso de Login
+
+    // Busca un usuario por su login (usado en autenticación)
     Optional<UsuarioSistema> findByUsuario(String usuario);
-    
-    // Para estadísticas de Reportes
+
+    // Cuenta usuarios por estado (Activo/Inactivo) para el Dashboard
     long countByEstado(String estado);
-    
-    // 🔹 NUEVO: Para listar personal por rol (Ej: Conciliadores para el Director)
-    List<UsuarioSistema> findByRol(String rol);
+
+    // Filtra personal por rol (Ej: DIRECTOR, CONCILIADOR)
+    List<UsuarioSistema> findByRoles(String rol);
 }

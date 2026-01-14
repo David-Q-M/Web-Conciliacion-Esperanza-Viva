@@ -1,12 +1,5 @@
 package appesperanzaviva.backend.service.impl;
 
-import appesperanzaviva.backend.entity.Solicitud;
-import appesperanzaviva.backend.repository.SolicitudRepository;
-import appesperanzaviva.backend.service.SolicitudService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,6 +8,15 @@ import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import appesperanzaviva.backend.entity.Solicitud;
+import appesperanzaviva.backend.repository.SolicitudRepository;
+import appesperanzaviva.backend.service.SolicitudService;
 
 @Service
 public class SolicitudServiceImpl implements SolicitudService {
@@ -28,7 +30,7 @@ public class SolicitudServiceImpl implements SolicitudService {
     private final Path root = Paths.get("uploads");
 
     @Override
-    public Solicitud crearSolicitudConArchivos(Solicitud solicitud, MultipartFile dni, MultipartFile pruebas,
+        public Solicitud crearSolicitudConArchivos(Solicitud solicitud, MultipartFile dni, MultipartFile pruebas,
             MultipartFile firma) {
         try {
             if (!Files.exists(root)) {
@@ -80,7 +82,7 @@ public class SolicitudServiceImpl implements SolicitudService {
     }
 
     @Override
-    public Optional<Solicitud> buscarPorId(Long id) {
+    public Optional<Solicitud> buscarPorId(@NonNull Long id) {
         return repository.findById(id);
     }
 
@@ -91,7 +93,7 @@ public class SolicitudServiceImpl implements SolicitudService {
 
     // 🔹 Implementación de actualización para el Director
     @Override
-    public Solicitud actualizarEstado(Long id, String nuevoEstado, String observacion) {
+    public Solicitud actualizarEstado(@NonNull Long id, String nuevoEstado, String observacion) {
         return repository.findById(id).map(s -> {
             s.setEstado(nuevoEstado);
             s.setObservacion(observacion);
@@ -100,7 +102,7 @@ public class SolicitudServiceImpl implements SolicitudService {
     }
 
     @Override
-    public Solicitud designarConciliador(Long id, Long conciliadorId) {
+    public Solicitud designarConciliador(@NonNull Long id, @NonNull Long conciliadorId) {
         Solicitud solicitud = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
 
@@ -115,7 +117,7 @@ public class SolicitudServiceImpl implements SolicitudService {
     }
 
     @Override
-    public List<Solicitud> listarPorConciliador(Long conciliadorId) {
+    public List<Solicitud> listarPorConciliador(@NonNull Long conciliadorId) {
         return repository.findByConciliadorId(conciliadorId);
     }
 }

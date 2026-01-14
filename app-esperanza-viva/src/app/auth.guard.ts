@@ -13,22 +13,33 @@ export const authGuard = (rolesPermitidos: string[]) => {
     }
 
     const user = JSON.parse(userJson);
-    const rolUsuario = user.rol ? user.rol.toUpperCase() : '';
+    // 🛡️ Soporte para múltiples roles (Backend devuelve 'roles': [])
+    const rolesUsuario = user.roles || (user.rol ? [user.rol] : []);
 
-    // Si el usuario tiene el rol necesario, adelante
-    if (rolesPermitidos.includes(rolUsuario)) {
+    // Normalizamos a mayúsculas
+    const rolesUpper = rolesUsuario.map((r: string) => r.toUpperCase());
+
+    // Si el usuario tiene AL MENOS UNO de los roles permitidos, adelante
+    const tienePermiso = rolesPermitidos.some(r => rolesUpper.includes(r));
+
+    if (tienePermiso) {
       return true;
-    } 
+    }
 
-    // SI NO TIENE EL ROL, lo mandamos a su panel correspondiente (NO al de admin)
-    console.warn(`Acceso restringido. Redirigiendo según rol: ${rolUsuario}`);
-    
-    if (rolUsuario === 'CONCILIADOR') {
-      router.navigate(['/conciliador/mis-casos']);
-    } else if (rolUsuario === 'DIRECTOR') {
-      router.navigate(['/director/bandeja-solicitudes']);
-    } else if (rolUsuario === 'ADMINISTRADOR') {
+    // SI NO TIENE EL ROL, lo mandamos a su panel correspondiente (Prioridad según rol)
+    console.warn(`Acceso restringido. Roles: ${rolesUpper}`);
+
+    if (rolesUpper.includes('ADMINISTRADOR')) {
       router.navigate(['/admin-dashboard']);
+    } else if (rolesUpper.includes('DIRECTOR')) {
+      router.navigate(['/director/bandeja-solicitudes']);
+    } else if (rolesUpper.includes('CONCILIADOR')) {
+      router.navigate(['/conciliador/mis-casos']);
+    } else if (rolesUpper.includes('ABOGADO')) {
+      // Asumiendo que existe, si no, redirigir a login
+      router.navigate(['/abogado/bandeja-pendientes']);
+    } else if (rolesUpper.includes('NOTIFICADOR')) {
+      router.navigate(['/notificador/bandeja-notificador']);
     } else {
       router.navigate(['/login-admin']);
     }

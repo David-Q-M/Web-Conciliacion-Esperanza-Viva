@@ -1,44 +1,64 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UsuarioService {
-  // Asegúrate de que este puerto coincida con tu backend de Spring Boot
-  private apiUrl = 'http://localhost:8080/api/usuarios';
+  
+  // 🔹 SINCRONIZADO: Debe coincidir exactamente con el @RequestMapping del Backend
+  private apiUrl = 'http://localhost:8080/api/usuarios-sistema';
 
   constructor(private http: HttpClient) { }
 
-  // 1. Obtener lista de empleados registrados
+  /**
+   * 1. Obtener lista de empleados registrados (DNI, Teléfono, etc. incluidos)
+   * Vinculado a UsuarioController.listar()
+   */
   listarUsuarios(): Observable<any[]> {
     return this.http.get<any[]>(this.apiUrl);
   }
 
-  // 2. Registrar nuevo personal administrativo
+  /**
+   * 2. Registrar nuevo personal administrativo con campos completos (Wireframe 13)
+   * Vinculado a UsuarioController.registrar()
+   */
   registrarUsuario(usuario: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/registrar`, usuario);
   }
 
-  // 3. Actualizar datos de un empleado existente
+  /**
+   * 3. Actualizar datos de un empleado (incluye nuevos campos profesionales)
+   * Vinculado a UsuarioController.actualizar()
+   */
   actualizarUsuario(id: number, usuario: any): Observable<any> {
-    // 🔹 IMPORTANTE: Verificamos que el ID se pase correctamente en la URL
     return this.http.put(`${this.apiUrl}/${id}`, usuario);
   }
 
-  // 4. Eliminar permanentemente a un usuario
+  /**
+   * 4. Eliminar permanentemente a un usuario
+   * Vinculado a UsuarioController.eliminar()
+   */
   eliminarUsuario(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
 
-  // 5. Autenticación de roles (ADMINISTRADOR, DIRECTOR, etc.)
+  /**
+   * 5. Autenticación de roles (ADMINISTRADOR, DIRECTOR, CONCILIADOR)
+   * Vinculado a UsuarioController.login()
+   */
   login(credentials: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/login`, credentials);
   }
 
-  // 6. Obtener personal por rol (Útil para la pantalla del Director)
+  /**
+   * 6. Obtener personal por rol específico
+   * Útil para que el Director elija qué Conciliador asignar (Wireframe 19)
+   */
   listarPorRol(rol: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/rol/${rol}`);
+    // Convertimos a mayúsculas para asegurar coincidencia con la DB
+    const rolUpper = rol.toUpperCase();
+    return this.http.get<any[]>(`${this.apiUrl}/rol/${rolUpper}`);
   }
 }

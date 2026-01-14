@@ -1,36 +1,80 @@
-.admin-container { display: flex; min-height: 100vh; background-color: #000; }
-.sidebar-viva { width: 260px; background-color: #ffc107; display: flex; flex-direction: column; }
-.main-content-viva { flex: 1; padding: 40px; background-color: #0d0d0d; overflow-y: auto; }
-
-/* Header y Badge unificados */
-.admin-badge span { 
-  border: 1px solid #ffc107; 
-  color: #ffc107; 
-  padding: 5px 15px; 
-  border-radius: 5px; 
-  font-size: 0.8rem; 
+/* Panel Admin - Estilo Original Esperanza Viva */
+.admin-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: #000;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.text-cian { color: #0dcaf0 !important; }
-
-/* Tabla de Auditoría */
-.table-viva-container { background-color: #121212; border-radius: 12px; padding: 15px; border: 1px solid #222; }
-.table-viva { width: 100%; border-collapse: collapse; color: #fff; }
-.table-viva th { text-align: left; padding: 15px; border-bottom: 1px solid #333; font-size: 0.85rem; font-weight: normal; }
-.table-viva td { padding: 15px; border-bottom: 1px solid #222; font-size: 0.9rem; }
-
-.role-pill { padding: 4px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; color: #fff; }
-
-/* Botón Exportar */
-.btn-register-viva { 
-  background-color: #ffc107; 
-  color: #000; 
-  border: none; 
-  border-radius: 10px; 
-  font-weight: bold; 
-  cursor: pointer; 
-  transition: 0.3s;
+/* Sidebar Amarillo Original */
+.sidebar-viva {
+  width: 260px;
+  background-color: #ffc107;
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  padding: 20px 0;
 }
-.btn-register-viva:hover { background-color: #e5ac00; transform: scale(1.02); }
 
-.btn-logout-viva { background: none; border: none; font-weight: bold; color: #000; cursor: pointer; padding: 20px; }
+.logo-section {
+  padding: 0 20px 30px 20px;
+  border-bottom: 2px solid #000;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.nav-link-viva {
+  display: block;
+  padding: 12px 20px;
+  color: #000;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1rem;
+  border-left: 4px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.nav-link-viva:hover,
+.nav-link-viva.active {
+  background-color: #000;
+  color: #ffc107;
+  border-left-color: #fff;
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: 20px;
+}
+
+/* Contenido Principal Oscuro */
+.main-content-viva {
+  flex: 1;
+  padding: 30px;
+  background-color: #0d0d0d;
+  overflow-y: auto;
+}
+
+/* Cards */
+.glass-card {
+  background-color: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 20px;
+  height: 100%;
+}
+
+.table-hover tbody tr:hover {
+  background-color: rgba(255, 193, 7, 0.05);
+}
+
+.form-control {
+  background-color: #000 !important;
+  border-color: #333 !important;
+  color: #fff !important;
+}
+
+.form-control:focus {
+  border-color: #ffc107 !important;
+}

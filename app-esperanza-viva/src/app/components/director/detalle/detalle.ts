@@ -16,6 +16,7 @@ export class DetalleDirector implements OnInit {
   expediente: any = {};
   conciliadores: any[] = [];
   conciliadorId: any = null;
+  conciliadorSeleccionado: any = null; 
   mostrarModal = false;
   observacionTexto = '';
 
@@ -36,62 +37,48 @@ export class DetalleDirector implements OnInit {
 
   cargarDetalle(id: number) {
     this.solicitudService.obtenerPorId(id).subscribe({
-      next: (res) => this.expediente = res,
+      next: (res) => {
+        this.expediente = res;
+        console.log("Datos cargados de MariaDB:", res);
+      },
       error: (err) => console.error("Error al cargar expediente:", err)
     });
   }
 
   cargarConciliadores() {
-    this.usuarioService.listarPorRol('CONCILIADOR').subscribe({
-      next: (res) => {
-        this.conciliadores = res.filter(u => u.estado === 'ACTIVO');
-      },
-      error: (err) => console.error("Error al cargar conciliadores:", err)
+    this.usuarioService.listarPorRol('CONCILIADOR').subscribe(res => {
+      this.conciliadores = res.map((u: any) => ({
+        ...u,
+        // Unificamos nombre y estado para que se vea profesional en el select
+        labelMenu: `${u.nombre_completo || u.nombreCompleto} — ${u.estado === 'ACTIVO' ? 'Disponible' : 'Ocupado'}`
+      }));
     });
   }
 
-  abrirModalObservacion() { this.mostrarModal = true; }
+  // Se dispara al elegir un profesional en el desplegable
+  onConciliadorChange() {
+    this.conciliadorSeleccionado = this.conciliadores.find(c => c.id == this.conciliadorId);
+  }
 
   actualizarEstado(nuevoEstado: string) {
-    if ((nuevoEstado === 'OBSERVADO' || nuevoEstado === 'RECHAZADO') &&
-      (!this.observacionTexto || this.observacionTexto.trim().length < 5)) {
-      alert("Para cambiar el estado a " + nuevoEstado + ", debe ingresar una observación detallada.");
+    if ((nuevoEstado === 'OBSERVADO' || nuevoEstado === 'RECHAZADO') && !this.observacionTexto) {
+      this.mostrarModal = true;
       return;
     }
-
     this.solicitudService.actualizarEstado(this.expediente.id, nuevoEstado, this.observacionTexto).subscribe({
       next: () => {
+        this.expediente.status = nuevoEstado;
         this.mostrarModal = false;
-        alert("Estado actualizado a " + nuevoEstado);
-        // 🔹 Cambio: Actualizamos el estado localmente para que se refleje en la UI sin navegar
-        this.expediente.estado = nuevoEstado;
-
-        // Si se rechazó u observó, quizás sí queramos volver, pero si se aprobó, nos quedamos para designar
-        if (nuevoEstado !== 'APROBADO' && nuevoEstado !== 'PENDIENTE') {
-          this.router.navigate(['/director/bandeja-solicitudes']);
-        }
-      },
-      error: (err) => alert("Error: " + err.message)
+        alert("Estado actualizado correctamente a: " + nuevoEstado);
+      }
     });
   }
 
-  // 🔹 NUEVO: Se conecta con la funcionalidad que acabamos de agregar al backend
-  generarFormatoB() {
-    if (!this.conciliadorId) {
-      alert("Debe seleccionar un conciliador");
-      return;
-    }
-
-    // Llamamos al método designar (necesitaremos agregarlo al servicio también)
-    this.solicitudService.designarConciliador(this.expediente.id, this.conciliadorId).subscribe({
-      next: () => {
-        alert("Conciliador designado correctamente. El expediente aparecerá en su bandeja.");
-        this.router.navigate(['/director/bandeja-solicitudes']);
-      },
-      error: (err) => {
-        console.error(err);
-        alert("Error al designar conciliador");
-      }
+  confirmarDesignacion() {
+    if (!this.conciliadorId) return;
+    this.solicitudService.designarConciliador(this.expediente.id, this.conciliadorId).subscribe(() => {
+      alert("Designación guardada exitosamente en la base de datos.");
+      this.router.navigate(['/director/bandeja-solicitudes']);
     });
   }
 }

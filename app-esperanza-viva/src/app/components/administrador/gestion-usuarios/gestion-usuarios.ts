@@ -17,15 +17,22 @@ export class GestionUsuarios implements OnInit {
   modoEdicion = false;
   usuarioActivo: string = '';
 
+  listaRoles = ['ADMINISTRADOR', 'DIRECTOR', 'CONCILIADOR', 'ABOGADO', 'NOTIFICADOR'];
+
   usuarioForm: any = {
     id: null,
     nombreCompleto: '',
+    dni: '',
+    telefono: '',
+    direccion: '',
+    correoElectronico: '',
     usuario: '',
     contrasena: '',
-    rol: 'DIRECTOR',
+    roles: [], // 🔹 CAMBIO: Array de roles
     nroRegistro: '',
     nroColegiatura: '',
-    nroEspecializacion: ''
+    nroEspecializacion: '',
+    estado: 'ACTIVO'
   };
 
   constructor(private usuarioService: UsuarioService, private router: Router) { }
@@ -39,8 +46,30 @@ export class GestionUsuarios implements OnInit {
   cargarUsuarios(): void {
     this.usuarioService.listarUsuarios().subscribe({
       next: (res) => this.usuarios = res,
-      error: (err) => console.error("Error cargando personal", err)
+      error: (err) => console.error("Error al cargar personal", err)
     });
+  }
+
+  // 🛡️ Validación estricta: DNI 8 dígitos, Celular 9 dígitos (empieza con 9)
+  esFormularioValido(): boolean {
+    const f = this.usuarioForm;
+    const regexCelular = /^9[0-9]{8}$/;
+    const regexDNI = /^[0-9]{8}$/;
+
+    const basico = f.nombreCompleto.length > 5 &&
+      regexDNI.test(f.dni) &&
+      regexCelular.test(f.telefono) &&
+      f.usuario.length >= 4;
+
+    const seguridad = this.modoEdicion ? true : (f.contrasena && f.contrasena.length >= 6);
+
+    let credencial = true;
+    const roles = f.roles || [];
+
+    if (roles.includes('CONCILIADOR')) credencial = !!(f.nroRegistro?.length > 2);
+    if (roles.includes('ABOGADO')) credencial = !!(f.nroColegiatura?.length > 2);
+
+    return !!(basico && seguridad && credencial);
   }
 
   abrirRegistro() {
@@ -51,31 +80,36 @@ export class GestionUsuarios implements OnInit {
 
   abrirEdicion(u: any) {
     this.modoEdicion = true;
-    this.usuarioForm = { ...u }; // 🔹 Clonación profunda para edición segura
+    this.usuarioForm = { ...u };
+    // Asegurar que roles sea un array (backend devuelve Set/List, aquí llega como array JSON)
+    if (!this.usuarioForm.roles) {
+      this.usuarioForm.roles = this.usuarioForm.rol ? [this.usuarioForm.rol] : [];
+    }
     this.mostrarModal = true;
+  }
+
+  toggleRol(rol: string) {
+    const roles = this.usuarioForm.roles || [];
+    const index = roles.indexOf(rol);
+    if (index > -1) {
+      roles.splice(index, 1);
+    } else {
+      roles.push(rol);
+    }
+    this.usuarioForm.roles = roles;
   }
 
   resetForm() {
     this.usuarioForm = {
-      id: null, nombreCompleto: '', usuario: '', contrasena: '',
-      rol: 'DIRECTOR', nroRegistro: '', nroColegiatura: '', nroEspecializacion: ''
+      id: null, nombreCompleto: '', dni: '', telefono: '', direccion: '',
+      correoElectronico: '', usuario: '', contrasena: '', roles: [], // 🔹 Reset roles []
+      nroRegistro: '', nroColegiatura: '', nroEspecializacion: '', estado: 'ACTIVO'
     };
   }
 
   guardar() {
-    // 🛡️ Validación: Usuario y contraseña mínimos
-    if (!this.usuarioForm.usuario || this.usuarioForm.usuario.length < 5) {
-      alert("El nombre de usuario debe tener al menos 5 caracteres.");
-      return;
-    }
-    // La contraseña es obligatoria al registrar, pero opcional al editar (si no se quiere cambiar)
-    if (!this.modoEdicion && (!this.usuarioForm.contrasena || this.usuarioForm.contrasena.length < 5)) {
-      alert("La contraseña debe tener al menos 5 caracteres.");
-      return;
-    }
-    // Si estamos editando y escribieron algo en la contraseña, validamos longitud
-    if (this.modoEdicion && this.usuarioForm.contrasena && this.usuarioForm.contrasena.length < 5) {
-      alert("La nueva contraseña debe tener al menos 5 caracteres.");
+    if (!this.esFormularioValido()) {
+      alert("⚠️ Error: Verifique que el Celular tenga 9 dígitos (empieza con 9) y el DNI 8 dígitos.");
       return;
     }
 
@@ -87,20 +121,36 @@ export class GestionUsuarios implements OnInit {
       next: () => {
         this.mostrarModal = false;
         this.cargarUsuarios();
-        alert(this.modoEdicion ? "Datos actualizados exitosamente" : "Personal registrado con éxito");
+        alert(this.modoEdicion ? "✅ Datos actualizados" : "✅ Personal registrado");
       },
-      error: (err) => alert("Error: " + err.message)
+      error: (err) => alert("❌ Error: " + err.message)
     });
   }
 
   eliminarUsuario(id: number, nombre: string) {
-    if (confirm(`¿Está seguro de eliminar permanentemente a ${nombre}?`)) {
+    if (confirm(`¿Eliminar permanentemente a ${nombre}?`)) {
       this.usuarioService.eliminarUsuario(id).subscribe(() => this.cargarUsuarios());
+    }
+  }
+
+  toggleBloqueo(u: any) {
+    const nuevoEstado = u.estado === 'ACTIVO' ? 'INACTIVO' : 'ACTIVO';
+    const accion = nuevoEstado === 'ACTIVO' ? 'desbloquear' : 'bloquear';
+
+    if (confirm(`¿Seguro que deseas ${accion} el acceso de ${u.nombreCompleto}?`)) {
+      const usuarioActualizado = { ...u, estado: nuevoEstado };
+      this.usuarioService.actualizarUsuario(u.id, usuarioActualizado).subscribe({
+        next: () => {
+          this.cargarUsuarios();
+          alert(`Usuario ${nuevoEstado === 'ACTIVO' ? 'ACTIVADO' : 'SUSPENDIDO'} correctamente.`);
+        },
+        error: (err) => alert("Error al cambiar estado")
+      });
     }
   }
 
   cerrarSesion() {
     localStorage.clear();
-    this.router.navigate(['/']);
+    this.router.navigate(['/consulta-expediente']);
   }
 }
