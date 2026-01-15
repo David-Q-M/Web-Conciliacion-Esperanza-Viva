@@ -1,23 +1,197 @@
-.admin-container { background-color: #000; min-height: 100vh; display: flex; font-family: 'Segoe UI', sans-serif; }
-.sidebar-viva { width: 260px; background-color: #ffc107; height: 100vh; position: fixed; }
-.main-content-viva { flex: 1; margin-left: 260px; padding: 40px; color: #fff; background-color: #0d0d0d; }
-
-.info-card-wireframe { background-color: #1a1a1a; border: 1px solid #333; border-radius: 15px; height: 100%; transition: 0.3s; }
-.viva-input-black { background-color: #000; border: 1px solid #444; color: #fff; width: 100%; padding: 12px; border-radius: 8px; outline: none; cursor: pointer; }
-
-/* 🔹 Botones */
-.btn-register-viva { background-color: #ffc107; color: #000; border: none; font-weight: bold; border-radius: 8px; transition: 0.3s; }
-.btn-register-viva:hover { background-color: #e0ac00; transform: scale(1.02); }
-
-.btn-green-viva { 
-  background-color: #28a745; 
-  color: #fff; 
-  border: none; 
-  font-weight: bold; 
-  border-radius: 8px; 
-  transition: 0.3s; 
-  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+/* --- LAYOUT GENERAL --- */
+.admin-container {
+  background-color: #0d0d0d;
+  min-height: 100vh;
+  display: flex;
+  font-family: 'Segoe UI', sans-serif;
 }
-.btn-green-viva:hover { background-color: #218838; transform: scale(1.02); box-shadow: 0 6px 20px rgba(40, 167, 69, 0.5); }
 
-.admin-badge span { border: 1px solid #ffc107; color: #ffc107; padding: 5px 15px; border-radius: 5px; font-weight: bold; }
+/* --- SIDEBAR --- */
+.sidebar-viva {
+  width: 260px;
+  background-color: #ffd600;
+  /* Intense Yellow */
+  height: 100vh;
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+}
+
+.logo-section h5 {
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+.logo-section small {
+  font-weight: 700;
+  opacity: 0.9;
+}
+
+.nav-link-viva {
+  display: block;
+  padding: 15px 25px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #000;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.nav-link-viva.active,
+.nav-link-viva:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  padding-left: 30px;
+}
+
+.btn-logout-viva {
+  background: transparent;
+  border: 2px solid #000;
+  color: #000;
+  font-weight: bold;
+  border-radius: 8px;
+  padding: 10px;
+  transition: 0.3s;
+}
+
+.btn-logout-viva:hover {
+  background: #000;
+  color: #ffd600;
+}
+
+/* --- MAIN CONTENT --- */
+.main-content-viva {
+  flex: 1;
+  margin-left: 260px;
+  padding: 50px;
+  background-color: #121212;
+  color: #fff;
+}
+
+/* --- HEADER --- */
+h2.text-warning {
+  color: #ffc107 !important;
+  font-size: 2rem;
+}
+
+.admin-badge {
+  text-align: right;
+}
+
+.admin-badge span {
+  display: block;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.admin-badge small {
+  display: block;
+  color: #ccc;
+}
+
+/* --- CARDS & PANELS --- */
+.info-card-wireframe {
+  background-color: #1a1a1a;
+  border: 1px solid #ffc107;
+  /* Yellow Border as per image */
+  border-radius: 20px;
+  padding: 25px;
+  position: relative;
+  height: 100%;
+}
+
+/* Inputs design matching image */
+.viva-input-black {
+  background: #000;
+  border: 1px solid #ffc107;
+  color: #ffc107;
+  width: 100%;
+  padding: 10px 15px;
+  border-radius: 12px;
+  outline: none;
+  font-size: 0.95rem;
+}
+
+.viva-input-black::placeholder {
+  color: #666;
+}
+
+.viva-input-black:focus {
+  box-shadow: 0 0 10px rgba(255, 193, 7, 0.2);
+}
+
+/* --- SELECTION LIST --- */
+.notificador-item {
+  background-color: #222;
+  border: 1px solid #333;
+  transition: 0.2s;
+}
+
+.notificador-item:hover {
+  border-color: #ffc107;
+  background-color: #2a2a2a;
+}
+
+.notificador-item.selected {
+  background-color: #ffc107;
+  color: #000;
+}
+
+.notificador-item.selected .badge {
+  background-color: #000 !important;
+  color: #ffc107 !important;
+}
+
+/* --- BUTTONS --- */
+/* Word - Cyan/Blue */
+.btn-cyan-viva {
+  background-color: #00bcd4;
+  /* Cyan color from image */
+  color: #000;
+  font-weight: bold;
+  border: none;
+  border-radius: 25px;
+  /* Pill shape */
+  padding: 12px 30px;
+  font-size: 1rem;
+  transition: 0.3s;
+}
+
+.btn-cyan-viva:hover {
+  background-color: #00abc1;
+  transform: translateY(-2px);
+}
+
+/* PDF - Yellow */
+.btn-yellow-viva {
+  background-color: #ffc107;
+  color: #000;
+  font-weight: bold;
+  border: none;
+  border-radius: 25px;
+  padding: 12px 30px;
+  font-size: 1rem;
+  transition: 0.3s;
+}
+
+.btn-yellow-viva:hover {
+  background-color: #e0a800;
+  transform: translateY(-2px);
+}
+
+/* Guardar - Green */
+.btn-green-viva {
+  background-color: #00e676;
+  /* Bright Green */
+  color: #000;
+  font-weight: bold;
+  border: none;
+  border-radius: 25px;
+  padding: 12px 30px;
+  font-size: 1rem;
+  transition: 0.3s;
+}
+
+.btn-green-viva:hover {
+  background-color: #00c853;
+  transform: translateY(-2px);
+}

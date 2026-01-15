@@ -1,0 +1,119 @@
+<div class="d-flex" style="height: 100vh; overflow: hidden;">
+    <!-- Sidebar -->
+    <div class="sidebar bg-warning d-flex flex-column p-4" style="width: 280px; height: 100vh;">
+        <div class="mb-5">
+            <h2 class="h4 fw-bold mb-0 text-dark">Esperanza Viva</h2>
+            <p class="small text-dark">centro de conciliacion</p>
+        </div>
+
+        <nav class="nav flex-column gap-3">
+            <a routerLink="/conciliador/mis-casos" routerLinkActive="active"
+                class="nav-link text-dark fw-bold d-flex align-items-center">
+                <i class="bi bi-envelope me-2 fs-5"></i> Mis Casos
+            </a>
+            <a routerLink="/conciliador/agenda" routerLinkActive="active"
+                class="nav-link text-dark fw-bold d-flex align-items-center">
+                <i class="bi bi-people me-2 fs-5"></i> Mi Agenda
+            </a>
+            <a href="#" class="nav-link text-dark fw-bold d-flex align-items-center">
+                <span class="fs-4 me-2"></span> Historial
+            </a>
+        </nav>
+
+        <div class="mt-auto">
+            <button class="btn btn-link text-dark text-decoration-none fw-bold d-flex align-items-center p-0">
+                <i class="bi bi-arrow-left me-2"></i> Cerrar Sesion
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-grow-1 bg-dark text-white p-4" style="height: 100vh; overflow-y: auto;">
+        <!-- Header -->
+        <header class="d-flex justify-content-between align-items-start mb-4 border-bottom border-warning pb-2">
+            <div>
+                <h1 class="h4 text-warning mb-1">GENERACION DE ACTA-AMBAS PARTES</h1>
+                <p class="text-secondary small mb-0">Evaluacion de Designacion</p>
+            </div>
+            <div class="text-end text-white">
+                <p class="mb-0 small">Dr. {{ conciliadorNombre }}</p>
+                <p class="small text-secondary mb-0">Director</p>
+            </div>
+        </header>
+
+        <p class="text-secondary small mb-3">Inasistencia de ambas partes</p>
+
+        <div class="row g-4">
+            <!-- Left Column -->
+            <div class="col-md-6">
+                <!-- Control de Asistencia -->
+                <div class="info-card-wireframe p-3 mb-4">
+                    <h5 class="text-white small mb-2">Control de Asistencia</h5>
+                    <p class="text-secondary x-small mb-3">Hora programada: 10:00 AM. (se recomienda esperar 10-15 min)
+                    </p>
+
+                    <div
+                        class="d-flex justify-content-between align-items-center mb-2 bg-black p-2 rounded border border-secondary">
+                        <span class="text-white small">1. SOLICITANTE: {{ audiencia?.solicitud?.solicitante?.nombres }}
+                            {{ audiencia?.solicitud?.solicitante?.apellidos }}</span>
+                        <span class="badge-status-red">Falto</span>
+                    </div>
+
+                    <div
+                        class="d-flex justify-content-between align-items-center mb-2 bg-black p-2 rounded border border-secondary">
+                        <span class="text-white small">1. INVITADO: {{ audiencia?.solicitud?.invitado?.nombres }} {{
+                            audiencia?.solicitud?.invitado?.apellidos }}</span>
+                        <span class="badge-status-red">Falto</span>
+                    </div>
+                </div>
+
+                <!-- Antecedentes -->
+                <div class="mb-4">
+                    <label class="text-white small mb-2 d-block">ANTECEDENTES DEL CONFLICTO</label>
+                    <div class="info-card-wireframe p-3">
+                        <p class="text-secondary x-small mb-2">1. Hechos expuestos en la solicitud</p>
+                        <textarea class="viva-input-black" rows="4" [(ngModel)]="datosActa.hechos"></textarea>
+                    </div>
+                </div>
+
+                <!-- Declaracion Inasistencia -->
+                <div class="mb-4">
+                    <label class="text-white small mb-2 d-block">DECLARACION DE INASISTENCIA</label>
+                    <div class="info-card-wireframe p-3">
+                        <p class="text-white small m-0">No habiendo asistido NINGUNA de las partes a la audiencia de
+                            conciliacion convocada se da por concluida la misma y el procedimiento de conciliacion</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="col-md-6 d-flex flex-column">
+                <!-- Resultado -->
+                <div class="info-card-wireframe p-4 mb-4">
+                    <h6 class="text-white small mb-3">RESULTADO DE LA SESION</h6>
+                    <h4 class="text-white mb-2">INASISTENCIA DE AMBAS PARTES</h4>
+                    <p class="text-secondary small">Cierre por inasistencia tras dos citaciones</p>
+                </div>
+
+                <!-- Controversia -->
+                <div class="mb-4 flex-grow-1">
+                    <label class="text-white small mb-2 d-block">CONTROVERSIA</label>
+                    <div class="info-card-wireframe p-3 h-100">
+                        <p class="text-secondary x-small mb-2">Descripcion de la controversia</p>
+                        <textarea class="viva-input-black" rows="4" [(ngModel)]="datosActa.controversia"></textarea>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="d-flex gap-2 justify-content-center mb-4">
+                    <button class="btn-yellow-acta" (click)="descargarPDF()">Emitir Acta Final(PDF)</button>
+                    <button class="btn-blue-acta" (click)="descargarWord()">Emitir Acta Final(WORD)</button>
+                </div>
+
+                <div class="text-center">
+                    <button class="btn-green-finalizar" (click)="finalizarYDescargar()">FINALIZAR</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

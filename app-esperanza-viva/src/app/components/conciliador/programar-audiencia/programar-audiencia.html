@@ -5,11 +5,15 @@
       <small class="text-dark fw-bold">CONCILIACIÓN</small>
     </div>
     <nav class="sidebar-nav">
-      <a class="nav-link-viva active" routerLink="/conciliador/mis-casos"><i class="bi bi-folder-fill"></i> Mis Casos</a>
+      <a class="nav-link-viva active" routerLink="/conciliador/mis-casos"><i class="bi bi-folder-fill"></i> Mis
+        Casos</a>
       <a class="nav-link-viva" routerLink="/conciliador/agenda"><i class="bi bi-calendar3"></i> Mi Agenda</a>
+      <a class="nav-link-viva" routerLink="/conciliador/historial"><i class="bi bi-clock-history"></i> Historial</a>
     </nav>
     <div class="sidebar-footer p-3">
-      <button class="btn-logout-viva w-100" (click)="cerrarSesion()">Cerrar Sesión</button>
+      <button class="btn-logout-viva w-100" (click)="cerrarSesion()">
+        <i class="bi bi-box-arrow-left"></i> Cerrar Sesión
+      </button>
     </div>
   </aside>
 
@@ -17,54 +21,115 @@
     <header class="mb-5 d-flex justify-content-between align-items-center">
       <div>
         <h2 class="text-warning fw-bold m-0">Programación de audiencia</h2>
-        <p class="text-secondary small">EVALUACIÓN DE DESIGNACIÓN - FORMATO C</p>
+        <p class="text-secondary small">Evaluacion de Designacion</p>
       </div>
-      <div class="admin-badge"><span>{{ conciliadorNombre }}</span></div>
+      <div class="admin-badge text-end">
+        <div class="text-white fw-bold">{{ conciliadorNombre }}</div>
+        <small class="text-success">Director</small>
+        <i class="bi bi-person-circle fs-4 ms-2 text-warning"></i>
+      </div>
     </header>
 
-    <h5 class="text-white mb-4">GENERAR INVITACIÓN (FORMATO C)</h5>
+    <h5 class="text-white mb-4">GENERAR INVITACION (FORMATO C)</h5>
 
-    <div class="row g-4">
+    <!-- SECCION PRINCIPAL: DATOS Y VERIFICACION -->
+    <div class="row g-4 mb-4">
+      <!-- COLUMNA IZQUIERDA: DATOS DE AUDIENCIA -->
       <div class="col-md-6">
-        <div class="info-card-wireframe p-4 shadow">
-          <small class="text-warning fw-bold d-block mb-3">DATOS DE LA AUDIENCIA</small>
+        <div class="info-card-wireframe p-4 shadow h-100">
+          <small class="text-warning fw-bold d-block mb-3 text-uppercase">DATOS DE LA AUDIENCIA</small>
+          <p class="small text-secondary mb-2">Programa datos de la audiencia</p>
+
           <div class="row mb-3">
             <div class="col-6">
               <label class="small text-secondary">Fecha de Audiencia</label>
-              <input type="date" class="viva-input-black" [(ngModel)]="form.fechaAudiencia">
+              <input type="date" class="viva-input-black form-control bg-dark text-white border-secondary"
+                [(ngModel)]="form.fechaAudiencia">
             </div>
             <div class="col-6">
               <label class="small text-secondary">Hora (10 min tolerancia)</label>
-              <input type="time" class="viva-input-black" [(ngModel)]="form.horaAudiencia">
+              <input type="time" class="viva-input-black form-control bg-dark text-white border-secondary"
+                [(ngModel)]="form.horaAudiencia">
             </div>
           </div>
-          <label class="small text-secondary">Lugar de la Audiencia (Dirección del Centro)</label>
-          <input type="text" class="viva-input-black mt-1" [(ngModel)]="form.lugar">
+
+          <label class="small text-secondary">Lugar de la Audiencia (Direccion del Centro)</label>
+          <input type="text" class="viva-input-black form-control bg-dark text-white border-secondary mt-1"
+            [(ngModel)]="form.lugar">
         </div>
       </div>
 
+      <!-- COLUMNA DERECHA: VERIFICACION DE PARTES -->
       <div class="col-md-6">
-        <div class="info-card-wireframe p-4 shadow">
-          <small class="text-warning fw-bold d-block mb-3">VERIFICACIÓN DE PARTES</small>
-          <p class="small text-white mb-1"><strong>SOLICITANTE:</strong> {{expediente.solicitante?.nombres}} {{expediente.solicitante?.apellidos}}</p>
-          <label class="small text-secondary">Dirección:</label>
-          <input type="text" class="viva-input-black mb-3" [value]="expediente.solicitante?.domicilio || 'No registrado'" readonly>
-          
-          <p class="small text-white mb-1"><strong>INVITADO:</strong> {{expediente.invitado?.nombres}} {{expediente.invitado?.apellidos}}</p>
-          <label class="small text-secondary">Dirección:</label>
-          <input type="text" class="viva-input-black" [value]="expediente.invitado?.domicilio || 'No registrado'" readonly>
+        <div class="info-card-wireframe p-4 shadow h-100">
+          <small class="text-warning fw-bold d-block mb-3 text-uppercase">VERIFICACION DE PARTES</small>
+
+          <div class="mb-3">
+            <p class="small text-white mb-1"><strong>SOLICITANTE:</strong> {{expediente.solicitante?.nombres}}
+              {{expediente.solicitante?.apellidos}}</p>
+            <label class="small text-secondary">Direccion:</label>
+            <input type="text" class="viva-input-black form-control bg-dark text-white border-secondary mb-2"
+              [value]="expediente.solicitante?.domicilio || 'No registrado'" readonly>
+          </div>
+
+          <div>
+            <p class="small text-white mb-1"><strong>INVITADO:</strong> {{expediente.invitado?.nombres}}
+              {{expediente.invitado?.apellidos}}</p>
+            <label class="small text-secondary">Direccion:</label>
+            <input type="text" class="viva-input-black form-control bg-dark text-white border-secondary"
+              [value]="expediente.invitado?.domicilio || 'No registrado'" readonly>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="d-flex justify-content-end gap-3 mt-5">
-       <button class="btn-register-viva px-4 py-3" (click)="generarInvitacion()">
-          <i class="bi bi-file-earmark-pdf"></i> Descargar Documento
-       </button>
+    <!-- SECCION INFERIOR: SELECCION DE NOTIFICADOR -->
+    <h5 class="text-white mb-3 text-lowercase">seleccione un notificador</h5>
+    <div class="info-card-wireframe p-4 shadow mb-5">
+      <div class="mb-2">
+        <!-- Search Input Mock -->
+        <input type="text" class="viva-input-black mb-3" placeholder="seleccione un notificador"
+          style="border-radius: 8px;">
 
-       <button class="btn-green-viva px-4 py-3" (click)="guardarYSalir()">
-          <i class="bi bi-check-circle-fill"></i> Guardar Audiencia Programada
-       </button>
+        <!-- LISTA DE NOTIFICADORES -->
+        <div class="d-flex flex-column gap-2">
+          <div *ngFor="let notif of notificadores"
+            class="notificador-item d-flex justify-content-between align-items-center p-3 rounded-3 cursor-pointer"
+            [ngClass]="{'selected': selectedNotificador?.id === notif.id}" (click)="seleccionarNotificador(notif)"
+            style="cursor: pointer;">
+
+            <span class="text-white fw-bold"
+              [ngStyle]="{'color': selectedNotificador?.id === notif.id ? '#000' : '#fff'}">
+              {{ notif.nombreCompleto }}
+            </span>
+
+            <span class="badge rounded-pill px-3 py-2" [ngClass]="{
+                              'bg-success': notif.estado === 'Disponible',
+                              'bg-danger': notif.estado === 'Ocupado'
+                          }">
+              {{ notif.estado || 'Disponible' }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTONES DE ACCION -->
+    <div class="d-flex justify-content-between gap-4 mt-5">
+      <!-- Descargar Word (Cyan/Blue) -->
+      <button class="btn-cyan-viva flex-grow-1" (click)="generarWord()">
+        Descargar word
+      </button>
+
+      <!-- Descargar PDF (Yellow) -->
+      <button class="btn-yellow-viva flex-grow-1" (click)="generarInvitacion()">
+        Descargar PDF
+      </button>
+
+      <!-- Guardar Audiencia (Green) -->
+      <button class="btn-green-viva flex-grow-1" (click)="guardarYSalir()">
+        Guardar Audiencia
+      </button>
     </div>
   </main>
 </div>

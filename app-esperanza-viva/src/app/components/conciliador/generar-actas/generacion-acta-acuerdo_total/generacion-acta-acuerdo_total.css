@@ -1,0 +1,89 @@
+/* Shared styles & Specifics for Acuerdo Total */
+.info-card-wireframe {
+  background-color: #1a1a1a;
+  border: 1px solid #FFD700;
+  border-radius: 8px;
+}
+
+.bg-dark {
+  background-color: #000 !important;
+}
+
+.text-justify {
+  text-align: justify;
+}
+
+/* --- INPUTS & TEXTAREAS --- */
+.viva-input-black {
+  background: #000;
+  border: 1px solid #ffc107;
+  color: #fff;
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.viva-textarea-black {
+  background: #000;
+  border: 1px solid #ffc107;
+  color: #fff;
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  resize: vertical;
+}
+
+/* --- BUTTONS --- */
+.btn-yellow-acta {
+  background-color: #ffc107;
+  color: #000;
+  font-weight: bold;
+  border-radius: 20px;
+  border: none;
+  padding: 10px 20px;
+}
+
+.btn-blue-acta {
+  background-color: #00bdd6;
+  color: #000;
+  font-weight: bold;
+  border-radius: 20px;
+  border: none;
+  padding: 10px 20px;
+}
+
+.btn-green-finalizar {
+  background-color: #00ff00;
+  color: #000;
+  font-weight: bold;
+  border-radius: 5px;
+  border: none;
+  padding: 10px 40px;
+  font-size: 1.1rem;
+  box-shadow: 0 0 10px #00ff00;
+}
+
+.btn-add-clause {
+  background-color: #ffc107;
+  color: #000;
+  font-weight: bold;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 20px;
+  width: 100%;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.btn-add-clause:hover {
+  background-color: #e0a800;
+  transform: scale(1.02);
+}
+
+.clause-card {
+  background-color: #000;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 10px;
+}

@@ -1,126 +1,139 @@
-  <div class="admin-container" *ngIf="audiencia; else loading">
-    <aside class="sidebar-viva">
-      <div class="logo-section p-4 text-center">
-        <h5 class="m-0 fw-bold text-dark">ESPERANZA VIVA</h5>
-        <small class="text-dark fw-bold">centro de conciliacion</small>
+<div class="admin-container" *ngIf="audiencia; else loading">
+  <aside class="sidebar-viva">
+    <div class="logo-section p-4 text-center">
+      <h5 class="m-0 fw-bold text-dark">ESPERANZA VIVA</h5>
+      <small class="text-dark fw-bold">centro de conciliacion</small>
+    </div>
+    <nav class="sidebar-nav">
+      <a class="nav-link-viva" routerLink="/conciliador/mis-casos" routerLinkActive="active"><i
+          class="bi bi-folder-fill me-2"></i> Mis Casos</a>
+      <a class="nav-link-viva active"><i class="bi bi-calendar3 me-2" routerLinkActive="active"></i> Mi Agenda</a>
+    </nav>
+  </aside>
+
+  <main class="main-content-viva p-4">
+    <header class="mb-4 d-flex justify-content-between align-items-center">
+      <div>
+        <h2 class="text-warning fw-bold m-0">Registro de Audiencia</h2>
+        <p class="text-secondary small">Evaluacion de Designacion</p>
       </div>
-      <nav class="sidebar-nav">
-        <a class="nav-link-viva" routerLink="/conciliador/mis-casos" routerLinkActive="active"><i class="bi bi-folder-fill me-2"></i> Mis Casos</a>
-        <a class="nav-link-viva active"><i class="bi bi-calendar3 me-2" routerLinkActive="active"></i> Mi Agenda</a>
-      </nav>
-    </aside>
+      <div class="admin-badge"><span>Dr. {{ conciliadorNombre }} <i class="bi bi-person-circle"></i></span></div>
+    </header>
 
-    <main class="main-content-viva p-4">
-      <header class="mb-4 d-flex justify-content-between align-items-center">
-        <div>
-          <h2 class="text-warning fw-bold m-0">Registro de Audiencia</h2>
-          <p class="text-secondary small">Evaluacion de Designacion</p>
+    <p class="text-white small text-center mb-4 opacity-50">Inasistencia de una de las partes (formato N)</p>
+
+    <div class="info-card-wireframe p-4 mb-4">
+      <h6 class="text-warning small mb-3 fw-bold">Control de Asistencia</h6>
+
+      <div class="asistencia-row d-flex justify-content-between align-items-center mb-3 p-3">
+        <span class="text-white">1. SOLICITANTE: <strong>{{ audiencia.solicitud?.solicitante?.nombres }} {{
+            audiencia.solicitud?.solicitante?.apellidos }}</strong></span>
+        <div class="dropdown">
+          <button class="btn-status-viva dropdown-toggle shadow-sm"
+            [ngClass]="audiencia.asistenciaSolicitante === 'Asistio' ? 'bg-success' : 'bg-danger'" type="button"
+            (click)="toggleSolicitante()">
+            Estado: <span class="ms-2 fw-bold">{{ audiencia.asistenciaSolicitante }}</span>
+          </button>
+
+          <ul class="dropdown-menu dropdown-menu-dark shadow" [class.show]="showSolicitanteDropdown">
+            <li><a class="dropdown-item pointer" (click)="cambiarAsistencia('solicitante', 'Asistio')">Asistio</a></li>
+            <li><a class="dropdown-item pointer" (click)="cambiarAsistencia('solicitante', 'No asistio')">No asistio</a>
+            </li>
+          </ul>
         </div>
-        <div class="admin-badge"><span>Dr. {{ conciliadorNombre }} <i class="bi bi-person-circle"></i></span></div>
-      </header>
+      </div>
 
-      <p class="text-white small text-center mb-4 opacity-50">Inasistencia de una de las partes (formato D)</p>
-
-      <div class="info-card-wireframe p-4 mb-4">
-        <h6 class="text-warning small mb-3 fw-bold">Control de Asistencia</h6>
-        
-        <div class="asistencia-row d-flex justify-content-between align-items-center mb-3 p-3">
-          <span class="text-white">1. SOLICITANTE: <strong>{{ audiencia.solicitud?.solicitante?.nombres }} {{ audiencia.solicitud?.solicitante?.apellidos }}</strong></span>
-          <div class="dropdown">
-            <button class="btn-status-viva dropdown-toggle shadow-sm" 
-                    [ngClass]="audiencia.asistenciaSolicitante === 'Asistio' ? 'bg-success' : 'bg-danger'" 
-                    type="button" (click)="toggleSolicitante()">
-              Estado: <span class="ms-2 fw-bold">{{ audiencia.asistenciaSolicitante }}</span>
-            </button>
-            
-            <ul class="dropdown-menu dropdown-menu-dark shadow" [class.show]="showSolicitanteDropdown">
-              <li><a class="dropdown-item pointer" (click)="cambiarAsistencia('solicitante', 'Asistio')">Asistio</a></li>
-              <li><a class="dropdown-item pointer" (click)="cambiarAsistencia('solicitante', 'No asistio')">No asistio</a></li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="asistencia-row d-flex justify-content-between align-items-center p-3">
-          <span class="text-white small">1. INVITADO: <strong class="ms-2">{{ audiencia.solicitud?.invitado?.nombres }} {{ audiencia.solicitud?.invitado?.apellidos }}</strong></span>
-          <div class="dropdown">
-            <button class="btn-status-viva dropdown-toggle shadow-sm" 
-                  [ngClass]="audiencia.asistenciaInvitado === 'Asistio' ? 'bg-success' : 'bg-danger'" 
-                  type="button" id="dropInv" (click)="toggleInvitado()">
+      <div class="asistencia-row d-flex justify-content-between align-items-center p-3">
+        <span class="text-white small">1. INVITADO: <strong class="ms-2">{{ audiencia.solicitud?.invitado?.nombres }} {{
+            audiencia.solicitud?.invitado?.apellidos }}</strong></span>
+        <div class="dropdown">
+          <button class="btn-status-viva dropdown-toggle shadow-sm"
+            [ngClass]="audiencia.asistenciaInvitado === 'Asistio' ? 'bg-success' : 'bg-danger'" type="button"
+            id="dropInv" (click)="toggleInvitado()">
             Estado: <span class="ms-2 fw-bold">{{ audiencia.asistenciaInvitado }}</span>
           </button>
-          <ul class="dropdown-menu dropdown-menu-dark shadow" [class.show]="showInvitadoDropdown" aria-labelledby="dropInv">
+          <ul class="dropdown-menu dropdown-menu-dark shadow" [class.show]="showInvitadoDropdown"
+            aria-labelledby="dropInv">
             <li><a class="dropdown-item pointer" (click)="cambiarAsistencia('invitado', 'Asistio')">Asistio</a></li>
-            <li><a class="dropdown-item pointer" (click)="cambiarAsistencia('invitado', 'No asistio')">No asistio</a></li>
+            <li><a class="dropdown-item pointer" (click)="cambiarAsistencia('invitado', 'No asistio')">No asistio</a>
+            </li>
           </ul>
-          </div>
         </div>
       </div>
+    </div>
 
-      <div class="info-card-wireframe p-4">
-        <h6 class="text-white text-center mb-4 fw-bold">Resultados de la Sesion</h6>
-        
-        <div class="options-container mx-auto" style="max-width: 650px;">
-          
-          <div class="resultado-option" [class.selected]="resultadoSeleccionado === 'Inasistencias'">
-            <label class="p-3 d-flex align-items-center pointer w-100">
-              <input type="radio" value="Inasistencias" [(ngModel)]="resultadoSeleccionado">
-              <span class="text-white ms-3">Inasistencias</span>
-              <i class="bi bi-chevron-down ms-auto text-secondary"></i>
-            </label>
-            <div class="sub-menu-viva p-3" *ngIf="resultadoSeleccionado === 'Inasistencias'">
-              <select class="viva-select-dark w-100" [(ngModel)]="subResultado">
-                <option value="Inasistencia de una de las partes">Inasistencia de una de las partes</option>
-                <option value="Inasistencia de ambas partes">Inasistencia de ambas partes</option>
-                <option value="Asistencia e invitacion para conciliar">Asistencia e invitacion para conciliar</option>
-              </select>
-            </div>
+    <div class="info-card-wireframe p-4">
+      <h6 class="text-white text-center mb-4 fw-bold">Resultados de la Sesion</h6>
+
+      <div class="options-container mx-auto" style="max-width: 650px;">
+
+        <div class="resultado-option" [class.selected]="resultadoSeleccionado === 'Inasistencias'">
+          <label class="p-3 d-flex align-items-center pointer w-100">
+            <input type="radio" value="Inasistencias" [(ngModel)]="resultadoSeleccionado">
+            <span class="text-white ms-3">Inasistencias</span>
+            <i class="bi bi-chevron-down ms-auto text-secondary"></i>
+          </label>
+          <div class="sub-menu-viva p-3" *ngIf="resultadoSeleccionado === 'Inasistencias'">
+            <select class="viva-select-dark w-100" [(ngModel)]="subResultado">
+              <option value="Inasistencia de una de las partes">Inasistencia de una de las partes</option>
+              <option value="Inasistencia de ambas partes">Inasistencia de ambas partes</option>
+              <option value="Asistencia e invitacion para conciliar">Asistencia e invitacion para conciliar</option>
+            </select>
           </div>
-
-          <div class="resultado-option p-3"><label class="pointer"><input type="radio" value="Acuerdo Total" [(ngModel)]="resultadoSeleccionado"><span class="text-white ms-3">Acuerdo Total</span></label></div>
-
-          <div class="resultado-option" [class.selected]="resultadoSeleccionado === 'Acuerdo Parcial'">
-            <label class="p-3 d-flex align-items-center pointer w-100">
-              <input type="radio" value="Acuerdo Parcial" [(ngModel)]="resultadoSeleccionado">
-              <span class="text-white ms-3">Acuerdo Parcial</span>
-              <i class="bi bi-chevron-down ms-auto text-secondary"></i>
-            </label>
-            <div class="sub-menu-viva p-3" *ngIf="resultadoSeleccionado === 'Acuerdo Parcial'">
-              <select class="viva-select-dark w-100" [(ngModel)]="subResultado">
-                <option value="Acuerdo parcial">Acuerdo parcial</option>
-                <option value="Acuerdo parcial con pociciones">Acuerdo parcial con pociciones y/o propuestas</option>
-                <option value="Acuerdo parcial con sustento">Acuerdo parcial con sustento</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="resultado-option" [class.selected]="resultadoSeleccionado === 'Falta de Acuerdo'">
-            <label class="p-3 d-flex align-items-center pointer w-100">
-              <input type="radio" value="Falta de Acuerdo" [(ngModel)]="resultadoSeleccionado">
-              <span class="text-white ms-3">Falta de Acuerdo</span>
-              <i class="bi bi-chevron-down ms-auto text-secondary"></i>
-            </label>
-            <div class="sub-menu-viva p-3" *ngIf="resultadoSeleccionado === 'Falta de Acuerdo'">
-              <select class="viva-select-dark w-100" [(ngModel)]="subResultado">
-                <option value="Falta de acuerdo">Falta de acuerdo</option>
-                <option value="Falta de acuerdo con posiciones">Falta de acuerdo con posiciones y/o propuestas</option>
-                <option value="Falta de acuerdo">Falta de acuerdo con sustento</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="resultado-option p-3"><label class="pointer"><input type="radio" value="Suspension" [(ngModel)]="resultadoSeleccionado"><span class="text-white ms-3">Suspencion de Audiencia (Mutuo Acuerdo)</span></label></div>
-
         </div>
-      </div>
 
-      <div class="text-center mt-5">
-        <button class="btn btn-warning fw-bold px-5 py-3" [disabled]="!resultadoSeleccionado" (click)="finalizarProceso()">
-          FINALIZAR Y CONTINUAR <i class="bi bi-arrow-right-circle ms-2"></i>
-        </button>
+        <div class="resultado-option p-3"><label class="pointer"><input type="radio" value="Acuerdo Total"
+              [(ngModel)]="resultadoSeleccionado"><span class="text-white ms-3">Acuerdo Total</span></label></div>
+
+        <div class="resultado-option" [class.selected]="resultadoSeleccionado === 'Acuerdo Parcial'">
+          <label class="p-3 d-flex align-items-center pointer w-100">
+            <input type="radio" value="Acuerdo Parcial" [(ngModel)]="resultadoSeleccionado">
+            <span class="text-white ms-3">Acuerdo Parcial</span>
+            <i class="bi bi-chevron-down ms-auto text-secondary"></i>
+          </label>
+          <div class="sub-menu-viva p-3" *ngIf="resultadoSeleccionado === 'Acuerdo Parcial'">
+            <select class="viva-select-dark w-100" [(ngModel)]="subResultado">
+              <option value="Acuerdo parcial">Acuerdo parcial</option>
+              <option value="Acuerdo parcial con pociciones">Acuerdo parcial con pociciones y/o propuestas</option>
+              <option value="Acuerdo parcial con sustento">Acuerdo parcial con sustento</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="resultado-option" [class.selected]="resultadoSeleccionado === 'Falta de Acuerdo'">
+          <label class="p-3 d-flex align-items-center pointer w-100">
+            <input type="radio" value="Falta de Acuerdo" [(ngModel)]="resultadoSeleccionado">
+            <span class="text-white ms-3">Falta de Acuerdo</span>
+            <i class="bi bi-chevron-down ms-auto text-secondary"></i>
+          </label>
+          <div class="sub-menu-viva p-3" *ngIf="resultadoSeleccionado === 'Falta de Acuerdo'">
+            <select class="viva-select-dark w-100" [(ngModel)]="subResultado">
+              <option value="Falta de acuerdo">Falta de acuerdo</option>
+              <option value="Falta de acuerdo con posiciones y/o propuestas">Falta de acuerdo con posiciones y/o
+                propuestas</option>
+              <option value="Falta de acuerdo con sustento">Falta de acuerdo con sustento</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="resultado-option p-3"><label class="pointer"><input type="radio" value="Suspension"
+              [(ngModel)]="resultadoSeleccionado"><span class="text-white ms-3">Suspencion de Audiencia (Mutuo
+              Acuerdo)</span></label></div>
+
       </div>
-    </main>
+    </div>
+
+    <div class="text-center mt-5">
+      <button class="btn btn-warning fw-bold px-5 py-3" [disabled]="!resultadoSeleccionado"
+        (click)="finalizarProceso()">
+        FINALIZAR Y CONTINUAR <i class="bi bi-arrow-right-circle ms-2"></i>
+      </button>
+    </div>
+  </main>
+</div>
+
+<ng-template #loading>
+  <div class="loading-screen text-center p-5">
+    <div class="spinner-border text-warning"></div>
   </div>
-
-  <ng-template #loading>
-    <div class="loading-screen text-center p-5"><div class="spinner-border text-warning"></div></div>
-  </ng-template>
+</ng-template>

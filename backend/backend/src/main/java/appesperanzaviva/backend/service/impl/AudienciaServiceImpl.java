@@ -20,10 +20,10 @@ public class AudienciaServiceImpl implements AudienciaService {
 
     @Autowired
     private AudienciaRepository repository;
-    
+
     @Autowired
     private AudienciaClausulaRepository clausulaRepo;
-    
+
     @Autowired
     private SolicitudRepository solicitudRepository;
 
@@ -31,7 +31,7 @@ public class AudienciaServiceImpl implements AudienciaService {
     public List<Audiencia> listarPorConciliador(@NonNull Integer conciliadorId) {
         return repository.findBySolicitudConciliadorId(conciliadorId);
     }
-    
+
     @Override
     public Audiencia obtenerPorId(@NonNull Long id) {
         return repository.findById(id).orElse(null);
@@ -44,11 +44,17 @@ public class AudienciaServiceImpl implements AudienciaService {
         if (solicitud == null || solicitud.getId() == null) {
             throw new RuntimeException("Error: La solicitud vinculada es nula.");
         }
-        
+
         Solicitud solicitudDb = solicitudRepository.findById(solicitud.getId())
                 .orElseThrow(() -> new RuntimeException("Solicitud no encontrada en MariaDB"));
 
         solicitudDb.setEstado("AUDIENCIA_PROGRAMADA");
+
+        // 🔹 NUEVO: Guardar el notificador si se seleccionó en el frontend
+        if (solicitud.getNotificador() != null && solicitud.getNotificador().getId() != null) {
+            solicitudDb.setNotificador(solicitud.getNotificador());
+        }
+
         solicitudRepository.save(solicitudDb);
 
         return repository.save(audiencia);

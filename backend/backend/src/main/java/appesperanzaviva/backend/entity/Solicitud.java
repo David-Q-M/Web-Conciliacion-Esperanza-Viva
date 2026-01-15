@@ -71,12 +71,22 @@ public class Solicitud {
     @ManyToOne
     @JoinColumn(name = "conciliador_id")
     private UsuarioSistema conciliador;
-    
+
+    // 🔹 NUEVO: Notificador asignado para diligenciar la invitación
+    @ManyToOne
+    @JoinColumn(name = "notificador_id")
+    private UsuarioSistema notificador;
+
     @Column(name = "modalidad")
     private String modalidad;
-    
-    public String getModalidad() { return modalidad; }
-    public void setModalidad(String modalidad) { this.modalidad = modalidad; }
+
+    public String getModalidad() {
+        return modalidad;
+    }
+
+    public void setModalidad(String modalidad) {
+        this.modalidad = modalidad;
+    }
 
     @PrePersist
     protected void onCreate() {
@@ -222,5 +232,13 @@ public class Solicitud {
 
     public void setConciliador(UsuarioSistema conciliador) {
         this.conciliador = conciliador;
+    }
+
+    public UsuarioSistema getNotificador() {
+        return notificador;
+    }
+
+    public void setNotificador(UsuarioSistema notificador) {
+        this.notificador = notificador;
     }
 }

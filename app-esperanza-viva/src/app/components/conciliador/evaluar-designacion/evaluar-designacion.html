@@ -5,9 +5,12 @@
       <small class="text-dark fw-bold">centro de conciliacion</small>
     </div>
     <nav class="sidebar-nav">
-      <a class="nav-link-viva active" routerLink="/conciliador/mis-casos" routerLinkActive="active"><i class="bi bi-folder-fill me-2"></i> Mis Casos</a>
-      <a class="nav-link-viva" routerLink="/conciliador/agenda" routerLinkActive="active"><i class="bi bi-calendar3 me-2"></i> Mi Agenda</a>
-      <a class="nav-link-viva" routerLink="/conciliador/historial" routerLinkActive="active"><i class="bi bi-clock-history me-2"></i> Historial</a>
+      <a class="nav-link-viva active" routerLink="/conciliador/mis-casos" routerLinkActive="active"><i
+          class="bi bi-folder-fill me-2"></i> Mis Casos</a>
+      <a class="nav-link-viva" routerLink="/conciliador/agenda" routerLinkActive="active"><i
+          class="bi bi-calendar3 me-2"></i> Mi Agenda</a>
+      <a class="nav-link-viva" routerLink="/conciliador/historial" routerLinkActive="active"><i
+          class="bi bi-clock-history me-2"></i> Historial</a>
     </nav>
   </aside>
 
@@ -26,16 +29,20 @@
         <div class="admin-badge"><span>Dr. {{conciliadorNombre}}</span></div>
       </header>
 
-      <div class="d-flex justify-content-between align-items-center mb-3">
+      <div class="d-flex justify-content-between align-items-center mb-3 gap-2">
         <h5 class="text-white m-0">Informacion del conflicto</h5>
-        <button class="btn-register-viva btn-sm">Descargar Documento</button>
+        <div class="d-flex gap-2">
+          <button class="btn-cyan-viva btn-sm" (click)="generarWord()">Descargar Word</button>
+          <button class="btn-yellow-viva btn-sm" (click)="generarPDF()">Descargar PDF</button>
+        </div>
       </div>
 
       <div class="info-card-wireframe p-4 mb-4 shadow">
         <div class="row">
           <div class="col-md-6 border-end border-secondary">
             <p class="text-secondary small mb-1">Solicitante:</p>
-            <h6 class="text-white fw-bold mb-1">{{expediente.solicitante?.nombres}} {{expediente.solicitante?.apellidos}}</h6>
+            <h6 class="text-white fw-bold mb-1">{{expediente.solicitante?.nombres}}
+              {{expediente.solicitante?.apellidos}}</h6>
             <p class="text-white small m-0">DNI: {{expediente.solicitante?.dni}}</p>
             <p class="text-white small m-0">Rep. Legal: --</p>
           </div>
@@ -50,7 +57,7 @@
       <div class="mb-4">
         <label class="text-secondary small d-block mb-1">Materia:</label>
         <div class="viva-data-box mb-3">{{expediente.materiaConciliable}}</div>
-        
+
         <label class="text-secondary small d-block mb-1">Pretencion:</label>
         <div class="viva-data-box text-italic">"{{expediente.pretension}}"</div>
       </div>
@@ -58,7 +65,8 @@
       <div class="designacion-alert-box p-4 text-center">
         <h6 class="text-dark fw-bold mb-1">DESIGNACION PENDIENTE</h6>
         <p class="text-dark small mb-4 mx-auto" style="max-width: 600px;">
-          El Director te ha asignado este caso. Por ley, debes verificar que no tengas conflicto de intereses por las partes.
+          El Director te ha asignado este caso. Por ley, debes verificar que no tengas conflicto de intereses por las
+          partes.
         </p>
         <div class="d-flex justify-content-center gap-4">
           <button class="btn-decline px-5 py-2 shadow-sm" (click)="responder(false)">Declinar</button>

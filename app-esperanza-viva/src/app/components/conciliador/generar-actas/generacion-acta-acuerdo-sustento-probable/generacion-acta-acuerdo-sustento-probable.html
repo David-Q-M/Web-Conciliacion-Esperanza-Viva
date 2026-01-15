@@ -1,0 +1,187 @@
+<div class="admin-container" *ngIf="audiencia; else loading">
+    <!-- Sidebar -->
+    <aside class="sidebar-viva">
+        <div class="logo-section mb-5 text-center">
+            <h5 class="m-0 fw-bold text-dark">ESPERANZA VIVA</h5>
+            <small class="text-dark fw-bold">centro de conciliacion</small>
+        </div>
+
+        <nav class="nav flex-column gap-3">
+            <a routerLink="/conciliador/mis-casos" routerLinkActive="active" class="nav-link-viva">
+                <i class="bi bi-envelope me-2"></i> Mis Casos
+            </a>
+            <a routerLink="/conciliador/agenda" routerLinkActive="active" class="nav-link-viva">
+                <i class="bi bi-people me-2"></i> Mi Agenda
+            </a>
+            <a routerLink="/conciliador/historial" class="nav-link-viva">
+                <i class="bi bi-clock-history me-2"></i> Historial
+            </a>
+        </nav>
+
+        <div class="mt-auto">
+            <button class="btn btn-link nav-link-viva w-100 text-start p-0">
+                <i class="bi bi-box-arrow-left me-2"></i> Cerrar Sesion
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content-viva">
+        <!-- Header -->
+        <header class="d-flex justify-content-between align-items-center mb-5 border-bottom border-secondary pb-3">
+            <div>
+                <h2 class="text-warning fw-bold m-0 text-uppercase">GENERACION DE ACTA-CON RECONVENCION</h2>
+                <p class="text-secondary small m-0">Evaluacion de Designacion</p>
+            </div>
+            <div class="text-end text-white">
+                <p class="mb-0 small fw-bold">Dr. {{ conciliadorNombre }}</p>
+                <p class="small text-secondary mb-0">Conciliador</p>
+            </div>
+        </header>
+
+        <div class="row g-5">
+            <!-- Left Column -->
+            <div class="col-md-6">
+                <!-- Conciliador Data -->
+                <h6 class="text-white small mb-3 fw-bold text-uppercase border-start border-3 border-warning ps-2">
+                    DATOS DEL CONCILIADOR</h6>
+
+                <div class="info-card-wireframe mb-4">
+                    <div class="row g-2">
+                        <div class="col-md-4">
+                            <label class="text-secondary x-small mb-1">DNI</label>
+                            <input type="text" class="viva-input-black form-control-sm"
+                                [(ngModel)]="datosActa.conciliadorDni" placeholder="DNI">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="text-secondary x-small mb-1">N° Registro</label>
+                            <input type="text" class="viva-input-black form-control-sm"
+                                [(ngModel)]="datosActa.conciliadorRegistro" placeholder="Reg. No">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="text-secondary x-small mb-1">N° Especialidad</label>
+                            <input type="text" class="viva-input-black form-control-sm"
+                                [(ngModel)]="datosActa.conciliadorEspecialidad" placeholder="Esp. No">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Antecedentes -->
+                <h6 class="text-white small mb-3 fw-bold text-uppercase border-start border-3 border-warning ps-2">
+                    ANTECEDENTES DEL CONFLICTO</h6>
+
+                <div class="info-card-wireframe mb-4">
+                    <div class="mb-3">
+                        <label class="text-secondary x-small mb-1">1. Hechos expuestos en la solicitud</label>
+                        <textarea class="viva-textarea-black" rows="4" [(ngModel)]="datosActa.hechos"
+                            placeholder="El solicitante indica..."></textarea>
+                    </div>
+
+                    <div class="mb-0">
+                        <label class="text-secondary x-small mb-1">2. Descripcion de las controversias
+                            (SOLICITANTE)</label>
+                        <textarea class="viva-textarea-black" rows="3" [(ngModel)]="datosActa.controversia"
+                            placeholder="Determinar la forma de pago..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Puntos Sin Acuerdo -->
+                <h6 class="text-white small mb-3 fw-bold text-uppercase border-start border-3 border-warning ps-2">
+                    PUNTOS SIN ACUERDO (lo que no se resolvio)</h6>
+                <div class="info-card-wireframe mb-4">
+                    <label class="text-secondary x-small mb-2">Detalle los puntos en conflicto que quedaron
+                        pendientes:</label>
+                    <textarea class="viva-textarea-black" rows="4" [(ngModel)]="datosActa.puntosSinAcuerdo"
+                        placeholder="No hay acuerdo sobre el pago del capital..."></textarea>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="col-md-6">
+                <!-- Acuerdos -->
+                <h6 class="text-white small mb-3 fw-bold text-uppercase border-start border-3 border-warning ps-2">
+                    ACUERDOS ADOPTADOS</h6>
+
+                <div class="info-card-wireframe mb-4">
+                    <p class="text-secondary x-small mb-3 fst-italic">Redacte los acuerdos de forma clara, expresa y
+                        exigible</p>
+
+                    <!-- Dynamic Agreements -->
+                    <div *ngFor="let acuerdo of acuerdos; let i = index" class="clause-card">
+                        <div class="d-flex justify-content-between mb-2">
+                            <label class="text-warning small fw-bold">{{ acuerdo.titulo }}</label>
+                            <button *ngIf="i > 1" class="btn btn-sm btn-outline-danger border-0"
+                                (click)="eliminarClausula(i)">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                        <textarea class="viva-textarea-black" rows="3" [(ngModel)]="acuerdos[i].contenido"></textarea>
+                    </div>
+
+                    <div class="mt-3">
+                        <button class="btn-add-clause" (click)="agregarClausula()">
+                            <i class="bi bi-plus-circle me-1"></i> Agregar Clausula (Tercero, Cuarto...)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sustento de Reconvencion -->
+                <h6 class="text-white small mb-3 fw-bold text-uppercase border-start border-3 border-warning ps-2">
+                    SUSTENTO DE RECONVENCION</h6>
+
+                <div class="info-card-wireframe mb-4">
+                    <label class="text-secondary x-small mb-2 d-block">Datos proporcionados por el INVITADO (contra
+                        demanda)</label>
+
+                    <div class="mb-3">
+                        <div class="input-group input-group-sm mb-2">
+                            <span class="input-group-text bg-dark text-secondary border-secondary"
+                                style="width: 200px;">Hechos expuestos por el invitado:</span>
+                            <textarea class="form-control bg-black text-white border-secondary" rows="2"
+                                [(ngModel)]="datosActa.hechosInvitado"
+                                placeholder="El invitado señala que el solicitante le debe..."></textarea>
+                        </div>
+                    </div>
+                    <div class="mb-0">
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text bg-dark text-secondary border-secondary"
+                                style="width: 200px;">Controvercia (sustento de reconvencion):</span>
+                            <textarea class="form-control bg-black text-white border-secondary" rows="2"
+                                [(ngModel)]="datosActa.controversiaInvitado"
+                                placeholder="Determinar el reembolso..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Verificacion Legal -->
+                <h6 class="text-white small mb-3 fw-bold text-uppercase border-start border-3 border-warning ps-2">
+                    VERIFICACION DE LEGALIDAD (Requisito Obligatorio)</h6>
+                <div class="info-card-wireframe mb-4">
+                    <label class="text-secondary x-small mb-2">Seleccione el abogado del centro que visa este
+                        acuerdo:</label>
+                    <select class="viva-input-black" [(ngModel)]="datosActa.abogadoVerificador">
+                        <option value="" disabled selected>Abogado verificador</option>
+                        <option *ngFor="let abogado of abogados" [value]="abogado.nombre">{{ abogado.nombre }}</option>
+                    </select>
+                </div>
+
+
+                <!-- Action Buttons -->
+                <div class="d-flex justify-content-end gap-3 mt-5">
+                    <button class="btn-outline-white-custom" (click)="descargarWord()">Emitir Acta Final (Word)</button>
+                    <button class="btn-yellow-acta" (click)="descargarPDF()">Emitir Acta Final (PDF)</button>
+                    <button class="btn-green-finalizar" (click)="finalizarYDescargar()">FINALIZAR</button>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<ng-template #loading>
+    <div class="d-flex justify-content-center align-items-center vh-100 bg-dark">
+        <div class="spinner-border text-warning" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+</ng-template>

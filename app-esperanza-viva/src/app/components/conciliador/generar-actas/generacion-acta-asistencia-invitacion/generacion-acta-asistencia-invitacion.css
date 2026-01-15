@@ -1,0 +1,67 @@
+/* Shared styles from previous components */
+.info-card-wireframe {
+    background-color: #1a1a1a;
+    border: 1px solid #FFD700;
+    border-radius: 8px;
+}
+
+.bg-dark {
+    background-color: #000 !important;
+}
+
+/* --- INPUTS --- */
+.viva-input-black {
+    background: #000;
+    border: 1px solid #ffc107;
+    color: #fff;
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+/* --- BADGES --- */
+.badge-status-green {
+    background-color: #28a745;
+    color: #fff;
+    padding: 5px 15px;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.badge-status-red {
+    background-color: #dc3545;
+    color: #fff;
+    padding: 5px 15px;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+/* --- BUTTONS --- */
+.btn-yellow-acta {
+    background-color: #ffc107;
+    color: #000;
+    font-weight: bold;
+    border-radius: 20px;
+    border: none;
+    padding: 10px 20px;
+}
+
+.btn-blue-acta {
+    background-color: #00bdd6;
+    color: #000;
+    font-weight: bold;
+    border-radius: 20px;
+    border: none;
+    padding: 10px 20px;
+}
+
+.btn-green-finalizar {
+    background-color: #00ff00;
+    color: #000;
+    font-weight: bold;
+    border-radius: 5px;
+    border: none;
+    padding: 10px 40px;
+    font-size: 1.1rem;
+    box-shadow: 0 0 10px #00ff00;
+}

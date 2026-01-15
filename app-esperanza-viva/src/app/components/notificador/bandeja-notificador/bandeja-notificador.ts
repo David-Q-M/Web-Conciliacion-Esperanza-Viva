@@ -37,7 +37,7 @@ export class BandejaNotificador implements OnInit {
             next: (res) => {
                 // Simulacion de filtro: pendientes de notificación
                 this.pendientes = res.filter(s =>
-                    s.estado === 'APROBADA' || s.estado === 'PENDIENTE_NOTIFICACION'
+                    s.estado === 'APROBADA' || s.estado === 'PENDIENTE_NOTIFICACION' || s.estado === 'AUDIENCIA_PROGRAMADA'
                 );
 
                 this.countPendientes = this.pendientes.length;

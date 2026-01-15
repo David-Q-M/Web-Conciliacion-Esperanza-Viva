@@ -122,12 +122,38 @@ export class RegistroAudiencia implements OnInit {
           this.audiencia.asistenciaSolicitante === 'Asistio' &&
           this.audiencia.asistenciaInvitado === 'Asistio'
         ) {
-          this.router.navigate(['/conciliador/generar-acta-total', this.audiencia.id]);
+          this.router.navigate(['/conciliador/generacion-acta-acuerdo_total', this.audiencia.id]);
         } else if (
           this.resultadoSeleccionado === 'Inasistencias' &&
           this.subResultado === 'Inasistencia de una de las partes'
         ) {
           this.router.navigate(['/conciliador/generacion-acta-inasistencia-una-parte', this.audiencia.id]);
+        } else if (
+          this.resultadoSeleccionado === 'Inasistencias' &&
+          this.subResultado === 'Inasistencia de ambas partes'
+        ) {
+          this.router.navigate(['/conciliador/generar-acta-inasistencia-ambas-partes', this.audiencia.id]);
+        } else if (
+          this.resultadoSeleccionado === 'Inasistencias' &&
+          this.subResultado === 'Asistencia e invitacion para conciliar'
+        ) {
+          this.router.navigate(['/conciliador/generar-acta-asistencia-invitacion', this.audiencia.id]);
+        } else if (this.resultadoSeleccionado === 'Acuerdo Parcial') {
+          if (this.subResultado === 'Acuerdo parcial con pociciones') {
+            this.router.navigate(['/conciliador/generacion-acta-acuerdo-parcial-propuestas', this.audiencia.id]);
+          } else if (this.subResultado === 'Acuerdo parcial con sustento') {
+            this.router.navigate(['/conciliador/generacion-acta-acuerdo-sustento-probable', this.audiencia.id]);
+          } else {
+            this.router.navigate(['/conciliador/generacion-acta-acuerdo-parcial', this.audiencia.id]);
+          }
+        } else if (this.resultadoSeleccionado === 'Falta de Acuerdo') {
+          if (this.subResultado === 'Falta de acuerdo con posiciones y/o propuestas') {
+            this.router.navigate(['/conciliador/generacion-acta-falta-acuerdo-posiciones-propuesta', this.audiencia.id]);
+          } else if (this.subResultado === 'Falta de acuerdo con sustento') {
+            this.router.navigate(['/conciliador/generacion-acta-falta-acuerdo-sustento', this.audiencia.id]);
+          } else {
+            this.router.navigate(['/conciliador/generacion-acta-falta-acuerdo', this.audiencia.id]);
+          }
         } else {
           this.router.navigate(['/conciliador/mis-casos']);
         }

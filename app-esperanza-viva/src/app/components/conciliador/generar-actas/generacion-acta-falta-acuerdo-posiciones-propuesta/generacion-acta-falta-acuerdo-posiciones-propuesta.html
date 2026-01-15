@@ -1,0 +1,138 @@
+<div class="admin-container" *ngIf="audiencia; else loading">
+    <aside class="sidebar-viva">
+        <div class="sidebar-header">
+            <img src="assets/logo_esperanza.png" alt="Logo" class="logo-img">
+        </div>
+        <nav class="sidebar-nav">
+            <a routerLink="/conciliador/mis-casos" routerLinkActive="active" class="nav-item">
+                <i class="fas fa-folder-open"></i> Mis Casos
+            </a>
+            <a routerLink="/conciliador/agenda" routerLinkActive="active" class="nav-item">
+                <i class="fas fa-calendar-alt"></i> Mi Agenda
+            </a>
+            <a routerLink="/conciliador/historial" routerLinkActive="active" class="nav-item active">
+                <i class="fas fa-history"></i> Historial
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <button class="btn-cerrar-sesion" [routerLink]="['/login']">
+                <i class="fas fa-sign-out-alt"></i> Cerrar Sesion
+            </button>
+        </div>
+    </aside>
+
+    <main class="main-content-viva">
+        <!-- Header -->
+        <header class="d-flex justify-content-between align-items-center mb-5 border-bottom border-secondary pb-3">
+            <div>
+                <h3 class="text-warning fw-bold m-0 text-uppercase">GENERACION DE ACTA-FALTA DE ACUERDO PARCIAL MAS
+                    POSTURAS</h3>
+                <p class="text-secondary m-0 small">Evaluacion de Designacion</p>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <div class="text-end">
+                    <h6 class="text-white m-0">{{ conciliadorNombre }}</h6>
+                    <span class="badge bg-warning text-dark">Conciliador</span>
+                </div>
+                <div class="avatar-circle">
+                    <i class="fas fa-user"></i>
+                </div>
+            </div>
+        </header>
+
+        <div class="row g-4">
+            <!-- Top Row: Antecedentes & Controversia -->
+            <div class="col-md-6">
+                <div class="section-title">
+                    <i class="fas fa-history"></i> ANTECEDENTES DEL CONFLICTO
+                </div>
+                <div class="info-card-wireframe">
+                    <label class="form-label">1. Hechos expuestos en la solicitud</label>
+                    <textarea class="form-control" rows="4" [(ngModel)]="datosActa.hechos"></textarea>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="section-title">
+                    <i class="fas fa-gavel"></i> CONTROVERSIA
+                </div>
+                <div class="info-card-wireframe">
+                    <label class="form-label">Descripcion de la controversia</label>
+                    <textarea class="form-control" rows="4" [(ngModel)]="datosActa.controversia"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-title mt-5 mb-3">
+            <i class="fas fa-comments"></i> POSICIONES Y PROPUESTAS
+        </div>
+
+        <div class="row g-4">
+            <!-- Left: POSICIONES -->
+            <div class="col-md-6">
+                <div class="info-card-wireframe h-100">
+                    <h6 class="text-warning text-uppercase mb-3 fw-bold border-bottom border-secondary pb-2">POSICIONES
+                    </h6>
+
+                    <div class="mb-3">
+                        <label class="form-label small">Posicion del solicitante</label>
+                        <textarea class="form-control" rows="3" [(ngModel)]="datosActa.posicionSolicitante"
+                            placeholder="Solicita..."></textarea>
+                    </div>
+
+                    <div class="mb-0">
+                        <label class="form-label small">Posicion del invitado</label>
+                        <textarea class="form-control" rows="3" [(ngModel)]="datosActa.posicionInvitado"
+                            placeholder="Indica que..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: PROPUESTAS -->
+            <div class="col-md-6">
+                <div class="info-card-wireframe h-100">
+                    <h6 class="text-warning text-uppercase mb-3 fw-bold border-bottom border-secondary pb-2">PROPUESTAS
+                        (ofertas rechazadas)</h6>
+
+                    <div class="mb-3">
+                        <label class="form-label small">Propuesta del solicitante</label>
+                        <textarea class="form-control" rows="3" [(ngModel)]="datosActa.propuestaSolicitante"
+                            placeholder="Ofrece..."></textarea>
+                    </div>
+
+                    <div class="mb-0">
+                        <label class="form-label small">Propuesta del invitado</label>
+                        <textarea class="form-control" rows="3" [(ngModel)]="datosActa.propuestaInvitado"
+                            placeholder="Solicita..."></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom: Falta de Acuerdo & Buttons -->
+        <div class="section-title mt-5">
+            <i class="fas fa-exclamation-circle"></i> DECLARACION DE FALTA DE ACUERDO
+        </div>
+
+        <div class="info-card-wireframe mb-4">
+            <label class="form-label">Describa los motivos por el cual no se llego a un acuerdo</label>
+            <textarea class="form-control" rows="3" [(ngModel)]="datosActa.motivoFaltaAcuerdo"></textarea>
+        </div>
+
+        <div class="actions-container d-flex justify-content-end gap-3">
+            <button class="btn-yellow-acta" (click)="descargarPDF()">Emitir Acta Final(PDF)</button>
+            <button class="btn-blue-acta" (click)="descargarWord()">Emitir Acta Final(WORD)</button>
+            <button class="btn-green-finalizar" (click)="finalizarYDescargar()">FINALIZAR</button>
+        </div>
+
+    </main>
+</div>
+
+<ng-template #loading>
+    <div class="text-center text-white mt-5">
+        <div class="spinner-border text-warning" role="status">
+            <span class="visually-hidden">Cargando...</span>
+        </div>
+        <p class="mt-2">Cargando datos de la audiencia...</p>
+    </div>
+</ng-template>

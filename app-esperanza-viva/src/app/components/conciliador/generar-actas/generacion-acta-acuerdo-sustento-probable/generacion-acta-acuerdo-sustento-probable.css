@@ -1,0 +1,222 @@
+/* Main Layout Containers */
+.admin-container {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+    background-color: #121212;
+}
+
+.sidebar-viva {
+    width: 280px;
+    background-color: #FFD700;
+    /* Rich Yellow */
+    color: #000;
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
+    z-index: 10;
+}
+
+.main-content-viva {
+    flex-grow: 1;
+    overflow-y: auto;
+    background-color: #000000;
+    /* Pure black background for main content */
+    padding: 2rem;
+    color: #fff;
+}
+
+/* Sidebar Elements */
+.logo-section h5 {
+    font-weight: 800;
+    /* Extra bold */
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.nav-link-viva {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    color: #000;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background-color 0.2s, transform 0.2s;
+    font-size: 1rem;
+}
+
+.nav-link-viva:hover,
+.nav-link-viva.active {
+    background-color: rgba(0, 0, 0, 0.1);
+    transform: translateX(5px);
+}
+
+.nav-link-viva i {
+    font-size: 1.2rem;
+}
+
+/* Headers */
+h2.text-warning {
+    color: #FFD700 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Cards */
+.info-card-wireframe {
+    background-color: #1a1a1a;
+    border: 1px solid #FFD700;
+    /* Yellow Border */
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Inputs & Textareas */
+.viva-textarea-black,
+.viva-input-black,
+.form-control.bg-black {
+    background-color: #000 !important;
+    border: 1px solid #FFD700 !important;
+    color: #fff !important;
+    width: 100%;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 0.95rem;
+    transition: box-shadow 0.3s;
+}
+
+.viva-textarea-black:focus,
+.viva-input-black:focus,
+.form-control.bg-black:focus {
+    outline: none;
+    box-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+}
+
+/* Input group */
+.input-group-text {
+    background-color: #333 !important;
+    color: #FFD700 !important;
+    border: 1px solid #FFD700 !important;
+    font-weight: bold;
+}
+
+
+/* Specific Clause Card */
+.clause-card {
+    background-color: #121212;
+    border: 1px solid #333;
+    border-left: 4px solid #FFD700;
+    /* Accent on left */
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+/* Buttons */
+.btn-add-clause {
+    background-color: #FFD700;
+    color: #000;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    width: 100%;
+    padding: 10px;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+}
+
+.btn-add-clause:hover {
+    background-color: #e6c200;
+}
+
+.btn-yellow-acta {
+    background-color: #FFD700;
+    color: #000;
+    font-weight: 800;
+    border: none;
+    border-radius: 25px;
+    /* Rounded pill shape */
+    padding: 15px 30px;
+    /* Slightly tighter padding to fit 3 buttons */
+    text-transform: uppercase;
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2);
+    /* Subtle glow */
+}
+
+.btn-yellow-acta:hover {
+    background-color: #ffca2c;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+}
+
+/* Custom white outline button */
+.btn-outline-white-custom {
+    background-color: transparent;
+    /* Black background effectively */
+    border: 2px solid #fff;
+    color: #fff;
+    font-weight: 800;
+    border-radius: 25px;
+    padding: 15px 40px;
+    font-size: 1rem;
+    text-transform: uppercase;
+    transition: all 0.3s;
+}
+
+.btn-outline-white-custom:hover {
+    background-color: #fff;
+    color: #000;
+}
+
+.btn-green-finalizar {
+    background-color: #00ff00;
+    /* Neon Green */
+    color: #000;
+    font-weight: 900;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 50px;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-green-finalizar:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 25px rgba(0, 255, 0, 0.6);
+}
+
+/* Typography Utility */
+.x-small {
+    font-size: 0.85rem;
+    opacity: 0.8;
+}
+
+.text-warning {
+    color: #FFD700 !important;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #121212;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #444;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--viva-yellow);
+}

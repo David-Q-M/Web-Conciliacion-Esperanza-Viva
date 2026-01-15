@@ -1,0 +1,110 @@
+<div class="admin-container" *ngIf="audiencia; else loading">
+    <aside class="sidebar-viva">
+        <div class="sidebar-header">
+            <img src="assets/logo_esperanza.png" alt="Logo" class="logo-img">
+        </div>
+        <nav class="sidebar-nav">
+            <a routerLink="/conciliador/mis-casos" routerLinkActive="active" class="nav-item">
+                <i class="fas fa-folder-open"></i> Mis Casos
+            </a>
+            <a routerLink="/conciliador/agenda" routerLinkActive="active" class="nav-item">
+                <i class="fas fa-calendar-alt"></i> Mi Agenda
+            </a>
+            <a routerLink="/conciliador/historial" routerLinkActive="active" class="nav-item active">
+                <i class="fas fa-history"></i> Historial
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <button class="btn-cerrar-sesion" [routerLink]="['/login']">
+                <i class="fas fa-sign-out-alt"></i> Cerrar Sesion
+            </button>
+        </div>
+    </aside>
+
+    <main class="main-content-viva">
+        <!-- Header -->
+        <header class="d-flex justify-content-between align-items-center mb-5 border-bottom border-secondary pb-3">
+            <div>
+                <h2 class="text-warning fw-bold m-0 text-uppercase">GENERACION DE ACTA - FALTA DE ACUERDO</h2>
+                <p class="text-secondary m-0 small">Evaluacion de Designacion</p>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <div class="text-end">
+                    <h6 class="text-white m-0">{{ conciliadorNombre }}</h6>
+                    <span class="badge bg-warning text-dark">Conciliador</span>
+                </div>
+                <div class="avatar-circle">
+                    <i class="fas fa-user"></i>
+                </div>
+            </div>
+        </header>
+
+        <div class="row g-5">
+            <!-- Left Column -->
+            <div class="col-md-6">
+                <div class="section-title">
+                    <i class="fas fa-history"></i> ANTECEDENTES DEL CONFLICTO
+                </div>
+
+                <div class="info-card-wireframe mb-4">
+                    <div class="mb-3">
+                        <label class="form-label">1. Hechos expuestos en la solicitud</label>
+                        <textarea class="form-control" rows="5" [(ngModel)]="datosActa.hechos"
+                            placeholder="Ingrese los hechos..."></textarea>
+                    </div>
+                </div>
+
+                <div class="section-title mt-5">
+                    <i class="fas fa-exclamation-circle"></i> DECLARACION DE FALTA DE ACUERDO
+                </div>
+
+                <div class="info-card-wireframe mb-4">
+                    <div class="mb-3">
+                        <label class="form-label">Describa los motivos por el cual no se llego a un acuerdo</label>
+                        <textarea class="form-control" rows="5" [(ngModel)]="datosActa.motivoFaltaAcuerdo"
+                            placeholder="Ej: El invitado señala que..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="col-md-6">
+                <div class="section-title">
+                    <i class="fas fa-gavel"></i> CONTROVERSIA
+                </div>
+
+                <div class="info-card-wireframe mb-4">
+                    <div class="mb-3">
+                        <label class="form-label">Descripcion de la controversia</label>
+                        <textarea class="form-control" rows="5" [(ngModel)]="datosActa.controversia"
+                            placeholder="Ingrese la controversia..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="actions-container d-flex flex-column gap-3">
+                    <div class="d-flex gap-3 justify-content-end">
+                        <button class="btn-outline-white-custom flex-grow-1" (click)="descargarWord()">
+                            <i class="fas fa-file-word"></i> Emitir Acta (Word)
+                        </button>
+                        <button class="btn-yellow-acta flex-grow-1" (click)="descargarPDF()">
+                            <i class="fas fa-file-pdf"></i> Emitir Acta (PDF)
+                        </button>
+                    </div>
+                    <button class="btn-green-finalizar w-100 justify-content-center" (click)="finalizarYDescargar()">
+                        <i class="fas fa-check-circle"></i> FINALIZAR PROCESO
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<ng-template #loading>
+    <div class="text-center text-white mt-5">
+        <div class="spinner-border text-warning" role="status">
+            <span class="visually-hidden">Cargando...</span>
+        </div>
+        <p class="mt-2">Cargando datos de la audiencia...</p>
+    </div>
+</ng-template>

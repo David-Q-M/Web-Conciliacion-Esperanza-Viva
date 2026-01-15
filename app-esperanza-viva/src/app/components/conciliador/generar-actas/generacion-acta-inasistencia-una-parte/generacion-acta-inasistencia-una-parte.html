@@ -1,0 +1,155 @@
+<div class="admin-container" *ngIf="audiencia; else loading">
+    <aside class="sidebar-viva">
+        <div class="logo-section p-4 text-center">
+            <h5 class="m-0 fw-bold text-dark">ESPERANZA VIVA</h5>
+            <small class="text-dark fw-bold">centro de conciliacion</small>
+        </div>
+        <nav class="sidebar-nav">
+            <a class="nav-link-viva" routerLink="/conciliador/mis-casos" routerLinkActive="active"><i
+                    class="bi bi-folder-fill me-2"></i> Mis
+                Casos</a>
+            <a class="nav-link-viva" routerLink="/conciliador/agenda" routerLinkActive="active"><i
+                    class="bi bi-calendar3 me-2"></i> Mi Agenda</a>
+            <a class="nav-link-viva" routerLink="/conciliador/historial" routerLinkActive="active"><i
+                    class="bi bi-clock-history me-2"></i>
+                Historial</a>
+        </nav>
+        <div class="mt-auto p-3">
+            <a class="nav-link-viva text-dark" routerLink="/"><i class="bi bi-box-arrow-left me-2"></i> Cerrar
+                Sesion</a>
+        </div>
+    </aside>
+
+    <main class="main-content-viva p-4">
+        <header class="mb-4 d-flex justify-content-between align-items-center">
+            <div>
+                <h2 class="text-warning fw-bold m-0">GENERACION DE ACTA-INASISTENCIA DE UNA DE LAS PARTES</h2>
+                <p class="text-secondary small">Evaluacion de Designacion</p>
+            </div>
+            <div class="text-end text-white">
+                <p class="mb-0 small">Dr. {{ conciliadorNombre }}</p>
+                <p class="small text-secondary mb-0">Conciliador</p>
+            </div>
+        </header>
+
+        <p class="text-white small mb-3">Inasistencia de una de las partes</p>
+
+        <div class="row g-4">
+            <!-- Columna Izquierda -->
+            <div class="col-md-6">
+
+                <!-- Control de Asistencia -->
+                <div class="info-card-wireframe p-4 mb-4">
+                    <h6 class="text-white small mb-3">Control de Asistencia</h6>
+                    <p class="text-secondary small mb-2">Hora programada: {{ audiencia.hora }} (se recomienda esperar
+                        10-15 min)</p>
+
+                    <div
+                        class="d-flex justify-content-between align-items-center mb-2 border rounded p-2 bg-dark border-secondary">
+                        <span class="text-white small">1. SOLICITANTE: {{ audiencia.solicitud?.solicitante?.nombres }}
+                            {{ audiencia.solicitud?.solicitante?.apellidos }}</span>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="text-secondary small">Estado:</span>
+                            <span class="badge"
+                                [ngClass]="audiencia.asistenciaSolicitante === 'Asistio' ? 'bg-success' : 'bg-danger'">
+                                {{ audiencia.asistenciaSolicitante }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div
+                        class="d-flex justify-content-between align-items-center border rounded p-2 bg-dark border-secondary">
+                        <span class="text-white small">1. INVITADO: {{ audiencia.solicitud?.invitado?.nombres }} {{
+                            audiencia.solicitud?.invitado?.apellidos }}</span>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="text-secondary small">Estado:</span>
+                            <span class="badge"
+                                [ngClass]="audiencia.asistenciaInvitado === 'Asistio' ? 'bg-success' : 'bg-danger'">
+                                {{ audiencia.asistenciaInvitado }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ANTECEDENTES DEL CONFLICTO -->
+                <div class="info-card-wireframe p-4 mb-4">
+                    <h6 class="text-white small mb-3 text-uppercase">ANTECEDENTES DEL CONFLICTO</h6>
+                    <label class="form-label text-secondary small">1. Hechos expuestos en la solicitud</label>
+                    <textarea class="form-control bg-dark text-white border-secondary viva-input-black" rows="4"
+                        [(ngModel)]="datosActa.hechos"
+                        placeholder="El solicitante exige el pago de S/. 5000 por servicios..."></textarea>
+                </div>
+
+                <!-- CONSTANCIA DE CITACIONES -->
+                <div class="info-card-wireframe p-4">
+                    <h6 class="text-white small mb-3 text-uppercase">CONSTANCIA DE CITACIONES</h6>
+
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <label class="text-secondary small mb-0" style="width: 150px;">Fecha de primera
+                            citacion:</label>
+                        <input type="date" class="form-control bg-dark text-white border-secondary" style="width: auto;"
+                            [(ngModel)]="datosActa.fechaPrimeraCitacion">
+                        <input type="time" class="form-control bg-dark text-white border-secondary" style="width: auto;"
+                            [(ngModel)]="datosActa.horaPrimeraCitacion">
+                    </div>
+
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <label class="text-secondary small mb-0" style="width: 150px;">Fecha de segunda
+                            citacion:</label>
+                        <input type="date" class="form-control bg-dark text-white border-secondary" style="width: auto;"
+                            [(ngModel)]="datosActa.fechaSegundaCitacion">
+                        <input type="time" class="form-control bg-dark text-white border-secondary" style="width: auto;"
+                            [(ngModel)]="datosActa.horaSegundaCitacion">
+                    </div>
+
+                    <div class="d-flex align-items-center gap-2">
+                        <label class="text-secondary small mb-0" style="width: 150px;">Parte que no asistio</label>
+                        <input type="text" class="form-control bg-dark text-white border-secondary"
+                            [(ngModel)]="datosActa.parteNoAsistio">
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Columna Derecha -->
+            <div class="col-md-6">
+
+                <!-- RESULTADO DE LA SESION -->
+                <div class="info-card-wireframe p-4 mb-4">
+                    <h6 class="text-white small mb-3 text-uppercase">RESULTADO DE LA SESION</h6>
+                    <div class="border rounded p-3 bg-dark border-secondary">
+                        <h6 class="text-white mb-2">INASISTENCIA DE UNA DE LAS PARTES</h6>
+                        <p class="text-secondary small m-0">Cierre por inasistencia tras dos citaciones</p>
+                    </div>
+                </div>
+
+                <!-- CONTROVERSIA -->
+                <div class="info-card-wireframe p-4 mb-4">
+                    <h6 class="text-white small mb-3 text-uppercase">CONTROVERSIA</h6>
+                    <label class="form-label text-secondary small">Descripcion de la controversia</label>
+                    <textarea class="form-control bg-dark text-white border-secondary viva-input-black" rows="4"
+                        [(ngModel)]="datosActa.controversia"
+                        placeholder="Determinar la exigibilidad de la factura N°..."></textarea>
+                </div>
+
+                <!-- Buttons Footer -->
+                <div class="d-flex justify-content-end align-items-center gap-3 mt-5">
+                    <button class="btn-yellow-acta" (click)="descargarPDF()">Emitir Acta Final(PDF)</button>
+                    <button class="btn-blue-acta" (click)="descargarWord()">Emitir Acta Final(WORD)</button>
+                </div>
+
+                <div class="d-flex justify-content-end mt-4">
+                    <button class="btn-green-finalizar" (click)="finalizarYDescargar()">FINALIZAR</button>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<ng-template #loading>
+    <div class="loading-screen text-center p-5">
+        <div class="spinner-border text-warning"></div>
+    </div>
+</ng-template>

@@ -1,0 +1,113 @@
+<div class="d-flex" style="height: 100vh; overflow: hidden;">
+  <!-- Sidebar -->
+  <div class="sidebar bg-warning d-flex flex-column p-4" style="width: 280px; height: 100vh;">
+    <div class="mb-5">
+      <h2 class="h4 fw-bold mb-0 text-dark">Esperanza Viva</h2>
+      <p class="small text-dark">centro de conciliacion</p>
+    </div>
+
+    <nav class="nav flex-column gap-3">
+      <a routerLink="/conciliador/mis-casos" routerLinkActive="active"
+        class="nav-link text-dark fw-bold d-flex align-items-center">
+        <i class="bi bi-envelope me-2 fs-5"></i> Mis Casos
+      </a>
+      <a routerLink="/conciliador/agenda" routerLinkActive="active"
+        class="nav-link text-dark fw-bold d-flex align-items-center">
+        <i class="bi bi-people me-2 fs-5"></i> Mi Agenda
+      </a>
+      <a href="#" class="nav-link text-dark fw-bold d-flex align-items-center">
+        <span class="fs-4 me-2">Historial</span>
+      </a>
+    </nav>
+
+    <div class="mt-auto">
+      <button class="btn btn-link text-dark text-decoration-none fw-bold d-flex align-items-center p-0">
+        <i class="bi bi-arrow-left me-2"></i> Cerrar Sesion
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="flex-grow-1 bg-dark text-white p-4" style="height: 100vh; overflow-y: auto;">
+    <!-- Header -->
+    <header class="d-flex justify-content-between align-items-start mb-4 border-bottom border-warning pb-2">
+      <div>
+        <h1 class="h4 text-warning mb-1">GENERACION DE ACTA-ACUERDO TOTAL</h1>
+        <p class="text-secondary small mb-0">Evaluacion de Designacion</p>
+      </div>
+      <div class="text-end text-white">
+        <p class="mb-0 small">Dr. {{ conciliadorNombre }}</p>
+        <p class="small text-secondary mb-0">Conciliador</p>
+      </div>
+    </header>
+
+    <div class="row g-4">
+      <!-- Left Column: Antecedentes & Verificacion -->
+      <div class="col-md-6">
+        <!-- Antecedentes del Conflicto -->
+        <h6 class="text-white small mb-3 text-uppercase">Antecedentes del Conflicto</h6>
+
+        <div class="info-card-wireframe p-3 mb-4">
+          <div class="mb-3">
+            <label class="text-secondary x-small mb-1">1. Hechos expuestos en la solicitud</label>
+            <textarea class="viva-textarea-black" rows="4" [(ngModel)]="datosActa.hechos"
+              placeholder="El solicitante indica..."></textarea>
+          </div>
+
+          <div class="mb-0">
+            <label class="text-secondary x-small mb-1">2. Descripcion de las controversias</label>
+            <textarea class="viva-textarea-black" rows="3" [(ngModel)]="datosActa.controversia"
+              placeholder="Determinar la forma de pago..."></textarea>
+          </div>
+        </div>
+
+        <!-- Verificacion de Legalidad -->
+        <h6 class="text-white small mb-3 text-uppercase">Verificacion de Legalidad (Requisito Obligatorio)</h6>
+        <div class="info-card-wireframe p-3 mb-4">
+          <label class="text-secondary x-small mb-2">Seleccione el abogado del centro que visa este acuerdo:</label>
+          <select class="viva-input-black" [(ngModel)]="datosActa.abogadoVerificador">
+            <option value="" disabled>Abogado verificador</option>
+            <option *ngFor="let abogado of abogados" [value]="abogado.nombre">{{ abogado.nombre }}</option>
+          </select>
+        </div>
+
+      </div>
+
+      <!-- Right Column: Acuerdos -->
+      <div class="col-md-6">
+        <h6 class="text-white small mb-3 text-uppercase">Acuerdos Adoptados</h6>
+
+        <div class="info-card-wireframe p-3 mb-4">
+          <p class="text-secondary x-small mb-3">Redacte los acuerdos de forma clara, expresa y exigible</p>
+
+          <!-- Dynamic Agreements List -->
+          <div *ngFor="let acuerdo of acuerdos; let i = index" class="clause-card">
+            <div class="d-flex justify-content-between mb-1">
+              <label class="text-warning x-small fw-bold">{{ acuerdo.titulo }}</label>
+              <button *ngIf="i > 1" class="btn btn-link py-0 px-2 text-danger" (click)="eliminarClausula(i)">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+            <textarea class="viva-textarea-black" rows="3" [(ngModel)]="acuerdos[i].contenido"></textarea>
+          </div>
+
+          <div class="mt-3">
+            <button class="btn-add-clause" (click)="agregarClausula()">
+              + Agregar Clausula (Tercero, Cuarto...)
+            </button>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="d-flex justify-content-end gap-3 mt-5">
+          <button class="btn-yellow-acta" (click)="descargarPDF()">Emitir Acta Final(PDF)</button>
+          <button class="btn-blue-acta" (click)="descargarWord()">Emitir Acta Final(WORD)</button>
+        </div>
+
+        <div class="d-flex justify-content-end mt-3">
+          <button class="btn-green-finalizar" (click)="finalizarYDescargar()">FINALIZAR</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

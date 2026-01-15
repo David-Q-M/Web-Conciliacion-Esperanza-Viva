@@ -16,18 +16,19 @@ import { BandejaSolicitudes } from './components/director/bandeja-solicitudes/ba
 import { DetalleDirector } from './components/director/detalle/detalle';
 import { GestionPersonal } from './components/director/personal/personal';
 import { BandejaReportes } from './components/director/bandeja-reportes/bandeja-reportes';
-
 import { BandejaAsignados } from './components/conciliador/bandeja-asignados/bandeja-asignados';
 import { EvaluarDesignacion } from './components/conciliador/evaluar-designacion/evaluar-designacion';
 import { ProgramarAudiencia } from './components/conciliador/programar-audiencia/programar-audiencia';
 import { RegistroAudiencia } from './components/conciliador/registro-audiencia/registro-audiencia';
-import { GenerarActa } from './components/conciliador/generar-acta/generar-acta';
-import { GenerarActaSuspension } from './components/conciliador/generar-acta-suspension/generar-acta-suspension';
+import { GenerarActaSuspension } from './components/conciliador/generar-actas/generar-acta-suspension/generar-acta-suspension';
 import { Historial } from './components/conciliador/historial/historial';
 import { AgendaConciliador } from './components/conciliador/agenda/agenda';
-import { SuspensionAudiencia } from './components/conciliador/suspension-audiencia/suspension-audiencia';
-import { GeneracionActaAcuerdoTotal } from './components/conciliador/generacion-acta-acuerdo_total/generacion-acta-acuerdo_total';
-import { GeneracionActaInasistenciaUnaParte } from './components/conciliador/generacion-acta-inasistencia-una-parte/generacion-acta-inasistencia-una-parte';
+import { SuspensionAudiencia } from './components/conciliador/generar-actas/suspension-audiencia/suspension-audiencia';
+import { GeneracionActaAcuerdoTotal } from './components/conciliador/generar-actas/generacion-acta-acuerdo_total/generacion-acta-acuerdo_total';
+import { GeneracionActaInasistenciaUnaParte } from './components/conciliador/generar-actas/generacion-acta-inasistencia-una-parte/generacion-acta-inasistencia-una-parte';
+import { GeneracionActaInasistenciaAmbasPartes } from './components/conciliador/generar-actas/generacion-acta-inasistencia-ambas-partes/generacion-acta-inasistencia-ambas-partes';
+import { GeneracionActaAsistenciaInvitacion } from './components/conciliador/generar-actas/generacion-acta-asistencia-invitacion/generacion-acta-asistencia-invitacion';
+import { GeneracionActaAcuerdoParcial } from './components/conciliador/generar-actas/generacion-acta-acuerdo-parcial/generacion-acta-acuerdo-parcial';
 
 export const routes: Routes = [
   // 1. Ruta inicial y Flujo Público
@@ -112,14 +113,21 @@ export const routes: Routes = [
       },
 
       { path: 'evaluar/:id', component: EvaluarDesignacion },
-      { path: 'programar/:id', component: ProgramarAudiencia },
-      { path: 'registro/:id', component: RegistroAudiencia },
-      { path: 'generar-acta/:id', component: GenerarActa },
+      { path: 'programar-audiencia/:id', component: ProgramarAudiencia },
+      { path: 'registro-audiencia/:id', component: RegistroAudiencia },
       { path: 'generar-acta-suspension/:id', component: GenerarActaSuspension },
       { path: 'registro-audiencia/:id', component: RegistroAudiencia },
       { path: 'suspencion-audiencia/:id', component: SuspensionAudiencia },
       { path: 'generacion-acta-acuerdo_total/:id', component: GeneracionActaAcuerdoTotal },
-      { path: 'generacion-acta-inasistencia-una-parte/:id', component: GeneracionActaInasistenciaUnaParte }
+      { path: 'generacion-acta-inasistencia-una-parte/:id', component: GeneracionActaInasistenciaUnaParte },
+      { path: 'generar-acta-inasistencia-ambas-partes/:id', component: GeneracionActaInasistenciaAmbasPartes },
+      { path: 'generar-acta-asistencia-invitacion/:id', component: GeneracionActaAsistenciaInvitacion },
+      { path: 'generacion-acta-acuerdo-parcial/:id', component: GeneracionActaAcuerdoParcial },
+      { path: 'generacion-acta-acuerdo-parcial-propuestas/:id', loadComponent: () => import('./components/conciliador/generar-actas/generacion-acta-acuerdo-parcial-propuestas/generacion-acta-acuerdo-parcial-propuestas').then(m => m.GeneracionActaAcuerdoParcialPropuestas) },
+      { path: 'generacion-acta-acuerdo-sustento-probable/:id', loadComponent: () => import('./components/conciliador/generar-actas/generacion-acta-acuerdo-sustento-probable/generacion-acta-acuerdo-sustento-probable').then(m => m.GeneracionActaAcuerdoSustentoProbable) },
+      { path: 'generacion-acta-falta-acuerdo/:id', loadComponent: () => import('./components/conciliador/generar-actas/generacion-acta-falta-acuerdo/generacion-acta-falta-acuerdo').then(m => m.GeneracionActaFaltaAcuerdo) },
+      { path: 'generacion-acta-falta-acuerdo-posiciones-propuesta/:id', loadComponent: () => import('./components/conciliador/generar-actas/generacion-acta-falta-acuerdo-posiciones-propuesta/generacion-acta-falta-acuerdo-posiciones-propuesta').then(m => m.GeneracionActaFaltaAcuerdoPosicionesPropuesta) },
+      { path: 'generacion-acta-falta-acuerdo-sustento/:id', loadComponent: () => import('./components/conciliador/generar-actas/generacion-acta-falta-acuerdo-sustento/generacion-acta-falta-acuerdo-sustento').then(m => m.GeneracionActaFaltaAcuerdoSustento) }
     ]
   },
 
