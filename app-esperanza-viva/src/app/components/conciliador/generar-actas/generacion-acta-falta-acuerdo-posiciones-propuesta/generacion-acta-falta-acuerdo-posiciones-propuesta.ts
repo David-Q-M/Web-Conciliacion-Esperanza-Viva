@@ -5,6 +5,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router, ActivatedRoute, RouterLink, RouterLinkActive } from '@angular/router';
 import { jsPDF } from 'jspdf';
 import { UsuarioService } from '../../../../services/usuario.service';
+import { ActaService } from '../../../../services/acta.service';
 
 @Component({
     selector: 'app-generacion-acta-falta-acuerdo-posiciones-propuesta',
@@ -40,7 +41,8 @@ export class GeneracionActaFaltaAcuerdoPosicionesPropuesta implements OnInit {
         private http: HttpClient,
         private router: Router,
         private route: ActivatedRoute,
-        private usuarioService: UsuarioService
+        private usuarioService: UsuarioService,
+        private actaService: ActaService
     ) { }
 
     ngOnInit(): void {
@@ -76,25 +78,8 @@ export class GeneracionActaFaltaAcuerdoPosicionesPropuesta implements OnInit {
         });
     }
 
-    finalizarYDescargar() {
-        const token = localStorage.getItem('token');
-        const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-        const detalle = { ...this.datosActa };
-        const payload = {
-            resultadoTipo: 'Falta de Acuerdo con Posiciones',
-            resultadoDetalle: JSON.stringify(detalle)
-        };
-
-        this.http.put(`http://localhost:8080/api/audiencias/${this.audienciaId}/resultado`, payload, { headers }).subscribe({
-            next: () => {
-                alert("Proceso Finalizado. Acta Guardada.");
-                this.router.navigate(['/conciliador/mis-casos']);
-            },
-            error: (err) => alert("Error al finalizar: " + err.message)
-        });
-    }
-
-    descargarPDF() {
+    // Helper to generate doc
+    generarDocPDF(): jsPDF {
         const doc = new jsPDF();
         const sol = this.audiencia.solicitud?.solicitante;
         const inv = this.audiencia.solicitud?.invitado;
@@ -111,11 +96,11 @@ export class GeneracionActaFaltaAcuerdoPosicionesPropuesta implements OnInit {
         doc.setFontSize(10);
         doc.text("FORMATO L", 195, 15, { align: "right" });
 
-        centerText("FORMATO TIPO DE ACTA DE CONCILIACIÓN POR FALTA DE ACUERDO CON", 105, 25, 'bold');
-        centerText("POSICIONES Y/O PROPUESTAS DE LAS PARTES CONCILIANTES", 105, 30, 'bold');
-        centerText("(PERSONAS NATURALES)", 105, 35, 'bold');
+        centerText("FORMATO TIPO DE ACTA DE CONCILIACIÓN POR FALTA DE ACUERDO CON", 25, 10, 'bold');
+        centerText("POSICIONES Y/O PROPUESTAS DE LAS PARTES CONCILIANTES", 30, 10, 'bold');
+        centerText("(PERSONAS NATURALES)", 35, 10, 'bold');
 
-        centerText(`CENTRO DE CONCILIACIÓN "ESPERANZA VIVA"`, 105, 45, 'bold');
+        centerText(`CENTRO DE CONCILIACIÓN "ESPERANZA VIVA"`, 45, 12, 'bold');
 
         doc.setFont("times", "normal");
         doc.text("Autorizado su funcionamiento por Resolución ............... N° _______ - _______", 105, 50, { align: "center" });
@@ -220,7 +205,47 @@ export class GeneracionActaFaltaAcuerdoPosicionesPropuesta implements OnInit {
         doc.line(110, yPos, 170, yPos);
         doc.text("Nombre, firma y huella del invitado", 140, yPos + 5, { align: "center" });
 
-        doc.save(`Formato_L_FaltaDeAcuerdoPosiciones_${expNum}.pdf`);
+        return doc;
+    }
+
+    finalizarYDescargar() {
+        const doc = this.generarDocPDF();
+        const pdfBlob = doc.output('blob');
+        const numeroActa = `ACTA-FALTA-ACUERDO-PROP-${this.audienciaId}-${new Date().getTime()}`;
+
+        // 1. Upload Blob
+        this.actaService.subirActa(this.audienciaId, 'FALTA_ACUERDO_POSICIONES', numeroActa, pdfBlob).subscribe({
+            next: (res) => {
+                console.log("Acta Falta Acuerdo Posiciones subida:", res);
+
+                // 2. Update Status
+                const token = localStorage.getItem('token');
+                const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+                const detalle = {
+                    ...this.datosActa,
+                    actaUrl: res.archivoUrl
+                };
+
+                const payload = {
+                    resultadoTipo: 'Falta de Acuerdo con Posiciones',
+                    resultadoDetalle: JSON.stringify(detalle)
+                };
+
+                this.http.put(`http://localhost:8080/api/audiencias/${this.audienciaId}/resultado`, payload, { headers }).subscribe({
+                    next: () => {
+                        doc.save(`Formato_L_FaltaDeAcuerdoPosiciones_${this.audiencia.solicitud?.numeroExpediente}.pdf`);
+                        alert("✅ Proceso Finalizado. Acta Guardada.");
+                        this.router.navigate(['/conciliador/mis-casos']);
+                    },
+                    error: (err) => alert("Error al finalizar: " + err.message)
+                });
+            },
+            error: (err) => alert("Error al subir acta: " + err.message)
+        });
+    }
+
+    descargarPDF() {
+        this.generarDocPDF().save(`Formato_L_FaltaDeAcuerdoPosiciones_${this.audiencia.solicitud?.numeroExpediente}.pdf`);
     }
 
     descargarWord() {

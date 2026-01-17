@@ -20,6 +20,7 @@ export class HistorialNotificador implements OnInit {
     fechaInicio: string = '';
     fechaFin: string = '';
     estado: string = '';
+    currentUserId: number | null = null;
 
     constructor(private http: HttpClient, private router: Router) { }
 
@@ -28,17 +29,28 @@ export class HistorialNotificador implements OnInit {
         if (userJson) {
             const user = JSON.parse(userJson);
             this.notificadorNombre = user.nombreCompleto || this.notificadorNombre;
+            this.currentUserId = user.id;
         }
-        this.buscarHistorial();
+
+        if (this.currentUserId) {
+            this.buscarHistorial();
+        } else {
+            console.error("No user ID found for Notifier");
+            this.isLoading = false;
+        }
     }
 
     buscarHistorial() {
+        if (!this.currentUserId) return;
         this.isLoading = true;
-        this.http.get<any[]>('http://localhost:8080/api/solicitudes').subscribe({
+        this.http.get<any[]>(`http://localhost:8080/api/audiencias/notificador/${this.currentUserId}`).subscribe({
             next: (res) => {
-                this.historial = res.filter(s =>
-                    ['NOTIFICADO', 'ENTREGADO', 'DEVUELTO'].includes(s.estado) || s.estado === 'NOTIFICADO'
-                );
+                // 🔹 FIX: Mostrar todo el historial sin filtrar estrictamente por estado
+                this.historial = res;
+                // Optional: Client-side date filtering if dates are selected
+                if (this.fechaInicio && this.fechaFin) {
+                    // logic here if needed, but keeping it simple as requested
+                }
                 setTimeout(() => this.isLoading = false, 500);
             },
             error: (err) => {

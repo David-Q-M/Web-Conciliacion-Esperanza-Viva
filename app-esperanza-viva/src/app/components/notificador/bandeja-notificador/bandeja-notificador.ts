@@ -24,24 +24,34 @@ export class BandejaNotificador implements OnInit {
 
     ngOnInit(): void {
         const userJson = localStorage.getItem('currentUser');
+        let userId: number | null = null;
         if (userJson) {
             const user = JSON.parse(userJson);
             this.notificadorNombre = user.nombreCompleto || this.notificadorNombre;
+            userId = user.id;
         }
-        this.cargarPendientes();
+
+        if (userId) {
+            this.cargarPendientes(userId);
+        } else {
+            console.error("No user ID found for Notifier");
+            this.isLoading = false;
+        }
     }
 
-    cargarPendientes() {
+    cargarPendientes(userId: number) {
         this.isLoading = true;
-        this.http.get<any[]>('http://localhost:8080/api/solicitudes').subscribe({
+        // 🔹 FETCH FROM AUDIENCIAS FOR SPECIFIC NOTIFIER
+        this.http.get<any[]>(`http://localhost:8080/api/audiencias/notificador/${userId}`).subscribe({
             next: (res) => {
-                // Simulacion de filtro: pendientes de notificación
-                this.pendientes = res.filter(s =>
-                    s.estado === 'APROBADA' || s.estado === 'PENDIENTE_NOTIFICACION' || s.estado === 'AUDIENCIA_PROGRAMADA'
-                );
+                // Filter logic can be simpler now, or refined based on status
+                // If backend returns all assignments, we might want to filter completed vs pending in UI
+                // Filter to include Programmed and Pending notification states
+                // 🔹 FIX: Mostrar todo lo que traiga el backend sin filtrar por estado
+                this.pendientes = res;
 
                 this.countPendientes = this.pendientes.length;
-                this.countEntregadas = res.filter(s => s.estado === 'NOTIFICADO' || s.estado === 'ENTREGADO').length;
+                this.countEntregadas = res.filter(a => a.solicitud?.estado === 'NOTIFICADO' || a.solicitud?.estado === 'ENTREGADO').length;
                 this.countUrgente = Math.floor(Math.random() * 2); // Mock
 
                 setTimeout(() => this.isLoading = false, 500);

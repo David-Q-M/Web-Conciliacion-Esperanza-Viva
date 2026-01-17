@@ -17,15 +17,15 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/solicitudes")
-// Se añaden los métodos PUT y OPTIONS para que Angular pueda actualizar estados
-@CrossOrigin(origins = "http://localhost:4200", allowedHeaders = "*", methods = { RequestMethod.GET, RequestMethod.POST,
-        RequestMethod.PUT, RequestMethod.OPTIONS })
 public class SolicitudController {
 
     private static final Logger logger = LoggerFactory.getLogger(SolicitudController.class);
 
     @Autowired
     private SolicitudService service;
+
+    @Autowired
+    private appesperanzaviva.backend.service.AuditoriaService auditoriaService;
 
     @PostMapping(consumes = { "multipart/form-data" })
     public ResponseEntity<Solicitud> registrar(
@@ -38,6 +38,14 @@ public class SolicitudController {
             ObjectMapper objectMapper = new ObjectMapper();
             Solicitud nuevaSolicitud = objectMapper.readValue(solicitudJson, Solicitud.class);
             Solicitud guardada = service.crearSolicitudConArchivos(nuevaSolicitud, dni, pruebas, firma);
+
+            // AUDITORIA
+            auditoriaService.registrarAccion(
+                    "Usuario Web",
+                    "REGISTRO",
+                    "Nueva solicitud ingresada: " + guardada.getNumeroExpediente(),
+                    guardada.getNumeroExpediente());
+
             return ResponseEntity.ok(guardada);
         } catch (IOException e) {
             logger.error("Error procesando solicitud", e);
@@ -46,8 +54,45 @@ public class SolicitudController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Solicitud>> listar() {
-        return ResponseEntity.ok(service.listarTodas());
+    public ResponseEntity<List<appesperanzaviva.backend.dto.SolicitudDTO>> listar() {
+        try {
+            List<Solicitud> lista = service.listarTodas();
+            List<appesperanzaviva.backend.dto.SolicitudDTO> dtos = lista.stream().map(s -> {
+                appesperanzaviva.backend.dto.SolicitudDTO dto = new appesperanzaviva.backend.dto.SolicitudDTO();
+                dto.setId(s.getId());
+                dto.setNumeroExpediente(s.getNumeroExpediente());
+                dto.setEstado(s.getEstado());
+                dto.setFechaPresentacion(s.getFechaPresentacion());
+                dto.setMateriaConciliable(s.getMateriaConciliable());
+                dto.setSubMateria(s.getSubMateria());
+
+                // Mapeo seguro de nombres
+                if (s.getSolicitante() != null)
+                    dto.setSolicitanteNombre(s.getSolicitante().getNombres() + " " + s.getSolicitante().getApellidos());
+                if (s.getInvitado() != null)
+                    dto.setInvitadoNombre(s.getInvitado().getNombres() + " " + s.getInvitado().getApellidos());
+                if (s.getConciliador() != null) {
+                    dto.setConciliadorNombre(s.getConciliador().getNombreCompleto());
+                    dto.setConciliadorId(s.getConciliador().getId().longValue());
+                }
+
+                // Resultado de audiencia (Tomamos la última registrada si hay varias)
+                if (s.getAudiencias() != null && !s.getAudiencias().isEmpty()) {
+                    appesperanzaviva.backend.entity.Audiencia ultimaAudiencia = s.getAudiencias()
+                            .get(s.getAudiencias().size() - 1);
+                    dto.setFechaAudiencia(ultimaAudiencia.getFechaAudiencia());
+                    dto.setResultadoTipo(ultimaAudiencia.getResultadoTipo());
+                }
+
+                return dto;
+            }).collect(java.util.stream.Collectors.toList());
+
+            System.out.println("DEBUG - Enviando " + dtos.size() + " solicitudes como DTOs.");
+            return ResponseEntity.ok(dtos);
+        } catch (Exception e) {
+            logger.error("Error al listar solicitudes (DTO Serialization): ", e);
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     // 🔹 NUEVO: Obtener detalle por ID (Para el panel del director:
@@ -68,7 +113,7 @@ public class SolicitudController {
 
     // 🔹 NUEVO: Actualizar estado y observaciones (Para aprobar/observar/rechazar)
     @PutMapping("/{id}/estado")
-        public ResponseEntity<Solicitud> actualizarEstado(
+    public ResponseEntity<Solicitud> actualizarEstado(
             @PathVariable @NonNull Long id,
             @RequestBody Map<String, String> payload) {
 
@@ -76,6 +121,14 @@ public class SolicitudController {
             String nuevoEstado = payload.get("estado");
             String observacion = payload.get("observacion");
             Solicitud actualizada = service.actualizarEstado(id, nuevoEstado, observacion);
+
+            // AUDITORIA
+            auditoriaService.registrarAccion(
+                    "Director/Sistema",
+                    "ACTUALIZACION",
+                    "Estado actualizado a " + nuevoEstado + (observacion != null ? " (Obs: " + observacion + ")" : ""),
+                    actualizada.getNumeroExpediente());
+
             return ResponseEntity.ok(actualizada);
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
@@ -84,7 +137,7 @@ public class SolicitudController {
 
     // 🔹 NUEVO: Asignar conciliador (Para el Director - Wireframe 19/20)
     @PostMapping("/{id}/designar")
-        public ResponseEntity<Solicitud> designarConciliador(
+    public ResponseEntity<Solicitud> designarConciliador(
             @PathVariable @NonNull Long id,
             @RequestBody Map<String, Object> payload) {
 
@@ -96,12 +149,23 @@ public class SolicitudController {
             } else if (obj instanceof String) {
                 conciliadorId = Long.parseLong((String) obj);
             }
-            
+
             if (conciliadorId == null) {
                 return ResponseEntity.badRequest().build();
             }
-            
+
             Solicitud actualizada = service.designarConciliador(id, conciliadorId);
+
+            // AUDITORIA
+            String nombreConciliador = (actualizada.getConciliador() != null)
+                    ? actualizada.getConciliador().getNombreCompleto()
+                    : "Desconocido";
+            auditoriaService.registrarAccion(
+                    "Director",
+                    "ASIGNACION",
+                    "Se designó al conciliador: " + nombreConciliador,
+                    actualizada.getNumeroExpediente());
+
             return ResponseEntity.ok(actualizada);
         } catch (NumberFormatException | NullPointerException e) {
             logger.error("Error designando conciliador", e);

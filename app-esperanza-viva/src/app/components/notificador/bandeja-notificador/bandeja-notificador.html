@@ -70,8 +70,9 @@
                     <thead>
                         <tr class="text-secondary small text-uppercase">
                             <th class="ps-4">N° Expediente</th>
-                            <th>Destinatario</th>
-                            <th>Actuación</th>
+                            <th>Solicitante ( Parte 1)</th>
+                            <th>Invitado (Parte 2)</th>
+                            <th>Fecha Audiencia</th>
                             <th class="text-end pe-4">Acción</th>
                         </tr>
                     </thead>
@@ -80,13 +81,16 @@
                         <ng-container *ngIf="isLoading">
                             <tr *ngFor="let i of [1,2,3,4,5]">
                                 <td class="ps-4">
-                                    <div class="skeleton skeleton-text" style="width: 100px;"></div>
-                                </td>
-                                <td>
-                                    <div class="skeleton skeleton-text" style="width: 150px;"></div>
+                                    <div class="skeleton skeleton-text" style="width: 80px;"></div>
                                 </td>
                                 <td>
                                     <div class="skeleton skeleton-text" style="width: 120px;"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text" style="width: 120px;"></div>
+                                </td>
+                                <td>
+                                    <div class="skeleton skeleton-text" style="width: 100px;"></div>
                                 </td>
                                 <td class="text-end pe-4">
                                     <div class="skeleton skeleton-btn ms-auto"></div>
@@ -97,18 +101,52 @@
                         <!-- DATA -->
                         <ng-container *ngIf="!isLoading">
                             <tr *ngFor="let p of pendientes">
-                                <td class="ps-4 fw-bold text-white">{{ p.numeroExpediente }}</td>
-                                <td class="text-white">{{ p.solicitante?.nombres }} {{ p.solicitante?.apellidos }}</td>
-                                <td><span class="badge bg-warning text-dark">Notificar Invitación</span></td>
+                                <td class="ps-4 fw-bold text-white">{{ p.solicitud?.numeroExpediente }}</td>
+
+                                <!-- SOLICITANTE -->
+                                <td>
+                                    <div class="d-flex flex-column">
+                                        <span class="text-white fw-bold">{{ p.solicitud?.solicitante?.nombres }} {{
+                                            p.solicitud?.solicitante?.apellidos }}</span>
+                                        <span class="text-secondary small"
+                                            style="font-size: 0.75rem;">Solicitante</span>
+                                    </div>
+                                </td>
+
+                                <!-- INVITADO -->
+                                <td>
+                                    <div class="d-flex flex-column">
+                                        <span class="text-white fw-bold">{{ p.solicitud?.invitado?.nombres }} {{
+                                            p.solicitud?.invitado?.apellidos }}</span>
+                                        <span class="text-secondary small" style="font-size: 0.75rem;">Invitado</span>
+                                    </div>
+                                </td>
+
+                                <!-- FECHA AUDIENCIA -->
+                                <td>
+                                    <div *ngIf="p.fechaAudiencia; else noFecha">
+                                        <span class="badge bg-warning text-dark">
+                                            <i class="bi bi-calendar-event me-1"></i> {{ p.fechaAudiencia |
+                                            date:'dd/MM/yyyy' }}
+                                        </span>
+                                        <div class="small text-secondary mt-1">
+                                            <i class="bi bi-clock me-1"></i> {{ p.horaAudiencia }}
+                                        </div>
+                                    </div>
+                                    <ng-template #noFecha>
+                                        <span class="badge border border-secondary text-secondary">Por Programar</span>
+                                    </ng-template>
+                                </td>
+
                                 <td class="text-end pe-4">
                                     <button class="btn btn-warning btn-sm fw-bold px-3"
-                                        [routerLink]="['/notificador/certificacion', p.id]">
+                                        [routerLink]="['/notificador/certificacion', p.solicitud?.id]">
                                         Gestionar <i class="bi bi-chevron-right ms-1"></i>
                                     </button>
                                 </td>
                             </tr>
                             <tr *ngIf="pendientes.length === 0">
-                                <td colspan="4" class="text-center text-secondary py-5">
+                                <td colspan="5" class="text-center text-secondary py-5">
                                     <i class="bi bi-bookmarks fs-1 d-block mb-3 opacity-50"></i>
                                     No tienes notificaciones pendientes.
                                 </td>

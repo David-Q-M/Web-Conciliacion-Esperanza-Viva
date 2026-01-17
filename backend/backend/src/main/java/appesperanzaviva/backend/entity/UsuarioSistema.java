@@ -1,12 +1,14 @@
 package appesperanzaviva.backend.entity;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "usuarios_sistema")
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class UsuarioSistema {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -106,9 +106,25 @@
             </p>
 
             <div class="text-center mt-3">
-              <button class="btn-solucionar-viva shadow w-100" [routerLink]="['/conciliador/registro-audiencia', a.id]">
-                <i class="bi bi-pencil-square me-2"></i> Gestionar Audiencia
-              </button>
+              <div class="text-center mt-3">
+                <div *ngIf="a.resultadoTipo">
+                  <span class="badge bg-success w-100 p-2 text-uppercase mb-2">
+                    <i class="bi bi-check-circle-fill me-2"></i> GESTIONADO
+                  </span>
+                  <button class="btn btn-outline-secondary btn-sm w-100"
+                    [routerLink]="['/conciliador/registro-audiencia', a.id]">
+                    <i class="bi bi-eye me-1"></i> Revisar Detalles
+                  </button>
+                </div>
+
+                <div *ngIf="!a.resultadoTipo">
+                  <button class="btn-solucionar-viva shadow w-100"
+                    [routerLink]="['/conciliador/registro-audiencia', a.id]">
+                    <i class="bi bi-pencil-square me-2"></i> Gestionar Audiencia
+                  </button>
+                </div>
+              </div>
+
             </div>
           </div>
         </div>

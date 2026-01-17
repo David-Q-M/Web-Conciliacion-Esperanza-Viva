@@ -33,6 +33,7 @@ export class Reportes implements OnInit {
     finalizadosContador: 0
   };
 
+  listaPersonalBase: any[] = [];
   listaPersonalCarga: any[] = [];
 
   constructor(
@@ -45,38 +46,47 @@ export class Reportes implements OnInit {
     const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
     this.usuarioActivo = user.nombreCompleto || 'Administrador';
 
-    // Inicializar fechas (último mes por defecto)
+    // Inicializar fechas (Desde el 1 de Enero del 2024 para ver todo)
     const hoy = new Date();
-    const haceUnMes = new Date();
-    haceUnMes.setMonth(hoy.getMonth() - 1);
+    // Default to Jan 1st, 2024 to ensure historical data is seen
     this.fechaFin = hoy.toISOString().split('T')[0];
-    this.fechaInicio = haceUnMes.toISOString().split('T')[0];
+    this.fechaInicio = '2024-01-01';
 
     this.cargarDatos();
   }
 
   cargarDatos() {
-    // 1. Cargar Solicitudes
-    this.solicitudService.listarSolicitudes().subscribe({
-      next: (res: any[]) => {
-        this.todasSolicitudes = res;
-        this.filtrarReportes(); // Calcular estadísticas iniciales
-      },
-      error: (err) => console.error("Error cargando solicitudes", err)
-    });
-
-    // 2. Cargar Personal y calcular carga (simplificado)
     this.usuarioService.listarUsuarios().subscribe({
       next: (res: any[]) => {
+        // Filtrar personal activo (no Admin)
         const personal = res.filter(u => u.rol !== 'ADMINISTRADOR' && u.estado === 'ACTIVO');
         this.data.personalActivo = personal.length;
 
-        // Mapear carga de trabajo (esto requeriría lógica más compleja cruzando con solicitudes, 
-        // por ahora mostramos la lista base)
-        this.listaPersonalCarga = personal.map(p => ({
-          ...p,
-          cantidadCasos: 0 // Se actualizaría cruzando IDs con solicitudes
-        }));
+        // Inicializar base con contador 0
+        this.listaPersonalBase = personal.map(p => ({ ...p, cantidadCasos: 0 }));
+
+        // Cargar solicitudes tambien (ya no depende de usuarios)
+      },
+      error: (err) => {
+        console.error("Error cargando usuarios", err);
+        // Aun si falla usuarios, intentamos cargar solicitudes
+      }
+    });
+
+    // Cargar solicitudes en paralelo
+    this.cargarSolicitudes();
+  }
+
+  cargarSolicitudes() {
+    this.solicitudService.listarSolicitudes().subscribe({
+      next: (res: any[]) => {
+        console.log("🔍 REPORTES - SOLICITUDES RECIBIDAS:", res);
+        this.todasSolicitudes = res;
+        this.filtrarReportes(); // Calcular estadísticas iniciales
+      },
+      error: (err) => {
+        console.error("Error cargando solicitudes", err);
+        alert("Error al cargar reportes. Ver Consola.");
       }
     });
   }
@@ -104,12 +114,59 @@ export class Reportes implements OnInit {
       ? Math.round((this.data.finalizadosContador / this.data.totalSolicitudes) * 100)
       : 0;
 
-    // Recalcular carga de trabajo real basada en solicitudes filtradas (opcional, avanzado)
+    // Recalcular carga de trabajo real basada en solicitudes filtradas
+    // 1. Resetear contadores
+    this.listaPersonalBase.forEach(p => p.cantidadCasos = 0);
+
+    // 2. Contar asignaciones
+    filtradas.forEach(s => {
+      // Contar Conciliador
+      if (s.conciliadorId) {
+        const personal = this.listaPersonalBase.find(p => p.id === s.conciliadorId);
+        if (personal) personal.cantidadCasos++;
+      }
+      // Contar Notificador (si aplica - aunque el DTO actual no tiene notificadorId, se puede agregar despues si es critico)
+      // Por ahora comentamos notificador si no está en DTO, o asumimos que no se cuenta aqui
+    });
+
+    // 3. Actualizar lista visible y ordenar por mayor carga
+    this.listaPersonalCarga = [...this.listaPersonalBase].sort((a, b) => b.cantidadCasos - a.cantidadCasos);
+
+    // 4. Exponer datos filtrados para la tabla de detalle
+    this.solicitudesFiltradas = filtradas;
   }
 
+  // Datos para la tabla de detalle
+  solicitudesFiltradas: any[] = [];
+
   exportarReporte() {
-    alert("Funcionalidad de exportación a PDF/Excel simulada.\nSe descargarían las estadísticas del " + this.fechaInicio + " al " + this.fechaFin);
-    // Aquí iría la lógica con jsPDF o ExcelJS
+    if (this.solicitudesFiltradas.length === 0) {
+      alert("No hay datos para exportar en este rango de fechas.");
+      return;
+    }
+
+    // Generar CSV
+    const headers = ["Nro Expediente", "Fecha", "Solicitante", "Conciliador", "Estado", "Resultado"];
+    const rows = this.solicitudesFiltradas.map(s => [
+      s.numeroExpediente,
+      s.fechaPresentacion,
+      s.solicitanteNombre || 'Sin Nombre',
+      s.conciliadorNombre || 'Sin Asignar',
+      s.estado,
+      s.resultadoTipo || '-'
+    ]);
+
+    const csvContent = "data:text/csv;charset=utf-8,"
+      + headers.join(",") + "\n"
+      + rows.map(e => e.join(",")).join("\n");
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `reporte_esperanza_viva_${this.fechaInicio}_${this.fechaFin}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   }
   cerrarSesion() {
     localStorage.clear();

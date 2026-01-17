@@ -41,14 +41,71 @@
             </div>
 
             <div class="col-md-6 mb-3">
-              <span class="section-label">Conciliador Asignado</span>
-              <div class="section-value">{{ expediente.conciliador || 'Por asignar' }}</div>
+              <span class="section-label d-block mb-1">Conciliador Asignado</span>
+              <div class="section-value animate__animated animate__fadeIn"
+                [class.text-warning]="!expediente.conciliador" [class.text-success]="expediente.conciliador">
+
+                <!-- Display Conciliator Info if exists -->
+                <div *ngIf="expediente.conciliador || expediente.nombreConciliador; else sinConciliador">
+                  <div class="d-flex align-items-center">
+                    <i class="bi bi-person-check-fill me-2 fs-4 text-success"></i>
+                    <strong class="fs-5 text-white">
+                      <!-- 1. Full Object with nombres/apellidos -->
+                      <span *ngIf="expediente.conciliador?.nombres">
+                        {{ expediente.conciliador.nombres }} {{ expediente.conciliador.apellidos }}
+                      </span>
+                      <span *ngIf="!expediente.conciliador?.nombres && expediente.conciliador?.nombreCompleto">
+                        {{ expediente.conciliador.nombreCompleto }}
+                      </span>
+                      <span
+                        *ngIf="!expediente.conciliador?.nombres && !expediente.conciliador?.nombreCompleto && expediente.conciliador?.nombre_completo">
+                        {{ expediente.conciliador.nombre_completo }}
+                      </span>
+                      <span
+                        *ngIf="!expediente.conciliador?.nombres && !expediente.conciliador?.nombreCompleto && !expediente.conciliador?.nombre_completo && expediente.conciliador?.nombre">
+                        {{ expediente.conciliador.nombre }}
+                      </span>
+                      <!-- 5. Fallback: String name on expediente -->
+                      <span
+                        *ngIf="!expediente.conciliador?.nombres && !expediente.conciliador?.nombreCompleto && !expediente.conciliador?.nombre_completo && !expediente.conciliador?.nombre && expediente.nombreConciliador">
+                        {{ expediente.nombreConciliador }}
+                      </span>
+                      <!-- 6. Ultimate Fallback: ID or generic msg -->
+                      <span
+                        *ngIf="!expediente.conciliador?.nombres && !expediente.conciliador?.nombreCompleto && !expediente.conciliador?.nombre_completo && !expediente.conciliador?.nombre && !expediente.nombreConciliador">
+                        Conciliador Asignado (ID: {{ expediente.conciliador?.id || expediente.conciliador }})
+                      </span>
+                    </strong>
+                  </div>
+
+                  <!-- Registration Number -->
+                  <div *ngIf="expediente.conciliador?.nroRegistro || expediente.conciliador?.nro_registro"
+                    class="small text-muted ms-5 mt-1">
+                    Reg. N° {{ expediente.conciliador?.nroRegistro || expediente.conciliador?.nro_registro }}
+                  </div>
+                </div>
+
+                <ng-template #sinConciliador>
+                  <div class="d-flex align-items-center mt-1">
+                    <i class="bi bi-hourglass-split me-2 fs-5 text-warning"></i>
+                    <span class="fs-5">Pendiente de Asignación</span>
+                  </div>
+                </ng-template>
+              </div>
             </div>
             <div class="col-md-6 mb-3">
               <span class="section-label">Próxima Audiencia</span>
               <div class="section-value">
-                {{ expediente.audiencia?.fecha ? (expediente.audiencia.fecha | date:'dd/MM/yyyy') + ' - ' +
-                expediente.audiencia.hora : 'Por programar' }}
+                <div *ngIf="expediente.fechaAudiencia || expediente.audiencia?.fecha; else porProgramar">
+                  <i class="bi bi-calendar-check text-warning me-2"></i>
+                  {{ (expediente.fechaAudiencia || expediente.audiencia?.fecha) | date:'dd/MM/yyyy' }}
+                  <span class="ms-2 badge bg-dark text-warning border border-warning">
+                    {{ expediente.horaAudiencia || expediente.audiencia?.hora }}
+                  </span>
+                </div>
+                <ng-template #porProgramar>
+                  <span class="text-muted fst-italic">Por programar</span>
+                </ng-template>
               </div>
             </div>
           </div>
@@ -108,13 +165,14 @@
           <h5 class="card-title text-warning">Notificaciones</h5>
           <p class="text-muted small mb-3">Comunicaciones del centro de conciliación</p>
 
-          <div class="notif-card" *ngIf="expediente.audiencia?.fecha">
+          <div class="notif-card" *ngIf="expediente.fechaAudiencia || expediente.audiencia?.fecha">
             <div class="notif-title text-warning">Audiencia Programada</div>
             <div class="notif-body">
-              Se ha programado la audiencia de conciliación para el {{ expediente.audiencia.fecha | date:'dd/MM/yyyy' }}
-              a las {{ expediente.audiencia.hora }}.
+              Se ha programado la audiencia de conciliación para el {{ (expediente.fechaAudiencia ||
+              expediente.audiencia?.fecha) | date:'dd/MM/yyyy' }}
+              a las {{ expediente.horaAudiencia || expediente.audiencia?.hora }}.
             </div>
-            <span class="notif-date">{{ expediente.audiencia.fechaProgramacion | date:'dd/MM/yyyy' }}</span>
+            <span class="notif-date">{{ expediente.fechaCreacion | date:'dd/MM/yyyy' }}</span>
           </div>
 
           <div class="notif-card" *ngIf="isStateAfterOrEqual('APROBADA')">

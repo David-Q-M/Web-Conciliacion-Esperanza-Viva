@@ -30,7 +30,7 @@ public class SolicitudServiceImpl implements SolicitudService {
     private final Path root = Paths.get("uploads");
 
     @Override
-        public Solicitud crearSolicitudConArchivos(Solicitud solicitud, MultipartFile dni, MultipartFile pruebas,
+    public Solicitud crearSolicitudConArchivos(Solicitud solicitud, MultipartFile dni, MultipartFile pruebas,
             MultipartFile firma) {
         try {
             if (!Files.exists(root)) {
@@ -118,6 +118,6 @@ public class SolicitudServiceImpl implements SolicitudService {
 
     @Override
     public List<Solicitud> listarPorConciliador(@NonNull Long conciliadorId) {
-        return repository.findByConciliadorId(conciliadorId);
+        return repository.findByConciliadorId(Math.toIntExact(conciliadorId));
     }
 }

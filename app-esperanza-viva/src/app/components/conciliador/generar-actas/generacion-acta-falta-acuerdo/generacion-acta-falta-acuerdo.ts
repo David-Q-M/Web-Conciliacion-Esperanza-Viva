@@ -5,6 +5,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router, ActivatedRoute, RouterLink, RouterLinkActive } from '@angular/router';
 import { jsPDF } from 'jspdf';
 import { UsuarioService } from '../../../../services/usuario.service';
+import { ActaService } from '../../../../services/acta.service';
 
 @Component({
     selector: 'app-generacion-acta-falta-acuerdo',
@@ -36,7 +37,8 @@ export class GeneracionActaFaltaAcuerdo implements OnInit {
         private http: HttpClient,
         private router: Router,
         private route: ActivatedRoute,
-        private usuarioService: UsuarioService
+        private usuarioService: UsuarioService,
+        private actaService: ActaService
     ) { }
 
     ngOnInit(): void {
@@ -72,25 +74,8 @@ export class GeneracionActaFaltaAcuerdo implements OnInit {
         });
     }
 
-    finalizarYDescargar() {
-        const token = localStorage.getItem('token');
-        const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-        const detalle = { ...this.datosActa };
-        const payload = {
-            resultadoTipo: 'Falta de Acuerdo',
-            resultadoDetalle: JSON.stringify(detalle)
-        };
-
-        this.http.put(`http://localhost:8080/api/audiencias/${this.audienciaId}/resultado`, payload, { headers }).subscribe({
-            next: () => {
-                alert("Proceso Finalizado. Acta Guardada.");
-                this.router.navigate(['/conciliador/mis-casos']);
-            },
-            error: (err) => alert("Error al finalizar: " + err.message)
-        });
-    }
-
-    descargarPDF() {
+    // Helper to generate doc
+    generarDocPDF(): jsPDF {
         const doc = new jsPDF();
         const sol = this.audiencia.solicitud?.solicitante;
         const inv = this.audiencia.solicitud?.invitado;
@@ -107,10 +92,10 @@ export class GeneracionActaFaltaAcuerdo implements OnInit {
         doc.setFontSize(10);
         doc.text("FORMATO K", 195, 15, { align: "right" });
 
-        centerText("FORMATO TIPO DE ACTA DE CONCILIACIÓN POR FALTA DE ACUERDO", 105, 25, 'bold');
-        centerText("(PERSONAS NATURALES)", 105, 30, 'bold');
+        centerText("FORMATO TIPO DE ACTA DE CONCILIACIÓN POR FALTA DE ACUERDO", 25, 10, 'bold');
+        centerText("(PERSONAS NATURALES)", 30, 10, 'bold');
 
-        centerText(`CENTRO DE CONCILIACIÓN "ESPERANZA VIVA"`, 105, 45, 'bold');
+        centerText(`CENTRO DE CONCILIACIÓN "ESPERANZA VIVA"`, 45, 12, 'bold');
 
         doc.setFont("times", "normal");
         doc.text("Autorizado su funcionamiento por Resolución ............... N° _______ - _______", 105, 50, { align: "center" });
@@ -164,10 +149,6 @@ export class GeneracionActaFaltaAcuerdo implements OnInit {
         doc.line(20, yPos - 2, 190, yPos - 2);
         yPos += 15;
 
-        // NOTE: Technically "Falta de Acuerdo" might imply no specific agreement text, 
-        // but often the template just ends here or has a closing statement.
-        // We will add the closing statement as per typical legal docs or Formato K continuation.
-
         if (yPos > 240) { doc.addPage(); yPos = 30; }
 
         // TEXTO CIERRE
@@ -186,25 +167,50 @@ export class GeneracionActaFaltaAcuerdo implements OnInit {
         doc.text("Nombre, firma y huella del solicitante", 140, yPos + 5, { align: "center" });
 
         yPos += 30;
-        // Formato K usually only needs Conciliator + Parties, but if lawyer present?
-        // Template image 4 only shows 2 signature lines at bottom?
-        // Actually image 4 shows "Firma y huella de Conciliador" (Left) and "Nombre... solicitante" (Right).
-        // Then below: Empty left? and "Nombre... invitado" (Right).
-        // Let's match typical structure.
-
-        // Wait, image 4 shows: 
-        // Row 1: Left (Conciliador), Right (Solicitante)
-        // Row 2: Left (Abogado? - text cut off/faint), Right (Invitado)
-        // Let's assume Abogado is possible.
-
-        // doc.line(20, yPos, 80, yPos);
-        // doc.text("Firma y huella del Abogado", 50, yPos + 5, { align: "center" });
-
-        // Let's just put Invitado for now on right, standard implementation.
         doc.line(110, yPos, 170, yPos);
         doc.text("Nombre, firma y huella del invitado", 140, yPos + 5, { align: "center" });
 
-        doc.save(`Formato_K_FaltaDeAcuerdo_${expNum}.pdf`);
+        return doc;
+    }
+
+    finalizarYDescargar() {
+        const doc = this.generarDocPDF();
+        const pdfBlob = doc.output('blob');
+        const numeroActa = `ACTA-FALTA-ACUERDO-${this.audienciaId}-${new Date().getTime()}`;
+
+        // 1. Upload Blob
+        this.actaService.subirActa(this.audienciaId, 'FALTA_ACUERDO', numeroActa, pdfBlob).subscribe({
+            next: (res) => {
+                console.log("Acta Falta Acuerdo subida:", res);
+
+                // 2. Update Status
+                const token = localStorage.getItem('token');
+                const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+                const detalle = {
+                    ...this.datosActa,
+                    actaUrl: res.archivoUrl
+                };
+
+                const payload = {
+                    resultadoTipo: 'Falta de Acuerdo',
+                    resultadoDetalle: JSON.stringify(detalle)
+                };
+
+                this.http.put(`http://localhost:8080/api/audiencias/${this.audienciaId}/resultado`, payload, { headers }).subscribe({
+                    next: () => {
+                        doc.save(`Formato_K_FaltaDeAcuerdo_${this.audiencia.solicitud?.numeroExpediente}.pdf`);
+                        alert("✅ Proceso Finalizado. Acta Guardada.");
+                        this.router.navigate(['/conciliador/mis-casos']);
+                    },
+                    error: (err) => alert("Error al finalizar: " + err.message)
+                });
+            },
+            error: (err) => alert("Error al subir acta: " + err.message)
+        });
+    }
+
+    descargarPDF() {
+        this.generarDocPDF().save(`Formato_K_FaltaDeAcuerdo_${this.audiencia.solicitud?.numeroExpediente}.pdf`);
     }
 
     descargarWord() {

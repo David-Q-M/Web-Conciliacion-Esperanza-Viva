@@ -1,9 +1,11 @@
 package appesperanzaviva.backend.entity;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "personas")
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class Persona {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

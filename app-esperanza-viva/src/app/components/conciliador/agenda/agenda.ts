@@ -45,7 +45,7 @@ export class AgendaConciliador implements OnInit {
         const hoy = new Date().toISOString().split('T')[0];
 
         // "Cerrados" lo tomaremos como audiencias pasadas (historial) o con resultado
-        this.stats.cerrados = res.filter(a => a.fechaAudiencia < hoy || a.resultado).length;
+        this.stats.cerrados = res.filter(a => a.fechaAudiencia < hoy || a.resultadoTipo).length;
         this.stats.hoy = res.filter(a => a.fechaAudiencia === hoy).length;
         this.stats.proximos = res.filter(a => a.fechaAudiencia > hoy).length;
         setTimeout(() => this.isLoading = false, 500);
@@ -78,7 +78,7 @@ export class AgendaConciliador implements OnInit {
     } else if (filtro === 'proximos') {
       listaFiltrada = this.listaOriginal.filter(a => a.fechaAudiencia > hoy);
     } else if (filtro === 'cerrados') {
-      listaFiltrada = this.listaOriginal.filter(a => a.fechaAudiencia < hoy || a.resultado);
+      listaFiltrada = this.listaOriginal.filter(a => a.fechaAudiencia < hoy || a.resultadoTipo);
     }
 
     this.listaMostrada = listaFiltrada;

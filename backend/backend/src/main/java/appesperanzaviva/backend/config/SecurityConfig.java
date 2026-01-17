@@ -18,20 +18,29 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(Customizer.withDefaults())
-                // Sesión sin estado (Stateless) para que Angular mande los datos y no dependa del servidor
+                .cors(cors -> cors.configurationSource(request -> {
+                    var corsConfiguration = new org.springframework.web.cors.CorsConfiguration();
+                    corsConfiguration.setAllowedOrigins(java.util.List.of("http://localhost:4200"));
+                    corsConfiguration.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                    corsConfiguration.setAllowedHeaders(java.util.List.of("*"));
+                    corsConfiguration.setAllowCredentials(true);
+                    return corsConfiguration;
+                }))
+                // Sesión sin estado (Stateless) para que Angular mande los datos y no dependa
+                // del servidor
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        // 🛡️ ACCESO TOTAL A LAS APIS DE TRABAJO
                         .requestMatchers(
-                            "/api/solicitudes/**", 
-                            "/api/usuarios-sistema/**", 
-                            "/api/audiencias/**",
-                            "/api/reportes/**",
-                            "/api/configuracion/**", 
-                            "/api/auditoria/**"
-                        ).permitAll()
+                                "/api/solicitudes",
+                                "/api/solicitudes/**",
+                                "/api/usuarios-sistema/**",
+                                "/api/audiencias/**",
+                                "/api/actas/**",
+                                "/api/reportes/**",
+                                "/api/configuracion/**",
+                                "/api/auditoria/**")
+                        .permitAll()
                         .anyRequest().authenticated());
 
         return http.build();

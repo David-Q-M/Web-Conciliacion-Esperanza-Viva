@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.lang.NonNull;
 
-
 import java.util.List;
 import java.util.Map;
 
@@ -19,10 +18,13 @@ public class AudienciaController {
     @Autowired
     private AudienciaService service;
 
+    @Autowired
+    private appesperanzaviva.backend.service.AuditoriaService auditoriaService;
+
     // 🛡️ ENDPOINT PARA REGISTRO DE AUDIENCIA (Wireframe 61)
     @GetMapping("/{id}")
     public ResponseEntity<Audiencia> obtenerPorId(@PathVariable @NonNull Long id) {
-        Audiencia a = service.obtenerPorId(id); 
+        Audiencia a = service.obtenerPorId(id);
         return a != null ? ResponseEntity.ok(a) : ResponseEntity.notFound().build();
     }
 
@@ -32,9 +34,29 @@ public class AudienciaController {
         return ResponseEntity.ok(lista);
     }
 
+    @GetMapping("/notificador/{id}")
+    public ResponseEntity<List<Audiencia>> listarPorNotificador(@PathVariable @NonNull Integer id) {
+        List<Audiencia> lista = service.listarPorNotificador(id);
+        return ResponseEntity.ok(lista);
+    }
+
     @PostMapping("/programar")
     public ResponseEntity<Audiencia> programar(@RequestBody @NonNull Audiencia audiencia) {
-        return ResponseEntity.ok(service.programar(audiencia));
+        Audiencia programada = service.programar(audiencia);
+
+        // AUDITORIA
+        String fecha = (programada.getFechaAudiencia() != null) ? programada.getFechaAudiencia().toString()
+                : "Sin fecha";
+        String expedienteNo = (programada.getSolicitud() != null) ? programada.getSolicitud().getNumeroExpediente()
+                : "N/A";
+
+        auditoriaService.registrarAccion(
+                "Conciliador/Director",
+                "PROGRAMACION",
+                "Audiencia programada para el " + fecha,
+                expedienteNo);
+
+        return ResponseEntity.ok(programada);
     }
 
     @GetMapping("/solicitud/{id}")
@@ -44,8 +66,21 @@ public class AudienciaController {
     }
 
     @PutMapping("/{id}/resultado")
-    public ResponseEntity<Audiencia> registrarResultado(@PathVariable @NonNull Long id, @RequestBody @NonNull Audiencia datos) {
-        return ResponseEntity.ok(service.registrarResultado(id, datos));
+    public ResponseEntity<Audiencia> registrarResultado(@PathVariable @NonNull Long id,
+            @RequestBody @NonNull Audiencia datos) {
+        Audiencia registrada = service.registrarResultado(id, datos);
+
+        // AUDITORIA
+        String expedienteNo = (registrada.getSolicitud() != null) ? registrada.getSolicitud().getNumeroExpediente()
+                : "N/A";
+
+        auditoriaService.registrarAccion(
+                "Conciliador",
+                "RESULTADO",
+                "Resultado registrado: " + registrada.getResultadoTipo(),
+                expedienteNo);
+
+        return ResponseEntity.ok(registrada);
     }
 
     @PostMapping("/finalizar")

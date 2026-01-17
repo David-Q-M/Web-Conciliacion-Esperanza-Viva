@@ -1,134 +1,199 @@
 <div class="admin-container">
   <aside class="sidebar-viva">
-    <div class="logo-section p-4 text-center">
-      <h5 class="m-0 fw-bold text-dark">ESPERANZA VIVA</h5>
-      <small class="text-dark fw-bold">CONCILIACIÓN</small>
+    <div class="logo-section text-center">
+      <h5 class="m-0">ESPERANZA VIVA</h5>
+      <small>CONCILIACIÓN</small>
     </div>
     <nav class="sidebar-nav">
-      <a class="nav-link-viva active" routerLink="/conciliador/mis-casos"><i class="bi bi-folder-fill"></i> Mis
-        Casos</a>
-      <a class="nav-link-viva" routerLink="/conciliador/agenda"><i class="bi bi-calendar3"></i> Mi Agenda</a>
-      <a class="nav-link-viva" routerLink="/conciliador/historial"><i class="bi bi-clock-history"></i> Historial</a>
+      <a class="nav-link-viva active" routerLink="/conciliador/mis-casos">
+        <i class="bi bi-folder-fill"></i> Mis Casos
+      </a>
+      <a class="nav-link-viva" routerLink="/conciliador/agenda">
+        <i class="bi bi-calendar3"></i> Mi Agenda
+      </a>
+      <a class="nav-link-viva" routerLink="/conciliador/historial">
+        <i class="bi bi-clock-history"></i> Historial
+      </a>
     </nav>
-    <div class="sidebar-footer p-3">
+    <div class="sidebar-footer">
       <button class="btn-logout-viva w-100" (click)="cerrarSesion()">
-        <i class="bi bi-box-arrow-left"></i> Cerrar Sesión
+        <i class="bi bi-box-arrow-left me-2"></i> Cerrar Sesión
       </button>
     </div>
   </aside>
 
-  <main class="main-content-viva p-5">
-    <header class="mb-5 d-flex justify-content-between align-items-center">
+  <main class="main-content-viva animate-fade-in">
+    <header class="d-flex justify-content-between align-items-center mb-5">
       <div>
-        <h2 class="text-warning fw-bold m-0">Programación de audiencia</h2>
-        <p class="text-secondary small">Evaluacion de Designacion</p>
+        <h2 class="viva-page-title">Programación de Audiencia</h2>
+        <p class="viva-page-subtitle">Evaluación y Designación</p>
       </div>
-      <div class="admin-badge text-end">
-        <div class="text-white fw-bold">{{ conciliadorNombre }}</div>
-        <small class="text-success">Director</small>
-        <i class="bi bi-person-circle fs-4 ms-2 text-warning"></i>
+      <div class="admin-badge">
+        <div class="text-end">
+          <div class="user-name">{{ conciliadorNombre }}</div>
+          <div class="user-role">Director</div>
+        </div>
+        <div class="ms-3 bg-warning rounded-circle d-flex align-items-center justify-content-center"
+          style="width: 40px; height: 40px;">
+          <i class="bi bi-person-fill fs-5 text-dark"></i>
+        </div>
       </div>
     </header>
 
-    <h5 class="text-white mb-4">GENERAR INVITACION (FORMATO C)</h5>
+    <h5 class="text-white mb-4 fw-bold text-uppercase ps-1" style="border-left: 4px solid #ffc107; padding-left: 15px;">
+      Generar Invitación (Formato C)
+    </h5>
 
     <!-- SECCION PRINCIPAL: DATOS Y VERIFICACION -->
     <div class="row g-4 mb-4">
       <!-- COLUMNA IZQUIERDA: DATOS DE AUDIENCIA -->
-      <div class="col-md-6">
-        <div class="info-card-wireframe p-4 shadow h-100">
-          <small class="text-warning fw-bold d-block mb-3 text-uppercase">DATOS DE LA AUDIENCIA</small>
-          <p class="small text-secondary mb-2">Programa datos de la audiencia</p>
+      <div class="col-lg-6">
+        <div class="viva-card">
+          <span class="card-header-viva">
+            <i class="bi bi-calendar-event me-2"></i> Datos de la Audiencia
+          </span>
 
-          <div class="row mb-3">
-            <div class="col-6">
-              <label class="small text-secondary">Fecha de Audiencia</label>
-              <input type="date" class="viva-input-black form-control bg-dark text-white border-secondary"
-                [(ngModel)]="form.fechaAudiencia">
+          <div class="row mb-4">
+            <div class="col-md-6">
+              <label class="viva-label">Fecha de Audiencia</label>
+              <input type="date" class="viva-input" [(ngModel)]="form.fechaAudiencia">
             </div>
-            <div class="col-6">
-              <label class="small text-secondary">Hora (10 min tolerancia)</label>
-              <input type="time" class="viva-input-black form-control bg-dark text-white border-secondary"
-                [(ngModel)]="form.horaAudiencia">
+            <div class="col-md-6">
+              <label class="viva-label">Hora (10 min tolerancia)</label>
+              <input type="time" class="viva-input" [(ngModel)]="form.horaAudiencia">
             </div>
           </div>
 
-          <label class="small text-secondary">Lugar de la Audiencia (Direccion del Centro)</label>
-          <input type="text" class="viva-input-black form-control bg-dark text-white border-secondary mt-1"
-            [(ngModel)]="form.lugar">
+          <div>
+            <label class="viva-label">Lugar de la Audiencia</label>
+            <input type="text" class="viva-input" [(ngModel)]="form.lugar"
+              placeholder="Dirección del Centro de Conciliación">
+          </div>
         </div>
       </div>
 
       <!-- COLUMNA DERECHA: VERIFICACION DE PARTES -->
-      <div class="col-md-6">
-        <div class="info-card-wireframe p-4 shadow h-100">
-          <small class="text-warning fw-bold d-block mb-3 text-uppercase">VERIFICACION DE PARTES</small>
+      <div class="col-lg-6">
+        <div class="viva-card">
+          <span class="card-header-viva">
+            <i class="bi bi-people-fill me-2"></i> Verificación de Partes
+          </span>
 
-          <div class="mb-3">
-            <p class="small text-white mb-1"><strong>SOLICITANTE:</strong> {{expediente.solicitante?.nombres}}
-              {{expediente.solicitante?.apellidos}}</p>
-            <label class="small text-secondary">Direccion:</label>
-            <input type="text" class="viva-input-black form-control bg-dark text-white border-secondary mb-2"
-              [value]="expediente.solicitante?.domicilio || 'No registrado'" readonly>
-          </div>
+          <div class="person-card-container">
+            <!-- SOLICITANTE -->
+            <div class="person-card mb-4" *ngIf="expediente.solicitante; else noSolicitante">
+              <div class="person-icon-box">
+                <i class="bi bi-person-badge-fill"></i>
+              </div>
+              <div class="person-info">
+                <span class="person-label">SOLICITANTE</span>
+                <h4 class="person-name">{{expediente.solicitante.nombres}} {{expediente.solicitante.apellidos}}</h4>
+                <div class="person-address">
+                  <i class="bi bi-geo-alt-fill me-2 text-warning"></i>
+                  {{expediente.solicitante.domicilio || 'Domicilio no registrado'}}
+                </div>
+              </div>
+            </div>
+            <ng-template #noSolicitante>
+              <div class="person-card empty mb-4">
+                <i class="bi bi-person-slash"></i>
+                <span>Solicitante no registrado</span>
+              </div>
+            </ng-template>
 
-          <div>
-            <p class="small text-white mb-1"><strong>INVITADO:</strong> {{expediente.invitado?.nombres}}
-              {{expediente.invitado?.apellidos}}</p>
-            <label class="small text-secondary">Direccion:</label>
-            <input type="text" class="viva-input-black form-control bg-dark text-white border-secondary"
-              [value]="expediente.invitado?.domicilio || 'No registrado'" readonly>
+            <!-- INVITADO -->
+            <div class="person-card" *ngIf="expediente.invitado; else noInvitado">
+              <div class="person-icon-box invitado">
+                <i class="bi bi-person-badge"></i>
+              </div>
+              <div class="person-info">
+                <span class="person-label">INVITADO</span>
+                <h4 class="person-name">{{expediente.invitado.nombres}} {{expediente.invitado.apellidos}}</h4>
+                <div class="person-address">
+                  <i class="bi bi-geo-alt-fill me-2 text-warning"></i>
+                  {{expediente.invitado.domicilio || 'Domicilio no registrado'}}
+                </div>
+              </div>
+            </div>
+            <ng-template #noInvitado>
+              <div class="person-card empty">
+                <i class="bi bi-person-slash"></i>
+                <span>Invitado no registrado</span>
+              </div>
+            </ng-template>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- SECCION INFERIOR: SELECCION DE NOTIFICADOR -->
-    <h5 class="text-white mb-3 text-lowercase">seleccione un notificador</h5>
-    <div class="info-card-wireframe p-4 shadow mb-5">
-      <div class="mb-2">
-        <!-- Search Input Mock -->
-        <input type="text" class="viva-input-black mb-3" placeholder="seleccione un notificador"
-          style="border-radius: 8px;">
+    <!-- SECCION INFERIOR: SELECCION DE NOTIFICADOR (DROPDOWN) -->
+    <h5 class="text-white mb-4 fw-bold text-uppercase ps-1 mt-5"
+      style="border-left: 4px solid #ffc107; padding-left: 15px;">
+      Seleccione un Notificador
+    </h5>
 
-        <!-- LISTA DE NOTIFICADORES -->
-        <div class="d-flex flex-column gap-2">
-          <div *ngFor="let notif of notificadores"
-            class="notificador-item d-flex justify-content-between align-items-center p-3 rounded-3 cursor-pointer"
-            [ngClass]="{'selected': selectedNotificador?.id === notif.id}" (click)="seleccionarNotificador(notif)"
-            style="cursor: pointer;">
+    <div class="viva-card mb-5 notificador-card-compact">
+      <div class="notificador-dropdown-container">
 
-            <span class="text-white fw-bold"
-              [ngStyle]="{'color': selectedNotificador?.id === notif.id ? '#000' : '#fff'}">
-              {{ notif.nombreCompleto }}
-            </span>
-
-            <span class="badge rounded-pill px-3 py-2" [ngClass]="{
-                              'bg-success': notif.estado === 'Disponible',
-                              'bg-danger': notif.estado === 'Ocupado'
-                          }">
-              {{ notif.estado || 'Disponible' }}
-            </span>
+        <!-- Trigger / Search Input -->
+        <div class="notificador-trigger" (click)="toggleNotificadores()">
+          <div class="d-flex align-items-center justify-content-between w-100">
+            <div class="d-flex align-items-center text-white">
+              <i class="bi bi-search me-3 text-warning"></i>
+              <span *ngIf="selectedNotificador" class="fw-bold me-2 text-warning">{{ selectedNotificador.nombreCompleto
+                }}</span>
+              <span *ngIf="!selectedNotificador" class="text-secondary">Buscar o seleccionar notificador...</span>
+            </div>
+            <i class="bi bi-chevron-down text-secondary transition-icon" [class.rotate-180]="showNotificadoresList"></i>
           </div>
         </div>
+
+        <!-- Collapsible List -->
+        <div class="notificador-dropdown-list animate__animated animate__fadeIn" *ngIf="showNotificadoresList">
+          <div class="p-3 border-bottom border-secondary bg-black">
+            <input type="text" class="viva-input" placeholder="Escriba para filtrar..."
+              (click)="$event.stopPropagation()">
+          </div>
+
+          <div class="custom-scroll" style="max-height: 250px; overflow-y: auto;">
+            <div *ngFor="let notif of notificadores" class="notificador-item-dropdown"
+              (click)="seleccionarNotificador(notif)">
+
+              <div class="d-flex align-items-center gap-3">
+                <div class="notificador-avatar-small">
+                  <i class="bi bi-person-fill"></i>
+                </div>
+                <div class="notificador-info">
+                  <h6 class="mb-0 text-white">{{ notif.nombreCompleto }}</h6>
+                  <span class="small text-muted">ID: {{notif.id}}</span>
+                </div>
+              </div>
+
+              <span class="status-badge" [ngClass]="{
+                      'disponible': notif.estado === 'Disponible',
+                      'ocupado': notif.estado === 'Ocupado'
+                    }">
+                {{ notif.estado || 'Disponible' }}
+              </span>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
 
     <!-- BOTONES DE ACCION -->
-    <div class="d-flex justify-content-between gap-4 mt-5">
-      <!-- Descargar Word (Cyan/Blue) -->
-      <button class="btn-cyan-viva flex-grow-1" (click)="generarWord()">
-        Descargar word
+    <div class="action-buttons">
+      <button class="btn-viva btn-word" (click)="generarWord()">
+        <i class="bi bi-file-word-fill fs-5"></i> Descargar Word
       </button>
 
-      <!-- Descargar PDF (Yellow) -->
-      <button class="btn-yellow-viva flex-grow-1" (click)="generarInvitacion()">
-        Descargar PDF
+      <button class="btn-viva btn-pdf" (click)="generarInvitacion()">
+        <i class="bi bi-file-pdf-fill fs-5"></i> Descargar PDF
       </button>
 
-      <!-- Guardar Audiencia (Green) -->
-      <button class="btn-green-viva flex-grow-1" (click)="guardarYSalir()">
-        Guardar Audiencia
+      <button class="btn-viva btn-save" (click)="guardarYSalir()">
+        <i class="bi bi-check-circle-fill fs-5"></i> Guardar Audiencia
       </button>
     </div>
   </main>

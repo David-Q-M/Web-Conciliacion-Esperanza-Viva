@@ -1,197 +1,526 @@
 /* --- LAYOUT GENERAL --- */
 .admin-container {
-  background-color: #0d0d0d;
+  background: #000000;
+  /* Pure Black Background for contrast */
   min-height: 100vh;
   display: flex;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  /* Modern Font */
+  color: #f0f0f0;
 }
 
 /* --- SIDEBAR --- */
 .sidebar-viva {
-  width: 260px;
-  background-color: #ffd600;
-  /* Intense Yellow */
+  width: 280px;
+  background: #111;
+  border-right: 1px solid #333;
   height: 100vh;
   position: fixed;
   display: flex;
   flex-direction: column;
+  z-index: 1000;
+}
+
+.logo-section {
+  padding: 40px 20px;
+  text-align: center;
+  border-bottom: 1px solid #222;
 }
 
 .logo-section h5 {
+  color: #ffc107;
   font-weight: 800;
-  letter-spacing: 0.5px;
+  letter-spacing: 2px;
+  font-size: 1.4rem;
+  margin: 0;
 }
 
 .logo-section small {
-  font-weight: 700;
-  opacity: 0.9;
+  color: #666;
+  font-weight: 600;
+  letter-spacing: 4px;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  display: block;
+  margin-top: 5px;
 }
 
 .nav-link-viva {
-  display: block;
-  padding: 15px 25px;
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #000;
+  display: flex;
+  align-items: center;
+  padding: 16px 30px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #888;
   text-decoration: none;
-  transition: 0.3s;
+  transition: all 0.2s ease;
+  border-left: 3px solid transparent;
 }
 
-.nav-link-viva.active,
+.nav-link-viva i {
+  margin-right: 15px;
+  font-size: 1.1rem;
+  transition: all 0.2s ease;
+}
+
 .nav-link-viva:hover {
-  background-color: rgba(0, 0, 0, 0.05);
-  padding-left: 30px;
+  color: #fff;
+  background: #1a1a1a;
+}
+
+.nav-link-viva.active {
+  color: #ffc107;
+  background: linear-gradient(90deg, rgba(255, 193, 7, 0.1) 0%, transparent 100%);
+  border-left-color: #ffc107;
+}
+
+.nav-link-viva.active i {
+  color: #ffc107;
+}
+
+.sidebar-footer {
+  padding: 30px;
+  margin-top: auto;
 }
 
 .btn-logout-viva {
+  width: 100%;
   background: transparent;
-  border: 2px solid #000;
-  color: #000;
-  font-weight: bold;
+  border: 1px solid #333;
+  color: #666;
+  font-weight: 600;
+  padding: 12px;
   border-radius: 8px;
-  padding: 10px;
-  transition: 0.3s;
+  transition: all 0.3s;
+  font-size: 0.9rem;
 }
 
 .btn-logout-viva:hover {
-  background: #000;
-  color: #ffd600;
+  border-color: #ffc107;
+  color: #ffc107;
+  background: rgba(255, 193, 7, 0.05);
 }
 
 /* --- MAIN CONTENT --- */
 .main-content-viva {
   flex: 1;
-  margin-left: 260px;
-  padding: 50px;
-  background-color: #121212;
-  color: #fff;
+  margin-left: 280px;
+  padding: 50px 80px;
+  background: radial-gradient(circle at top right, #222 0%, #000 100%);
 }
 
 /* --- HEADER --- */
-h2.text-warning {
-  color: #ffc107 !important;
-  font-size: 2rem;
+header {
+  border-bottom: 2px solid #333;
+  /* Thicker header line */
+  padding-bottom: 35px;
 }
 
-.admin-badge {
-  text-align: right;
+.viva-page-title {
+  color: #fff;
+  font-size: 3.2rem;
+  /* Even Larger */
+  font-weight: 800;
+  /* Extra Bold */
+  letter-spacing: -2px;
+  margin: 0;
+  text-shadow: 0 4px 15px rgba(0, 0, 0, 0.8);
+  font-family: 'Inter', sans-serif;
 }
 
-.admin-badge span {
-  display: block;
-  font-size: 1.1rem;
-  font-weight: 600;
-}
-
-.admin-badge small {
-  display: block;
-  color: #ccc;
+.viva-page-subtitle {
+  color: #bbb;
+  font-size: 1.35rem;
+  /* Larger subtitle */
+  margin-top: 8px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
 }
 
 /* --- CARDS & PANELS --- */
-.info-card-wireframe {
-  background-color: #1a1a1a;
-  border: 1px solid #ffc107;
-  /* Yellow Border as per image */
-  border-radius: 20px;
-  padding: 25px;
+.viva-card {
+  background: #111;
+  border: 1px solid rgba(255, 193, 7, 0.15);
+  /* Slight gold tinge to border */
+  border-radius: 18px;
+  /* Softer corners */
+  padding: 40px;
+  /* Generous padding */
+  height: auto;
+  min-height: auto;
+  display: flex;
+  flex-direction: column;
   position: relative;
-  height: 100%;
+  overflow: visible;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s ease;
 }
 
-/* Inputs design matching image */
-.viva-input-black {
-  background: #000;
-  border: 1px solid #ffc107;
-  color: #ffc107;
+.viva-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+  border-color: rgba(255, 193, 7, 0.4);
+}
+
+/* Top accent line for cards */
+.viva-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  padding: 10px 15px;
-  border-radius: 12px;
-  outline: none;
-  font-size: 0.95rem;
+  height: 3px;
+  /* Stronger accent */
+  background: linear-gradient(90deg, transparent, #ffc107, transparent);
+  box-shadow: 0 0 15px rgba(255, 193, 7, 0.5);
+  /* Glow */
+  opacity: 0.8;
 }
 
-.viva-input-black::placeholder {
-  color: #666;
+.card-header-viva {
+  display: flex;
+  align-items: center;
+  color: #ffc107;
+  font-weight: 800;
+  font-size: 1.3rem;
+  /* Larger Header */
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 35px;
+  text-shadow: 0 0 10px rgba(255, 193, 7, 0.3);
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.viva-input-black:focus {
-  box-shadow: 0 0 10px rgba(255, 193, 7, 0.2);
+.card-header-viva i {
+  margin-right: 15px;
+  font-size: 1.8rem;
+  /* Even Bigger */
+  color: #ffc107;
+  filter: drop-shadow(0 0 5px rgba(255, 193, 7, 0.5));
+  /* Make it GLOW */
 }
 
-/* --- SELECTION LIST --- */
-.notificador-item {
-  background-color: #222;
+/* --- FORMS --- */
+.viva-label {
+  color: #bbb;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.viva-input {
+  width: 100%;
+  background: #0f0f0f;
   border: 1px solid #333;
-  transition: 0.2s;
+  color: #fff;
+  padding: 14px 16px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  outline: none;
+  transition: all 0.2s;
+  color-scheme: dark;
+  /* Critical: Forces browser date/time icons to be light */
 }
 
-.notificador-item:hover {
+/* Explicitly target the picker indicators for WebKit (Chrome/Edge/Safari) */
+.viva-input::-webkit-calendar-picker-indicator {
+  filter: invert(1) sepia(100%) saturate(10000%) hue-rotate(0deg) brightness(1.2) contrast(1);
+  /* Makes it white/gold */
+  cursor: pointer;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.viva-input::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+  filter: invert(0.8) sepia(1) saturate(5) hue-rotate(5deg);
+  /* Goldish tint on hover */
+}
+
+.viva-input:focus {
   border-color: #ffc107;
-  background-color: #2a2a2a;
+  background: #050505;
+  box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.15);
 }
 
-.notificador-item.selected {
-  background-color: #ffc107;
+.viva-input[readonly] {
+  background: #1a1a1a;
+  border-color: #2a2a2a;
+  color: #777;
+  cursor: not-allowed;
+  color-scheme: normal;
+  /* Reset for readonly if needed, but dark usually better */
+}
+
+/* --- PERSON CARDS (Contact Card Look) --- */
+.person-card-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.person-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: linear-gradient(145deg, #111 0%, #0d0d0d 100%);
+  border: 1px solid #222;
+  border-radius: 12px;
+  padding: 20px;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.person-card:hover {
+  transform: translateX(5px);
+  border-color: rgba(255, 193, 7, 0.3);
+  background: #141414;
+}
+
+.person-card.empty {
+  border-style: dashed;
+  color: #555;
+  justify-content: center;
+  padding: 30px;
+}
+
+.person-icon-box {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #ffc107 0%, #b38600 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
+  flex-shrink: 0;
+}
+
+.person-icon-box i {
+  font-size: 2rem;
   color: #000;
 }
 
-.notificador-item.selected .badge {
-  background-color: #000 !important;
-  color: #ffc107 !important;
+.person-icon-box.invitado {
+  background: linear-gradient(135deg, #333 0%, #111 100%);
+  border: 1px solid #444;
+  box-shadow: none;
 }
 
-/* --- BUTTONS --- */
-/* Word - Cyan/Blue */
-.btn-cyan-viva {
-  background-color: #00bcd4;
-  /* Cyan color from image */
-  color: #000;
-  font-weight: bold;
-  border: none;
-  border-radius: 25px;
-  /* Pill shape */
-  padding: 12px 30px;
+.person-icon-box.invitado i {
+  color: #ffc107;
+}
+
+.person-info {
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+.person-label {
+  display: block;
+  font-size: 0.7rem;
+  color: #666;
+  font-weight: 800;
+  letter-spacing: 2px;
+  margin-bottom: 4px;
+}
+
+.person-name {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: -0.5px;
+}
+
+.person-address {
+  margin-top: 6px;
+  font-size: 0.85rem;
+  color: #999;
+  display: flex;
+  align-items: center;
+}
+
+/* --- NOTIFICADOR DROPDOWN --- */
+.notificador-card-compact {
+  padding: 20px !important;
+  min-height: auto !important;
+  overflow: visible !important;
+}
+
+.notificador-dropdown-container {
+  position: relative;
+  width: 100%;
+}
+
+.notificador-trigger {
+  background: #0a0a0a;
+  border: 1px solid #333;
+  padding: 15px 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.notificador-trigger:hover {
+  border-color: #ffc107;
+  background: #111;
+}
+
+.transition-icon {
+  transition: transform 0.3s ease;
+}
+
+.rotate-180 {
+  transform: rotate(180deg);
+}
+
+/* Dropdown List */
+.notificador-dropdown-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background: #050505;
+  /* Blacker background for list */
+  border: 1px solid #333;
+  border-radius: 12px;
+  margin-top: 10px;
+  z-index: 9999;
+  /* Ensure it floats above everything */
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+  overflow: hidden;
+}
+
+.notificador-item-dropdown {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  border-bottom: 1px solid #252525;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.notificador-item-dropdown:hover {
+  background: #1a1a1a;
+}
+
+.notificador-item-dropdown:last-child {
+  border-bottom: none;
+}
+
+.notificador-avatar-small {
+  width: 35px;
+  height: 35px;
+  background: #333;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #888;
+}
+
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-badge.disponible {
+  background: rgba(0, 255, 128, 0.1);
+  color: #00ff80;
+  border: 1px solid rgba(0, 255, 128, 0.2);
+}
+
+.status-badge.ocupado {
+  background: rgba(255, 82, 82, 0.1);
+  color: #ff5252;
+  border: 1px solid rgba(255, 82, 82, 0.2);
+}
+
+/* --- ACTION BUTTONS --- */
+.action-buttons {
+  display: flex;
+  gap: 30px;
+  margin-top: 50px;
+}
+
+.btn-viva {
+  flex: 1;
+  padding: 18px;
+  border-radius: 12px;
+  font-weight: 700;
   font-size: 1rem;
-  transition: 0.3s;
-}
-
-.btn-cyan-viva:hover {
-  background-color: #00abc1;
-  transform: translateY(-2px);
-}
-
-/* PDF - Yellow */
-.btn-yellow-viva {
-  background-color: #ffc107;
-  color: #000;
-  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
   border: none;
-  border-radius: 25px;
-  padding: 12px 30px;
-  font-size: 1rem;
-  transition: 0.3s;
+  cursor: pointer;
+  transition: all 0.3s;
 }
 
-.btn-yellow-viva:hover {
-  background-color: #e0a800;
-  transform: translateY(-2px);
+.btn-word {
+  background: #0a0a0a;
+  border: 1px solid #333;
+  color: #ccc;
 }
 
-/* Guardar - Green */
-.btn-green-viva {
-  background-color: #00e676;
-  /* Bright Green */
+.btn-word:hover {
+  border-color: #fff;
+  color: #fff;
+  background: #111;
+}
+
+.btn-pdf {
+  background: #0a0a0a;
+  border: 1px solid #333;
+  color: #ccc;
+}
+
+.btn-pdf:hover {
+  border-color: #ff5252;
+  color: #ff5252;
+  background: rgba(255, 82, 82, 0.05);
+}
+
+.btn-save {
+  background: #ffc107;
   color: #000;
-  font-weight: bold;
-  border: none;
-  border-radius: 25px;
-  padding: 12px 30px;
-  font-size: 1rem;
-  transition: 0.3s;
+  box-shadow: 0 10px 30px rgba(255, 193, 7, 0.2);
 }
 
-.btn-green-viva:hover {
-  background-color: #00c853;
+.btn-save:hover {
+  background: #ffdb4d;
   transform: translateY(-2px);
+  box-shadow: 0 15px 40px rgba(255, 193, 7, 0.3);
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

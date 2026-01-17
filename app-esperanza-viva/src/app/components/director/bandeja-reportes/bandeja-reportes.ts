@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { SolicitudService } from '../../../services/solicitud.service';
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-bandeja-reportes',
@@ -19,7 +20,9 @@ export class BandejaReportes implements OnInit {
   terminoBusqueda: string = '';
   isLoading: boolean = true;
 
-  constructor(private http: HttpClient, private router: Router) { }
+  errorMessage: string = '';
+
+  constructor(private solicitudService: SolicitudService, private router: Router) { }
 
   ngOnInit(): void {
     const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
@@ -29,23 +32,23 @@ export class BandejaReportes implements OnInit {
 
   cargarEstadisticas() {
     this.isLoading = true;
-    const token = localStorage.getItem('token');
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-
-    this.http.get<any[]>('http://localhost:8080/api/solicitudes', { headers }).subscribe({
+    this.errorMessage = '';
+    this.solicitudService.listarSolicitudes().subscribe({
       next: (res) => {
+        console.log("🔍 REPORTES - DATOS RECIBIDOS:", res);
         this.reportData.listaOriginal = res;
         this.reportData.lista = res;
 
         // Cálculo dinámico de métricas para los cuadros
         this.reportData.total = res.length;
-        this.reportData.pendientes = res.filter(s => s.estado === 'PENDIENTE').length;
-        this.reportData.revision = res.filter(s => s.estado === 'ASIGNADO' || s.estado === 'OBSERVADO').length;
-        this.reportData.aprobadas = res.filter(s => s.estado === 'APROBADO' || s.estado === 'FINALIZADO').length;
+        this.reportData.pendientes = res.filter((s: any) => s.estado === 'PENDIENTE').length;
+        this.reportData.revision = res.filter((s: any) => s.estado === 'ASIGNADO' || s.estado === 'OBSERVADO').length;
+        this.reportData.aprobadas = res.filter((s: any) => s.estado === 'APROBADO' || s.estado === 'FINALIZADO').length;
         setTimeout(() => this.isLoading = false, 500);
       },
       error: (err) => {
         console.error("Error al conectar con la API de reportes", err);
+        this.errorMessage = 'No se pudieron cargar los reportes. Verifique su conexión.';
         this.isLoading = false;
       }
     });
@@ -75,6 +78,47 @@ export class BandejaReportes implements OnInit {
       s.solicitante?.nombres?.toLowerCase().includes(busq) ||
       s.materiaConciliable?.toLowerCase().includes(busq)
     );
+  }
+
+  exportarIndividual(item: any) {
+    const data = [{
+      'N° Expediente': item.numeroExpediente,
+      'Fecha': item.fechaPresentacion,
+      'Estado': item.estado,
+      'Solicitante': `${item.solicitante?.nombres || ''} ${item.solicitante?.apellidos || ''}`,
+      'DNI Solicitante': item.solicitante?.dni,
+      'Apoderado/Representante': item.apoderado?.dni ? `${item.apoderado?.nombres} ${item.apoderado?.apellidos} (DNI: ${item.apoderado?.dni})` : '—',
+      'Invitado': `${item.invitado?.nombres || ''} ${item.invitado?.apellidos || ''}`,
+      'DNI Invitado': item.invitado?.dni,
+      'Materia': item.materiaConciliable,
+      'Pretensión': item.pretension
+    }];
+
+    this.generarExcel(data, `Reporte_Exp_${item.numeroExpediente}`);
+  }
+
+  exportarGlobal() {
+    const data = this.reportData.lista.map((item: any) => ({
+      'N° Expediente': item.numeroExpediente,
+      'Fecha': item.fechaPresentacion,
+      'Estado': item.estado,
+      'Solicitante': `${item.solicitante?.nombres || ''} ${item.solicitante?.apellidos || ''}`,
+      'DNI Solicitante': item.solicitante?.dni,
+      'Apoderado/Representante': item.apoderado?.dni ? `${item.apoderado?.nombres} ${item.apoderado?.apellidos} (DNI: ${item.apoderado?.dni})` : '—',
+      'Invitado': `${item.invitado?.nombres || ''} ${item.invitado?.apellidos || ''}`,
+      'DNI Invitado': item.invitado?.dni,
+      'Materia': item.materiaConciliable,
+      'Pretensión': item.pretension
+    }));
+
+    this.generarExcel(data, `Reporte_Global_${new Date().toISOString().slice(0, 10)}`);
+  }
+
+  private generarExcel(data: any[], fileName: string) {
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Reporte');
+    XLSX.writeFile(wb, `${fileName}.xlsx`);
   }
 
   cerrarSesion() {

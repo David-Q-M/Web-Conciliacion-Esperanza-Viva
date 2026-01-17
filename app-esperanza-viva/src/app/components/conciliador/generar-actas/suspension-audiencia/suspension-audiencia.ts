@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { jsPDF } from 'jspdf';
+import { ActaService } from '../../../../services/acta.service';
 
 @Component({
   selector: 'app-suspension-audiencia',
@@ -44,7 +45,12 @@ export class SuspensionAudiencia implements OnInit {
     lugar: 'Sede Central Esperanza Viva'
   };
 
-  constructor(private http: HttpClient, private router: Router, private route: ActivatedRoute) { }
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private route: ActivatedRoute,
+    private actaService: ActaService
+  ) { }
 
   ngOnInit(): void {
     const userJson = localStorage.getItem('currentUser');
@@ -73,7 +79,7 @@ export class SuspensionAudiencia implements OnInit {
   toggleVistaPrevia() { this.mostrarVistaPrevia = !this.mostrarVistaPrevia; }
 
   // 🛡️ DESCARGA SEGÚN FORMATO E (CONSTANCIA DE SUSPENSIÓN)
-  descargarPDF() {
+  generarDocPDF(): jsPDF {
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth(); // ~210mm
 
@@ -130,19 +136,45 @@ export class SuspensionAudiencia implements OnInit {
     doc.text("_________________________", 120, 185);
     doc.text("Nombre, firma y huella del invitado", 120, 190);
 
-    doc.save(`CONSTANCIA_SUSPENSION_${this.expediente.numeroExpediente}.pdf`);
+    return doc;
   }
 
   finalizarYDescargar() {
-    const token = localStorage.getItem('token');
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    const payload = { resultadoTipo: 'Inasistencia/Suspensión', resultadoDetalle: this.acta.declaracion };
-    this.http.put(`http://localhost:8080/api/audiencias/${this.audienciaId}/resultado`, payload, { headers }).subscribe({
-      next: () => {
-        this.descargarPDF();
-        alert("Acta guardada y descargada con éxito.");
-        this.router.navigate(['/conciliador/mis-casos']);
-      }
+    const doc = this.generarDocPDF();
+    const pdfBlob = doc.output('blob');
+    const numeroActa = `ACTA-SUSPENSION-E-${this.audienciaId}-${new Date().getTime()}`;
+
+    // 1. Upload Blob
+    this.actaService.subirActa(this.audienciaId, 'CONSTANCIA_SUSPENSION_E', numeroActa, pdfBlob).subscribe({
+      next: (res) => {
+        console.log("Constancia Suspensión Format E subida:", res);
+
+        // 2. Update Status
+        const token = localStorage.getItem('token');
+        const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+        const payload = {
+          resultadoTipo: 'Inasistencia/Suspensión',
+          resultadoDetalle: JSON.stringify({
+            declaracion: this.acta.declaracion,
+            formE: this.formE,
+            actaUrl: res.archivoUrl
+          })
+        };
+
+        this.http.put(`http://localhost:8080/api/audiencias/${this.audienciaId}/resultado`, payload, { headers }).subscribe({
+          next: () => {
+            doc.save(`CONSTANCIA_SUSPENSION_${this.expediente.numeroExpediente}.pdf`);
+            alert("✅ Acta guardada y descargada con éxito.");
+            this.router.navigate(['/conciliador/mis-casos']);
+          },
+          error: (err) => alert("Error al actualizar estado: " + err.message)
+        });
+      },
+      error: (err) => alert("Error al subir acta: " + err.message)
     });
+  }
+
+  descargarPDF() {
+    this.generarDocPDF().save(`CONSTANCIA_SUSPENSION_${this.expediente.numeroExpediente}.pdf`);
   }
 }

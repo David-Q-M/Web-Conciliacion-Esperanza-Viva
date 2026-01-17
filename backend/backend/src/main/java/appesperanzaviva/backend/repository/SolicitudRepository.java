@@ -15,5 +15,5 @@ public interface SolicitudRepository extends JpaRepository<Solicitud, Long> {
     long countByEstado(String estado);
 
     // 🔹 NUEVO: Buscar solicitudes asignadas a un conciliador especifico
-    java.util.List<Solicitud> findByConciliadorId(Long conciliadorId);
+    java.util.List<Solicitud> findByConciliadorId(Integer conciliadorId);
 }

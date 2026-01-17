@@ -1,21 +1,25 @@
 /* Panel Admin - Estilo Original Esperanza Viva */
 .admin-container {
   display: flex;
-  min-height: 100vh;
+  height: 100vh;
+  /* Changed from min-height to height for fixed layout */
+  overflow: hidden;
+  /* Prevent body scroll */
   background-color: #000;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Sidebar Amarillo Original */
+/* Sidebar Amarillo Original (Estilo Configuración) */
 .sidebar-viva {
   width: 260px;
   background-color: #ffc107;
   display: flex;
   flex-direction: column;
-  position: sticky;
-  top: 0;
-  height: 100vh;
+  height: 100%;
+  /* Fixed height matching container */
   padding: 20px 0;
+  flex-shrink: 0;
+  /* Prevent shrinking */
 }
 
 .logo-section {
@@ -23,6 +27,7 @@
   border-bottom: 2px solid #000;
   margin-bottom: 20px;
   text-align: center;
+  background: transparent;
 }
 
 .nav-link-viva {
@@ -41,6 +46,9 @@
   background-color: #000;
   color: #ffc107;
   border-left-color: #fff;
+  opacity: 1;
+  padding-left: 20px;
+  box-shadow: none;
 }
 
 .sidebar-footer {
@@ -48,59 +56,157 @@
   padding: 20px;
 }
 
-/* Contenido Principal Oscuro */
+/* Contenido Principal con Scroll Interno */
 .main-content-viva {
   flex: 1;
   padding: 30px;
+  /* Match Configuracion padding */
   background-color: #0d0d0d;
+  /* Match Configuracion bg */
   overflow-y: auto;
+  /* Internal scroll */
+  height: 100%;
+  /* Fill container */
 }
 
-/* Cards (Original Dark) */
+/* Glass Card (Estilo Configuración) */
 .glass-card {
   background-color: #1a1a1a;
   border: 1px solid #333;
   border-radius: 12px;
   padding: 20px;
-  margin-bottom: 20px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  height: auto;
 }
 
-/* Input Styles */
-.form-control,
-.input-group-text,
-.form-select {
-  background-color: #000 !important;
-  border-color: #333 !important;
+/* Clase para forzar altura completa donde sea necesario (graficos) */
+.glass-card.h-100 {
+  height: 100% !important;
+}
+
+.glass-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 50px -10px rgba(0, 0, 0, 0.6);
+  border-color: rgba(255, 193, 7, 0.2);
+}
+
+/* Typography & Neon Effects */
+.text-warning-neon {
+  color: #ffc107;
+  text-shadow: 0 0 15px rgba(255, 193, 7, 0.4);
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+}
+
+h1.display-4 {
+  font-weight: 800;
+  letter-spacing: -2px;
+  text-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* Inputs Premium */
+.form-control {
+  background-color: #0f0f0f !important;
+  border: 1px solid #333 !important;
   color: #fff !important;
+  border-radius: 10px;
+  padding: 10px 15px;
+  font-size: 0.9rem;
 }
 
 .form-control:focus {
   border-color: #ffc107 !important;
-  box-shadow: 0 0 5px rgba(255, 193, 7, 0.5);
+  box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.15) !important;
+  background-color: #1a1a1a !important;
 }
 
+/* Progress Bars con Glow */
+.progress {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  border-radius: 8px;
+  overflow: visible;
+  /* Permitir glow */
+}
+
+.progress-bar {
+  border-radius: 8px;
+  box-shadow: 0 0 10px currentColor;
+  /* Glow del mismo color */
+  transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Scrollbar Estilizado */
+.scroll-carga::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scroll-carga::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 3px;
+}
+
+.scroll-carga::-webkit-scrollbar-thumb {
+  background: #444;
+  border-radius: 3px;
+}
+
+.scroll-carga::-webkit-scrollbar-thumb:hover {
+  background: #666;
+}
+
+/* Botones Premium */
 .btn-warning {
-  background-color: #ffc107;
+  background: linear-gradient(135deg, #ffc107 0%, #ff8f00 100%);
   border: none;
   color: #000;
-  font-weight: bold;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 15px rgba(255, 193, 7, 0.25);
+  transition: all 0.3s ease;
 }
 
 .btn-warning:hover {
-  background-color: #e0a800;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(255, 193, 7, 0.4);
+  filter: brightness(1.1);
 }
 
-/* Scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
+.btn-outline-success {
+  border: 2px solid #198754;
+  color: #198754;
+  font-weight: 600;
 }
 
-::-webkit-scrollbar-track {
-  background: #000;
+.btn-outline-success:hover {
+  background-color: #198754;
+  color: #fff;
+  box-shadow: 0 0 20px rgba(25, 135, 84, 0.4);
 }
 
-::-webkit-scrollbar-thumb {
-  background: #ffc107;
-  border-radius: 4px;
+/* Tablas Ultra Clean */
+.table-dark {
+  --bs-table-bg: transparent;
+}
+
+.table-dark th {
+  border-bottom: 2px solid #333;
+  color: #888;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  padding-bottom: 15px;
+}
+
+.table-dark td {
+  border-bottom: 1px solid #222;
+  padding: 16px 10px;
+  color: #ccc;
+}
+
+.table-hover tbody tr:hover td {
+  color: #fff;
+  background-color: rgba(255, 193, 7, 0.05);
 }

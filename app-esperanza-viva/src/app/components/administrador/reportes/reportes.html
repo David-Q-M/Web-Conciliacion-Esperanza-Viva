@@ -1,8 +1,8 @@
 <div class="admin-container">
   <aside class="sidebar-viva">
     <div class="logo-section">
-      <h5 class="m-0 fw-bold text-dark">ESPERANZA VIVA</h5>
-      <small class="text-dark fw-bold">ADMINISTRACIÓN</small>
+      <h5 class="m-0 fw-bold text-black" style="color: #000 !important;">ESPERANZA VIVA</h5>
+      <small class="text-black fw-bold" style="color: #000 !important;">ADMINISTRACIÓN</small>
     </div>
     <nav class="sidebar-nav">
       <a class="nav-link-viva" routerLink="/admin-dashboard" routerLinkActive="active">
@@ -18,7 +18,7 @@
         <i class="bi bi-shield-lock-fill me-2"></i> Auditoría
       </a>
       <a class="nav-link-viva active" routerLink="/reportes" routerLinkActive="active">
-        <i class="bi bi-bar-chart-fill me-2"></i> Reportes
+        <i class="bi bi-bar-chart-fill me-2"></i> Informes
       </a>
     </nav>
     <div class="sidebar-footer px-3">
@@ -41,107 +41,190 @@
     </header>
 
     <!-- Filtros y Acciones -->
-    <div class="glass-card mb-4 p-3 d-flex align-items-center gap-3 flex-wrap">
+    <div class="glass-card mb-4 p-4 d-flex flex-row align-items-center gap-4 flex-wrap">
       <div class="d-flex align-items-center gap-2">
-        <label class="text-secondary small">Desde:</label>
+        <label class="text-secondary small fw-bold text-uppercase">Desde:</label>
         <input type="date" [(ngModel)]="fechaInicio"
           class="form-control form-control-sm bg-dark text-white border-secondary">
       </div>
       <div class="d-flex align-items-center gap-2">
-        <label class="text-secondary small">Hasta:</label>
+        <label class="text-secondary small fw-bold text-uppercase">Hasta:</label>
         <input type="date" [(ngModel)]="fechaFin"
           class="form-control form-control-sm bg-dark text-white border-secondary">
       </div>
-      <button class="btn btn-warning btn-sm fw-bold" (click)="filtrarReportes()">
-        <i class="bi bi-funnel-fill"></i> Filtrar
+      <button class="btn btn-warning btn-sm fw-bold px-4" (click)="filtrarReportes()">
+        <i class="bi bi-funnel-fill me-1"></i> Filtrar Datos
       </button>
-      <div class="ms-auto">
-        <button class="btn btn-outline-success btn-sm" (click)="exportarReporte()">
-          <i class="bi bi-file-earmark-excel-fill"></i> Exportar Excel
+      <div class="ms-auto border-start border-secondary ps-4">
+        <button class="btn btn-outline-success btn-sm fw-bold" (click)="exportarReporte()">
+          <i class="bi bi-file-earmark-excel-fill me-1"></i> Exportar a Excel
         </button>
       </div>
     </div>
 
-    <div class="row g-4 mt-2">
-      <!-- Gráfico de Barras (Simulado con CSS) -->
-      <div class="col-md-6">
-        <div class="glass-card h-100">
-          <h6 class="text-warning-neon mb-4">📊 Estado de Solicitudes</h6>
-
-          <div class="mb-4">
-            <div class="d-flex justify-content-between small mb-1 text-white">
-              <span>Pendientes</span>
-              <span class="fw-bold">{{ data.pendientes }}</span>
-            </div>
-            <div class="progress" style="height: 10px; background: #333;">
-              <div class="progress-bar bg-danger" role="progressbar"
-                [style.width.%]="(data.pendientes / (data.totalSolicitudes || 1)) * 100"></div>
-            </div>
-          </div>
-
-          <div class="mb-4">
-            <div class="d-flex justify-content-between small mb-1 text-white">
-              <span>En Proceso (Asignados)</span>
-              <span class="fw-bold">{{ data.asignados }}</span>
-            </div>
-            <div class="progress" style="height: 10px; background: #333;">
-              <div class="progress-bar bg-warning" role="progressbar"
-                [style.width.%]="(data.asignados / (data.totalSolicitudes || 1)) * 100"></div>
-            </div>
-          </div>
-
-          <div class="mb-2">
-            <div class="d-flex justify-content-between small mb-1 text-white">
-              <span>Finalizados</span>
-              <span class="fw-bold">{{ data.finalizadosContador }}</span>
-            </div>
-            <div class="progress" style="height: 10px; background: #333;">
-              <div class="progress-bar bg-success" role="progressbar"
-                [style.width.%]="(data.finalizadosContador / (data.totalSolicitudes || 1)) * 100"></div>
-            </div>
-          </div>
+    <!-- Overview Cards -->
+    <div class="row g-4 mb-4">
+      <div class="col-md-4">
+        <div class="glass-card h-100 text-center d-flex flex-column justify-content-center align-items-center py-4">
+          <h1 class="text-white display-4 fw-bold m-0">{{ data.totalSolicitudes }}</h1>
+          <small class="text-secondary text-uppercase letter-spacing-2 fw-bold mt-2">Total Solicitudes Periodo</small>
         </div>
       </div>
-
-      <!-- Carga de Trabajo -->
-      <div class="col-md-6">
-        <div class="glass-card h-100">
-          <h6 class="text-warning mb-4">👥 Carga de Trabajo (Personal Activo)</h6>
-          <div class="scroll-carga" style="max-height: 250px; overflow-y: auto;">
-            <div *ngFor="let p of listaPersonalCarga"
-              class="d-flex justify-content-between align-items-center mb-3 p-2 bg-dark rounded border border-secondary">
-              <div>
-                <div class="fw-bold text-white">{{ p.nombreCompleto }}</div>
-                <small class="text-secondary">{{ p.usuario }} | {{ p.roles?.join(', ') || p.rol }}</small>
-              </div>
-              <span class="badge bg-primary rounded-pill">{{ p.cantidadCasos || 0 }} casos</span>
-            </div>
-            <p *ngIf="listaPersonalCarga.length === 0" class="text-secondary small text-center mt-5">
-              No hay personal operativo activo en este momento.
-            </p>
-          </div>
+      <div class="col-md-4">
+        <div class="glass-card h-100 text-center d-flex flex-column justify-content-center align-items-center py-4">
+          <h1 class="text-success display-4 fw-bold m-0">{{ data.tasaFinalizacion }}%</h1>
+          <small class="text-secondary text-uppercase letter-spacing-2 fw-bold mt-2">Tasa de Resolución</small>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="glass-card h-100 text-center d-flex flex-column justify-content-center align-items-center py-4">
+          <h1 class="text-warning display-4 fw-bold m-0">{{ data.personalActivo }}</h1>
+          <small class="text-secondary text-uppercase letter-spacing-2 fw-bold mt-2">Personal Activo</small>
         </div>
       </div>
     </div>
 
-    <!-- Overview Cards -->
-    <div class="row mt-4">
+    <div class="row g-4">
+      <!-- Gráfico de Estado (Más pequeño) -->
+      <div class="col-xl-5 col-lg-6">
+        <div class="glass-card h-100 d-flex flex-column">
+          <div class="d-flex align-items-center mb-4 border-bottom border-secondary pb-3">
+            <i class="bi bi-pie-chart-fill text-warning fs-4 me-2"></i>
+            <h6 class="text-warning-neon m-0">Estado de Solicitudes</h6>
+          </div>
+
+          <div class="px-2 flex-grow-1 d-flex flex-column justify-content-center">
+            <div class="mb-4">
+              <div class="d-flex justify-content-between small mb-2 text-white">
+                <span class="fw-bold text-uppercase text-secondary">Pendientes</span>
+                <span class="fw-bold">{{ data.pendientes }}</span>
+              </div>
+              <div class="progress" style="height: 12px;">
+                <div class="progress-bar bg-danger" role="progressbar"
+                  [style.width.%]="(data.pendientes / (data.totalSolicitudes || 1)) * 100"></div>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <div class="d-flex justify-content-between small mb-2 text-white">
+                <span class="fw-bold text-uppercase text-secondary">En Proceso / Asignados</span>
+                <span class="fw-bold">{{ data.asignados }}</span>
+              </div>
+              <div class="progress" style="height: 12px;">
+                <div class="progress-bar bg-warning" role="progressbar"
+                  [style.width.%]="(data.asignados / (data.totalSolicitudes || 1)) * 100"></div>
+              </div>
+            </div>
+
+            <div class="mb-2">
+              <div class="d-flex justify-content-between small mb-2 text-white">
+                <span class="fw-bold text-uppercase text-secondary">Finalizados</span>
+                <span class="fw-bold">{{ data.finalizadosContador }}</span>
+              </div>
+              <div class="progress" style="height: 12px;">
+                <div class="progress-bar bg-success" role="progressbar"
+                  [style.width.%]="(data.finalizadosContador / (data.totalSolicitudes || 1)) * 100"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Carga de Trabajo (Más ancho) -->
+      <div class="col-xl-7 col-lg-6">
+        <div class="glass-card h-100 d-flex flex-column">
+          <div class="d-flex align-items-center mb-4 border-bottom border-secondary pb-3">
+            <i class="bi bi-people-fill text-warning fs-4 me-2"></i>
+            <h6 class="text-warning-neon m-0">Carga de Trabajo ({{ data.personalActivo }} activos)</h6>
+          </div>
+
+          <div class="scroll-carga pe-2 flex-grow-1" style="max-height: 350px; overflow-y: auto;">
+            <div *ngFor="let p of listaPersonalCarga"
+              class="d-flex justify-content-between align-items-center mb-3 p-3 rounded"
+              style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); transition: background 0.2s;">
+
+              <div class="d-flex align-items-center gap-3">
+                <div
+                  class="rounded-circle bg-warning text-dark d-flex align-items-center justify-content-center fw-bold"
+                  style="width: 40px; height: 40px;">
+                  {{ p.nombreCompleto.charAt(0) }}
+                </div>
+                <div>
+                  <div class="fw-bold text-white mb-1">{{ p.nombreCompleto }}</div>
+                  <div class="d-flex gap-2">
+                    <span class="badge bg-secondary font-monospace" style="opacity: 0.7">{{ p.usuario }}</span>
+                    <!-- Mostrar solo el primer rol para ahorrar espacio si hay muchos -->
+                    <span class="badge bg-dark border border-secondary text-secondary">{{ p.roles?.[0] || p.rol
+                      }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="text-end ps-3">
+                <h4 class="text-warning m-0 fw-bold">{{ p.cantidadCasos || 0 }}</h4>
+                <small class="text-secondary" style="font-size: 0.7rem;">CASOS</small>
+              </div>
+            </div>
+
+            <p *ngIf="listaPersonalCarga.length === 0" class="text-secondary small text-center mt-5 opacity-50">
+              <i class="bi bi-person-slash fs-1 d-block mb-3"></i>
+              No hay personal activo con carga en este periodo.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div> <!-- Tabla Detallada -->
+    <div class="row mt-4 mb-5">
       <div class="col-12">
-        <div class="glass-card">
-          <h6 class="text-warning mb-4">📈 Resumen del Periodo</h6>
-          <div class="row g-3 text-center">
-            <div class="col-md-4 border-end border-secondary">
-              <h2 class="text-white fw-bold m-0">{{ data.totalSolicitudes }}</h2>
-              <small class="text-secondary text-uppercase">Solicitudes Totales</small>
-            </div>
-            <div class="col-md-4 border-end border-secondary">
-              <h2 class="text-success fw-bold m-0">{{ data.tasaFinalizacion }}%</h2>
-              <small class="text-secondary text-uppercase">Tasa de Resolución</small>
-            </div>
-            <div class="col-md-4">
-              <h2 class="text-primary fw-bold m-0">{{ data.personalActivo }}</h2>
-              <small class="text-secondary text-uppercase">Conciliadores/Abogados</small>
-            </div>
+        <div class="glass-card p-0">
+          <div class="p-3 border-bottom border-secondary d-flex justify-content-between align-items-center">
+            <h6 class="text-warning-neon m-0">📄 Detalle de Expedientes Filtrados</h6>
+            <span class="badge bg-dark border border-secondary">{{ solicitudesFiltradas.length }} registros</span>
+          </div>
+          <div class="table-responsive" style="max-height: 400px;">
+            <table class="table table-dark table-hover m-0 align-middle">
+              <thead>
+                <tr class="text-secondary small text-uppercase">
+                  <th class="ps-4">N° Exp</th>
+                  <th>Fecha</th>
+                  <th>Solicitante</th>
+                  <th>Conciliador</th>
+                  <th>Estado</th>
+                  <th class="pe-4">Resultado</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let s of solicitudesFiltradas">
+                  <td class="ps-4 text-info font-monospace">{{ s.numeroExpediente }}</td>
+                  <td>{{ s.fechaPresentacion | date:'dd/MM/yyyy' }}</td>
+                  <td>{{ s.solicitanteNombre }}</td>
+                  <td>
+                    <span *ngIf="s.conciliadorNombre">{{ s.conciliadorNombre }}</span>
+                    <span *ngIf="!s.conciliadorNombre" class="text-secondary fst-italic">--</span>
+                  </td>
+                  <td>
+                    <span class="badge" [ngClass]="{
+                        'bg-warning text-dark': s.estado === 'PENDIENTE',
+                        'bg-primary': s.estado === 'ASIGNADO' || s.estado === 'DESIGNACION_ACEPTADA',
+                        'bg-success': s.estado === 'FINALIZADO' || s.estado === 'CONCLUIDO_CON_ACUERDO' || s.estado === 'CONCLUIDO_SIN_ACUERDO',
+                        'bg-secondary': s.estado === 'OBSERVADO'
+                      }">
+                      {{ s.estado }}
+                    </span>
+                  </td>
+                  <td class="pe-4">
+                    <span *ngIf="s.resultadoTipo" class="badge bg-teal">{{ s.resultadoTipo }}</span>
+                    <span *ngIf="!s.resultadoTipo" class="text-secondary small">-</span>
+                  </td>
+                </tr>
+                <tr *ngIf="solicitudesFiltradas.length === 0">
+                  <td colspan="6" class="text-center py-5 text-secondary">
+                    <i class="bi bi-filter-circle fs-1 d-block mb-3"></i>
+                    No hay expedientes en este rango de fechas.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>

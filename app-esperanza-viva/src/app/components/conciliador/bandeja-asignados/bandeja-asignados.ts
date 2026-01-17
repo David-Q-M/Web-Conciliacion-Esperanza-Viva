@@ -75,6 +75,6 @@ export class BandejaAsignados implements OnInit {
 
   cerrarSesion() {
     localStorage.clear();
-    this.router.navigate(['/login-admin']);
+    this.router.navigate(['consulta']);
   }
 }

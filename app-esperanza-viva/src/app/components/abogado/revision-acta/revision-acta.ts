@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import jsPDF from 'jspdf';
+// 🔹 Import ActaService correctly
+import { ActaService } from '../../../services/acta.service';
 
 @Component({
     selector: 'app-revision-acta',
@@ -20,7 +21,8 @@ export class RevisionActa implements OnInit {
     constructor(
         private route: ActivatedRoute,
         private http: HttpClient,
-        private router: Router
+        private router: Router,
+        private actaService: ActaService
     ) { }
 
     ngOnInit(): void {
@@ -38,11 +40,29 @@ export class RevisionActa implements OnInit {
     }
 
     descargarPDF() {
-        const doc = new jsPDF();
-        doc.text('ACTA DE CONCILIACIÓN', 105, 20, { align: 'center' });
-        doc.text(`Expediente: ${this.expediente?.numeroExpediente}`, 20, 40);
-        doc.text(`Solicitante: ${this.expediente?.solicitante?.nombres}`, 20, 50);
-        doc.save(`Acta_${this.expediente?.numeroExpediente}.pdf`);
+        if (!this.expediente || !this.expediente.audiencia) {
+            alert("No hay audiencia registrada.");
+            return;
+        }
+
+        try {
+            // 🔹 FIX: Parse JSON to get URL
+            let detalle = {};
+            if (this.expediente.audiencia.resultadoDetalle) {
+                detalle = JSON.parse(this.expediente.audiencia.resultadoDetalle);
+            }
+
+            // @ts-ignore
+            if (detalle.actaUrl) {
+                // @ts-ignore
+                window.open(detalle.actaUrl, '_blank');
+            } else {
+                alert("El acta no tiene URL adjunta.");
+            }
+        } catch (e) {
+            console.error("Error parsing resultadoDetalle", e);
+            alert("Error al leer el archivo del acta.");
+        }
     }
 
     onFileSelected(event: any) {
@@ -54,7 +74,26 @@ export class RevisionActa implements OnInit {
     }
 
     aprobarLegalidad() {
-        this.actualizarEstado('FINALIZADA');
+        if (this.archivoFirmado && this.expediente && this.expediente.audiencia) {
+            // 1. Upload Signed File
+            const numExp = this.expediente.numeroExpediente || 'SN';
+            this.actaService.subirActa(
+                this.expediente.audiencia.id,
+                'ACTA_FIRMADA',
+                `ACTA-FIRMADA-${numExp}`,
+                this.archivoFirmado
+            ).subscribe({
+                next: (res) => {
+                    console.log("Acta firmada subida:", res);
+                    // 2. Update Status
+                    this.actualizarEstado('FINALIZADA');
+                },
+                error: (err) => alert("Error al subir el archivo firmado: " + err.message)
+            });
+        } else {
+            // Fallback if no file selected (Just approve status)
+            this.actualizarEstado('FINALIZADA');
+        }
     }
 
     observar() {
@@ -78,6 +117,6 @@ export class RevisionActa implements OnInit {
 
     cerrarSesion() {
         localStorage.clear();
-        this.router.navigate(['/consulta']); // ✅ FIXED: Route confirmed in app.routes.ts
+        this.router.navigate(['/consulta']);
     }
 }

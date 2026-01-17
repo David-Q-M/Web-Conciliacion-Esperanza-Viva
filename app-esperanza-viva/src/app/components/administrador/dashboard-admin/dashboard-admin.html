@@ -44,6 +44,14 @@
       </div>
     </header>
 
+    <!-- Mensaje de Error -->
+    <div *ngIf="errorMessage" class="alert alert-danger mb-4 d-flex align-items-center" role="alert">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i>
+      <div>
+        {{ errorMessage }}
+      </div>
+    </div>
+
     <!-- Centro de Notificaciones -->
     <section *ngIf="alertasSistema.length > 0" class="mb-4">
       <div *ngFor="let alerta of alertasSistema" class="alert-panel animate__animated animate__fadeIn">

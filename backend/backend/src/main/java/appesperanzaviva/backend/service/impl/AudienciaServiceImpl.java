@@ -27,9 +27,17 @@ public class AudienciaServiceImpl implements AudienciaService {
     @Autowired
     private SolicitudRepository solicitudRepository;
 
+    @Autowired
+    private appesperanzaviva.backend.repository.UsuarioSistemaRepository usuarioRepo;
+
     @Override
     public List<Audiencia> listarPorConciliador(@NonNull Integer conciliadorId) {
         return repository.findBySolicitudConciliadorId(conciliadorId);
+    }
+
+    @Override
+    public List<Audiencia> listarPorNotificador(@NonNull Integer notificadorId) {
+        return repository.findBySolicitudNotificadorId(notificadorId);
     }
 
     @Override
@@ -52,10 +60,20 @@ public class AudienciaServiceImpl implements AudienciaService {
 
         // 🔹 NUEVO: Guardar el notificador si se seleccionó en el frontend
         if (solicitud.getNotificador() != null && solicitud.getNotificador().getId() != null) {
-            solicitudDb.setNotificador(solicitud.getNotificador());
+            appesperanzaviva.backend.entity.UsuarioSistema notificadorDb = usuarioRepo
+                    .findById(solicitud.getNotificador().getId())
+                    .orElseThrow(() -> new RuntimeException("Notificador no encontrado"));
+            solicitudDb.setNotificador(notificadorDb);
         }
 
         solicitudRepository.save(solicitudDb);
+
+        // 🛡️ CRITICO: Asignar la solicitud gestionada (con el notificador actualizado)
+        // a la audiencia
+        // Si no hacemos esto, Hibernate podria usar el objeto parcial
+        // 'audiencia.getSolicitud()'
+        // y planchar los cambios o dejar el notificador nulo.
+        audiencia.setSolicitud(solicitudDb);
 
         return repository.save(audiencia);
     }
@@ -73,7 +91,12 @@ public class AudienciaServiceImpl implements AudienciaService {
 
             Solicitud solicitud = a.getSolicitud();
             if (datos.getResultadoTipo() != null && datos.getResultadoTipo().contains("Acuerdo")) {
-                solicitud.setEstado("PENDIENTE_ACTA");
+                // 🔹 LOGIC FIX: Si ya tiene URL de acta, pasa a firma del abogado
+                if (datos.getResultadoDetalle() != null && datos.getResultadoDetalle().contains("actaUrl")) {
+                    solicitud.setEstado("PENDIENTE_FIRMA");
+                } else {
+                    solicitud.setEstado("PENDIENTE_ACTA");
+                }
             } else {
                 solicitud.setEstado("CONCLUIDO_SIN_ACUERDO");
             }

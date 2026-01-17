@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { SolicitudService } from '../../../services/solicitud.service';
+import { UsuarioService } from '../../../services/usuario.service';
 
 @Component({
   selector: 'app-exito-registro',
@@ -10,30 +11,59 @@ import { SolicitudService } from '../../../services/solicitud.service';
   templateUrl: './exito-registro.html',
   styleUrls: ['./exito-registro.css']
 })
-export class ExitoRegistro implements OnInit {
+export class ExitoRegistro implements OnInit, OnDestroy {
   expediente: any = null;
   cargando: boolean = true;
+  private intervalId: any;
+  conciliadores: any[] = [];
 
   // Orden de estados para el timeline
   private estadosOrder = ['RECIBIDO', 'PENDIENTE', 'EN_REVISION', 'APROBADA', 'AUDIENCIA_PROGRAMADA', 'EN_AUDIENCIA', 'FINALIZADA', 'CONCILIADA', 'NO_ACUERDO'];
 
   constructor(
     private route: ActivatedRoute,
-    private solicitudService: SolicitudService
+    private solicitudService: SolicitudService,
+    private usuarioService: UsuarioService
   ) { }
 
   ngOnInit(): void {
+    this.cargarConciliadores();
     this.cargarDatos();
+    // Polling cada 5 segundos para actualizar estado y conciliador
+    this.intervalId = setInterval(() => {
+      this.cargarDatos();
+    }, 5000);
+  }
+
+  ngOnDestroy(): void {
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+    }
+  }
+
+  cargarConciliadores() {
+    this.usuarioService.listarPorRol('CONCILIADOR').subscribe({
+      next: (res) => {
+        this.conciliadores = res;
+        if (this.expediente) this.mapearConciliador();
+      },
+      error: (err) => console.error("Error cargando conciliadores", err)
+    });
   }
 
   cargarDatos() {
-    this.cargando = true;
+    // Solo mostrar spinner si no hay datos aun
+    if (!this.expediente) {
+      this.cargando = true;
+    }
+
     const numeroBusqueda = this.route.snapshot.paramMap.get('expediente');
 
     if (numeroBusqueda) {
       this.solicitudService.obtenerExpediente(numeroBusqueda).subscribe({
         next: (data) => {
           this.expediente = data;
+          this.mapearConciliador();
           this.cargando = false;
         },
         error: (err) => {
@@ -41,6 +71,27 @@ export class ExitoRegistro implements OnInit {
           this.cargando = false;
         }
       });
+    }
+  }
+
+  mapearConciliador() {
+    if (!this.expediente || !this.conciliadores.length) return;
+
+    let cId = this.expediente.conciliadorId;
+    // Caso: si conciliador es un ID numérico directamente
+    if (!cId && typeof this.expediente.conciliador === 'number') {
+      cId = this.expediente.conciliador;
+    }
+    // Caso: si conciliador es string pero numérico
+    if (!cId && this.expediente.conciliador && !isNaN(Number(this.expediente.conciliador))) {
+      cId = Number(this.expediente.conciliador);
+    }
+
+    if (cId) {
+      const found = this.conciliadores.find(u => u.id === cId);
+      if (found) {
+        this.expediente.conciliador = found;
+      }
     }
   }
 
@@ -60,9 +111,9 @@ export class ExitoRegistro implements OnInit {
 
     // Lógica manual simple si no hay orden estricto numérico, o usamos índices del array
     // Mapeo simplificado para la UI
-    // Etapa 1: Aprobada
+    // Etapa 1: Aprobada (Incluye variaciones y estado ASIGNADO)
     if (targetState === 'APROBADA') {
-      return ['APROBADA', 'AUDIENCIA_PROGRAMADA', 'EN_AUDIENCIA', 'FINALIZADA', 'CONCILIADA', 'NO_ACUERDO'].includes(current);
+      return ['APROBADA', 'APROBADO', 'ASIGNADO', 'AUDIENCIA_PROGRAMADA', 'EN_AUDIENCIA', 'FINALIZADA', 'CONCILIADA', 'NO_ACUERDO'].includes(current);
     }
     // Etapa 2: Audiencia
     if (targetState === 'AUDIENCIA_PROGRAMADA') {

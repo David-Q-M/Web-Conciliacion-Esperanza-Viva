@@ -34,6 +34,14 @@
       </div>
     </header>
 
+    <!-- Mensaje de Error -->
+    <div *ngIf="errorMessage" class="alert alert-danger mb-4 d-flex align-items-center" role="alert">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i>
+      <div>
+        {{ errorMessage }}
+      </div>
+    </div>
+
     <!-- Stats Cards -->
     <div class="row g-4 mb-5">
       <div class="col-md-3" (click)="filtrarPorEstado('TOTAL')" style="cursor: pointer;">
@@ -64,7 +72,12 @@
 
     <!-- Filter Bar -->
     <div class="d-flex justify-content-between align-items-center mb-3">
-      <h5 class="text-white fw-bold m-0">Detalle de Operaciones</h5>
+      <div class="d-flex align-items-center gap-3">
+        <h5 class="text-white fw-bold m-0">Detalle de Operaciones</h5>
+        <button class="btn btn-sm btn-green-viva py-1 px-3" (click)="exportarGlobal()">
+          <i class="bi bi-file-earmark-spreadsheet me-2"></i> Descargar Todo
+        </button>
+      </div>
       <div class="search-input-wrapper"
         style="width: 300px; background: #000; border: 1px solid #333; border-radius: 6px; padding: 0 10px;">
         <i class="bi bi-search text-secondary"></i>
@@ -81,9 +94,11 @@
             <tr class="text-secondary small text-uppercase">
               <th class="ps-4">Nº Expediente</th>
               <th>Solicitante</th>
+              <th>Apoderado</th>
               <th>Invitado</th>
               <th>Fecha de Ingreso</th>
               <th>Materia</th>
+              <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -100,10 +115,16 @@
                   <div class="skeleton skeleton-text" style="width: 150px;"></div>
                 </td>
                 <td>
+                  <div class="skeleton skeleton-text" style="width: 150px;"></div>
+                </td>
+                <td>
                   <div class="skeleton skeleton-text" style="width: 100px;"></div>
                 </td>
                 <td>
                   <div class="skeleton skeleton-text" style="width: 120px;"></div>
+                </td>
+                <td>
+                  <div class="skeleton skeleton-text" style="width: 40px;"></div>
                 </td>
               </tr>
             </ng-container>
@@ -113,12 +134,23 @@
               <tr *ngFor="let item of reportData.lista">
                 <td class="ps-4 fw-bold text-white">{{item.numeroExpediente}}</td>
                 <td class="text-secondary small">{{item.solicitante?.nombres}} {{item.solicitante?.apellidos}}</td>
+                <td class="text-secondary small">
+                  <span *ngIf="item.apoderado?.nombres" class="text-warning">{{item.apoderado?.nombres}}
+                    {{item.apoderado?.apellidos}}</span>
+                  <span *ngIf="!item.apoderado?.nombres" class="text-muted">—</span>
+                </td>
                 <td class="text-secondary small">{{item.invitado?.nombres}} {{item.invitado?.apellidos}}</td>
                 <td class="text-secondary small">{{item.fechaPresentacion | date:'dd/MM/yyyy'}}</td>
                 <td class="text-white small">{{item.materiaConciliable}}</td>
+                <td>
+                  <button class="btn btn-sm btn-outline-success" (click)="exportarIndividual(item)"
+                    title="Exportar Excel">
+                    <i class="bi bi-file-earmark-spreadsheet"></i>
+                  </button>
+                </td>
               </tr>
               <tr *ngIf="reportData.lista.length === 0">
-                <td colspan="5" class="text-center text-secondary py-5">
+                <td colspan="7" class="text-center text-secondary py-5">
                   No se encontraron datos para este filtro.
                 </td>
               </tr>

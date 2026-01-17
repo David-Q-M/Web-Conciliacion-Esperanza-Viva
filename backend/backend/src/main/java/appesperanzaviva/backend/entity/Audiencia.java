@@ -4,8 +4,14 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
 @Table(name = "audiencias")
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Audiencia {
 
     @Id
@@ -21,10 +27,11 @@ public class Audiencia {
     private LocalTime horaAudiencia;
     private String lugar;
 
-    // 🛠️ CORRECCIÓN: Cambiado de Boolean a String para recibir "Asistio" / "No asistio"
+    // 🛠️ CORRECCIÓN: Cambiado de Boolean a String para recibir "Asistio" / "No
+    // asistio"
     private String asistenciaSolicitante;
     private String asistenciaInvitado;
-    
+
     private String resultadoTipo;
 
     @Column(columnDefinition = "TEXT")
@@ -35,33 +42,83 @@ public class Audiencia {
     private UsuarioSistema abogadoVerificador;
 
     // --- GETTERS Y SETTERS ---
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public Solicitud getSolicitud() { return solicitud; }
-    public void setSolicitud(Solicitud solicitud) { this.solicitud = solicitud; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public LocalDate getFechaAudiencia() { return fechaAudiencia; }
-    public void setFechaAudiencia(LocalDate fechaAudiencia) { this.fechaAudiencia = fechaAudiencia; }
+    public Solicitud getSolicitud() {
+        return solicitud;
+    }
 
-    public LocalTime getHoraAudiencia() { return horaAudiencia; }
-    public void setHoraAudiencia(LocalTime horaAudiencia) { this.horaAudiencia = horaAudiencia; }
+    public void setSolicitud(Solicitud solicitud) {
+        this.solicitud = solicitud;
+    }
 
-    public String getLugar() { return lugar; }
-    public void setLugar(String lugar) { this.lugar = lugar; }
+    public LocalDate getFechaAudiencia() {
+        return fechaAudiencia;
+    }
 
-    public String getAsistenciaSolicitante() { return asistenciaSolicitante; }
-    public void setAsistenciaSolicitante(String asistenciaSolicitante) { this.asistenciaSolicitante = asistenciaSolicitante; }
+    public void setFechaAudiencia(LocalDate fechaAudiencia) {
+        this.fechaAudiencia = fechaAudiencia;
+    }
 
-    public String getAsistenciaInvitado() { return asistenciaInvitado; }
-    public void setAsistenciaInvitado(String asistenciaInvitado) { this.asistenciaInvitado = asistenciaInvitado; }
+    public LocalTime getHoraAudiencia() {
+        return horaAudiencia;
+    }
 
-    public String getResultadoTipo() { return resultadoTipo; }
-    public void setResultadoTipo(String resultadoTipo) { this.resultadoTipo = resultadoTipo; }
+    public void setHoraAudiencia(LocalTime horaAudiencia) {
+        this.horaAudiencia = horaAudiencia;
+    }
 
-    public String getResultadoDetalle() { return resultadoDetalle; }
-    public void setResultadoDetalle(String resultadoDetalle) { this.resultadoDetalle = resultadoDetalle; }
+    public String getLugar() {
+        return lugar;
+    }
 
-    public UsuarioSistema getAbogadoVerificador() { return abogadoVerificador; }
-    public void setAbogadoVerificador(UsuarioSistema abogadoVerificador) { this.abogadoVerificador = abogadoVerificador; }
+    public void setLugar(String lugar) {
+        this.lugar = lugar;
+    }
+
+    public String getAsistenciaSolicitante() {
+        return asistenciaSolicitante;
+    }
+
+    public void setAsistenciaSolicitante(String asistenciaSolicitante) {
+        this.asistenciaSolicitante = asistenciaSolicitante;
+    }
+
+    public String getAsistenciaInvitado() {
+        return asistenciaInvitado;
+    }
+
+    public void setAsistenciaInvitado(String asistenciaInvitado) {
+        this.asistenciaInvitado = asistenciaInvitado;
+    }
+
+    public String getResultadoTipo() {
+        return resultadoTipo;
+    }
+
+    public void setResultadoTipo(String resultadoTipo) {
+        this.resultadoTipo = resultadoTipo;
+    }
+
+    public String getResultadoDetalle() {
+        return resultadoDetalle;
+    }
+
+    public void setResultadoDetalle(String resultadoDetalle) {
+        this.resultadoDetalle = resultadoDetalle;
+    }
+
+    public UsuarioSistema getAbogadoVerificador() {
+        return abogadoVerificador;
+    }
+
+    public void setAbogadoVerificador(UsuarioSistema abogadoVerificador) {
+        this.abogadoVerificador = abogadoVerificador;
+    }
 }

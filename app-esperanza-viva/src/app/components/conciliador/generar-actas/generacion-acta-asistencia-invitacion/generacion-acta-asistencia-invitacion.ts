@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router, ActivatedRoute, RouterLink, RouterLinkActive } from '@angular/router';
 import { jsPDF } from 'jspdf';
+import { ActaService } from '../../../../services/acta.service';
 
 @Component({
     selector: 'app-generacion-acta-asistencia-invitacion',
@@ -31,7 +32,8 @@ export class GeneracionActaAsistenciaInvitacion implements OnInit {
     constructor(
         private http: HttpClient,
         private router: Router,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private actaService: ActaService
     ) { }
 
     ngOnInit(): void {
@@ -67,35 +69,8 @@ export class GeneracionActaAsistenciaInvitacion implements OnInit {
         });
     }
 
-    finalizarYDescargar() {
-        const token = localStorage.getItem('token');
-        const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-
-        // Logic to CREATE the NEW Audience (since this is a rescheduling)
-        // ... (This part might be complex backend logic. For now, we update the CURRENT audience result)
-        // Ideally, this should trigger a "create new audience" flow in backend, but user only asked for "Finalizar and Continue".
-        // We will just save the result on this one.
-
-        const payload = {
-            resultadoTipo: 'Inasistencias',
-            resultadoDetalle: 'Asistencia e invitacion para conciliar|' + JSON.stringify(this.datosActa)
-        };
-
-        this.http.put(`http://localhost:8080/api/audiencias/${this.audienciaId}/resultado`, payload, { headers }).subscribe({
-            next: () => {
-                alert("Proceso Finalizado. Se ha registrado la reprogramación.");
-                this.router.navigate(['/conciliador/mis-casos']);
-            },
-            error: (err) => alert("Error al finalizar: " + err.message)
-        });
-    }
-
-    descargarPDF() {
-        if (!this.datosActa.nuevaFecha || !this.datosActa.nuevaHora) {
-            alert("Por favor ingrese la nueva fecha y hora de la audiencia.");
-            return;
-        }
-
+    // Helper to generate doc
+    generarDocPDF(): jsPDF {
         const doc = new jsPDF();
         const sol = this.audiencia.solicitud?.solicitante;
         const inv = this.audiencia.solicitud?.invitado;
@@ -191,7 +166,55 @@ export class GeneracionActaAsistenciaInvitacion implements OnInit {
         doc.text("Nombre, firma y huella de la parte asistente", 140, yPos + 5, { align: 'center' });
         doc.text(asistente.split('(')[0], 140, yPos + 10, { align: 'center' }); // Just name
 
-        doc.save(`Formato_D_Constancia_${expNum}.pdf`);
+        return doc;
+    }
+
+    finalizarYDescargar() {
+        if (!this.datosActa.nuevaFecha || !this.datosActa.nuevaHora) {
+            alert("Por favor ingrese la nueva fecha y hora de la audiencia.");
+            return;
+        }
+
+        const doc = this.generarDocPDF();
+        const pdfBlob = doc.output('blob');
+        const numeroActa = `CONSTANCIA-ASIST-INVIT-${this.audienciaId}-${new Date().getTime()}`;
+
+        // 1. Upload Blob
+        this.actaService.subirActa(this.audienciaId, 'CONSTANCIA_ASISTENCIA_INVITACION', numeroActa, pdfBlob).subscribe({
+            next: (res) => {
+                console.log("Constancia subida:", res);
+
+                // 2. Update Status
+                const token = localStorage.getItem('token');
+                const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+                const payload = {
+                    resultadoTipo: 'Inasistencias',
+                    resultadoDetalle: 'Asistencia e invitacion para conciliar|' + JSON.stringify({
+                        ...this.datosActa,
+                        constanciaUrl: res.archivoUrl
+                    })
+                };
+
+                this.http.put(`http://localhost:8080/api/audiencias/${this.audienciaId}/resultado`, payload, { headers }).subscribe({
+                    next: () => {
+                        doc.save(`Formato_D_Constancia_${this.audiencia.solicitud?.numeroExpediente}.pdf`);
+                        alert("✅ Proceso Finalizado. Se ha registrado la reprogramación y guardado la constancia.");
+                        this.router.navigate(['/conciliador/mis-casos']);
+                    },
+                    error: (err) => alert("Error al finalizar: " + err.message)
+                });
+            },
+            error: (err) => alert("Error al subir constancia: " + err.message)
+        });
+    }
+
+    descargarPDF() {
+        if (!this.datosActa.nuevaFecha || !this.datosActa.nuevaHora) {
+            alert("Por favor ingrese la nueva fecha y hora de la audiencia.");
+            return;
+        }
+
+        this.generarDocPDF().save(`Formato_D_Constancia_${this.audiencia.solicitud?.numeroExpediente}.pdf`);
     }
 
     descargarWord() {

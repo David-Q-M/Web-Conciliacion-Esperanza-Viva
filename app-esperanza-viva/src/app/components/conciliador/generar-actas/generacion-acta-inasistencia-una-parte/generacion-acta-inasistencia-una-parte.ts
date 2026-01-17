@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router, ActivatedRoute, RouterLink, RouterLinkActive } from '@angular/router';
 import { jsPDF } from 'jspdf';
+import { ActaService } from '../../../../services/acta.service';
 
 @Component({
     selector: 'app-generacion-acta-inasistencia-una-parte',
@@ -15,10 +16,11 @@ import { jsPDF } from 'jspdf';
 export class GeneracionActaInasistenciaUnaParte implements OnInit {
     audienciaId: any;
     conciliadorNombre: string = '';
+    conciliadorDni: string = '';
+    conciliadorRegistro: string = '';
     audiencia: any = null;
     mostrarVistaPrevia: boolean = false;
 
-    // Form Data matches new UI fields
     // Form Data matches new UI fields
     datosActa = {
         hechos: '',
@@ -37,13 +39,17 @@ export class GeneracionActaInasistenciaUnaParte implements OnInit {
     constructor(
         private http: HttpClient,
         private router: Router,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private actaService: ActaService
     ) { }
 
     ngOnInit(): void {
         const userJson = localStorage.getItem('currentUser');
         if (userJson) {
-            this.conciliadorNombre = JSON.parse(userJson).nombreCompleto;
+            const user = JSON.parse(userJson);
+            this.conciliadorNombre = user.nombreCompleto;
+            this.conciliadorDni = user.dni || '____________';
+            this.conciliadorRegistro = user.nroRegistro || '____________';
         }
         this.audienciaId = this.route.snapshot.paramMap.get('id');
         if (this.audienciaId) {
@@ -89,90 +95,57 @@ export class GeneracionActaInasistenciaUnaParte implements OnInit {
         this.mostrarVistaPrevia = !this.mostrarVistaPrevia;
     }
 
-    finalizarYDescargar() {
-        const token = localStorage.getItem('token');
-        const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-
-        const payload = {
-            resultadoTipo: 'Inasistencia de una de las partes',
-            resultadoDetalle: JSON.stringify(this.datosActa)
-        };
-
-        this.http.put(`http://localhost:8080/api/audiencias/${this.audienciaId}/resultado`, payload, { headers }).subscribe({
-            next: () => {
-                alert("Proceso Finalizado Correctamente");
-                this.router.navigate(['/conciliador/mis-casos']);
-            },
-            error: (err) => alert("Error al finalizar: " + err.message)
-        });
-    }
-
-    descargarPDF() {
+    // Helper to generate doc
+    generarDocPDF(): jsPDF {
         const doc = new jsPDF();
-
-        // --- DATA PREPARATION ---
         const sol = this.audiencia.solicitud?.solicitante;
         const inv = this.audiencia.solicitud?.invitado;
         const expNum = this.audiencia.solicitud?.numeroExpediente || '_______';
 
-        // --- FORMATO N TITLE ---
         doc.setFont("times", "bold");
         doc.setFontSize(10);
         doc.text("FORMATO N", 180, 15);
-
         doc.setFontSize(11);
         doc.text("FORMATO TIPO DE ACTA DE CONCILIACIÓN POR INASISTENCIA", 105, 25, { align: "center" });
         doc.text("DE UNA DE LAS PARTES", 105, 30, { align: "center" });
         doc.text("(PERSONAS NATURALES)", 105, 35, { align: "center" });
-
         doc.text(`CENTRO DE CONCILIACIÓN "ESPERANZA VIVA"`, 105, 45, { align: "center" });
-
         doc.setFont("times", "normal");
         doc.setFontSize(10);
         doc.text("Autorizado su funcionamiento por Resolución ............... N° _______ - _______", 105, 50, { align: "center" });
-
         doc.text(`Dirección y teléfono: ${this.datosActa.lugarAudiencia} | Tlf: 987654321           EXP. N° ${expNum}`, 105, 55, { align: "center" });
+        doc.line(70, 56, 140, 56);
 
-        doc.line(70, 56, 140, 56); // Underline Exp
-
-        // ACTA TITLE
         doc.setFont("times", "bold");
         doc.setFontSize(12);
         doc.text("ACTA DE CONCILIACIÓN N° .........", 105, 70, { align: "center" });
-        doc.line(70, 71, 140, 71); // Underline Title
+        doc.line(70, 71, 140, 71);
 
-
-        // --- BODY ---
         doc.setFont("times", "normal");
         doc.setFontSize(11);
         let yPos = 85;
 
         const hoy = new Date();
-        const textoIntro = `En la ciudad de Lima, distrito de _______________ siendo las ____ horas del día ${hoy.getDate()} del mes de ${this.obtenerNombreMes(hoy)} del año ${hoy.getFullYear()}, ante mi ${this.conciliadorNombre}, identificado con DNI ___________ en mi calidad de Conciliador Extrajudicial debidamente autorizado por el Ministerio de Justicia con Registro N° ___________, se presentaron con el objeto que les asista en la solución de su conflicto, la parte solicitante: ${sol?.nombres} ${sol?.apellidos}, identificado con DNI ${sol?.dni || '_________'}, con domicilio en ${this.datosActa.solicitanteDireccion || '______________'}, y la parte invitada: ${inv?.nombres} ${inv?.apellidos}, identificado con DNI ${inv?.dni || '_________'}, con domicilio en ${this.datosActa.invitadoDireccion || '______________'}, con el objeto de que les asista en la solución de su conflicto.`;
-
+        const textoIntro = `En la ciudad de Lima, distrito de _______________ siendo las ____ horas del día ${hoy.getDate()} del mes de ${this.obtenerNombreMes(hoy)} del año ${hoy.getFullYear()}, ante mi ${this.conciliadorNombre}, identificado con DNI ${this.conciliadorDni} en mi calidad de Conciliador Extrajudicial debidamente autorizado por el Ministerio de Justicia con Registro N° ${this.conciliadorRegistro}, se presentaron con el objeto que les asista en la solución de su conflicto, la parte solicitante: ${sol?.nombres} ${sol?.apellidos}, identificado con DNI ${sol?.dni || '_________'}, con domicilio en ${this.datosActa.solicitanteDireccion || '______________'}, y la parte invitada: ${inv?.nombres} ${inv?.apellidos}, identificado con DNI ${inv?.dni || '_________'}, con domicilio en ${this.datosActa.invitadoDireccion || '______________'}, con el objeto de que les asista en la solución de su conflicto.`;
         const splitIntro = doc.splitTextToSize(textoIntro, 170);
         doc.text(splitIntro, 20, yPos);
         yPos += (splitIntro.length * 5) + 5;
 
-        // INASISTENCIA SECTION
         doc.setFont("times", "bold");
         doc.text("INASISTENCIA DE UNA DE LAS PARTES:", 20, yPos);
         yPos += 8;
 
         doc.setFont("times", "normal");
         const textoInasistencia = `Habiéndose invitado a las partes para la realización de la Audiencia de Conciliación en dos oportunidades consecutivas: la primera, el día ${this.datosActa.fechaPrimeraCitacion} a horas ${this.datosActa.horaPrimeraCitacion}; y la segunda, a las ${this.datosActa.horaSegundaCitacion} horas del día ${this.datosActa.fechaSegundaCitacion}, y no habiendo concurrido a ninguna de estas sesiones la parte: ${this.datosActa.parteNoAsistio}. Se deja constancia de la asistencia de la parte: _______________.`;
-
         const splitInasistencia = doc.splitTextToSize(textoInasistencia, 170);
         doc.text(splitInasistencia, 20, yPos);
         yPos += (splitInasistencia.length * 5) + 5;
 
-        // POR ESTA RAZON
         const textoRazon = `Por esta razón se extiende la presente Acta N° ..........., dejando expresa constancia que la conciliación no puede realizarse por este hecho:`;
         const splitRazon = doc.splitTextToSize(textoRazon, 170);
         doc.text(splitRazon, 20, yPos);
         yPos += (splitRazon.length * 5) + 8;
 
-        // HECHOS
         doc.setFont("times", "bold");
         doc.text("HECHOS EXPUESTOS EN LA SOLICITUD:", 20, yPos);
         yPos += 8;
@@ -186,7 +159,6 @@ export class GeneracionActaInasistenciaUnaParte implements OnInit {
         doc.text("(De adjuntarse la solicitud está formará parte integrante del acta.)", 20, yPos);
         yPos += 8;
 
-        // CONTROVERSIA
         doc.setFont("times", "bold");
         doc.text("DESCRIPCIÓN DE LA (S) CONTROVERSIA (S) SOBRE LA(S) QUE SE PRETENDÍA(N) CONCILIAR:", 20, yPos);
         yPos += 8;
@@ -196,7 +168,6 @@ export class GeneracionActaInasistenciaUnaParte implements OnInit {
         doc.text(splitContro, 20, yPos);
         yPos += (splitContro.length * 5) + 20;
 
-        // SIGNATURES
         if (yPos > 250) {
             doc.addPage();
             yPos = 40;
@@ -211,10 +182,49 @@ export class GeneracionActaInasistenciaUnaParte implements OnInit {
         doc.text("Firma y huella del Conciliador", 25, yPos + 5);
         doc.text("Nombre, firma y huella de la parte asistente", 125, yPos + 5);
 
-        doc.save(`Formato_N_Acta_Inasistencia_${expNum}.pdf`);
+        return doc;
+    }
+
+    finalizarYDescargar() {
+        const doc = this.generarDocPDF();
+        const pdfBlob = doc.output('blob');
+        const numeroActa = `ACTA-INASISTENCIA-${this.audienciaId}-${new Date().getTime()}`;
+
+        // 1. Upload Blob
+        this.actaService.subirActa(this.audienciaId, 'INASISTENCIA_UNA_PARTE', numeroActa, pdfBlob).subscribe({
+            next: (res) => {
+                console.log("Acta Inasistencia subida:", res);
+
+                // 2. Update Status
+                const token = localStorage.getItem('token');
+                const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+                const payload = {
+                    resultadoTipo: 'Inasistencia de una de las partes',
+                    resultadoDetalle: JSON.stringify({
+                        ...this.datosActa,
+                        actaUrl: res.archivoUrl
+                    })
+                };
+
+                this.http.put(`http://localhost:8080/api/audiencias/${this.audienciaId}/resultado`, payload, { headers }).subscribe({
+                    next: () => {
+                        doc.save(`Formato_N_Acta_Inasistencia_${this.audiencia.solicitud?.numeroExpediente}.pdf`);
+                        alert("✅ Proceso Finalizado. Acta guardada en base de datos.");
+                        this.router.navigate(['/conciliador/mis-casos']);
+                    },
+                    error: (err) => alert("Error al actualizar estado: " + err.message)
+                });
+            },
+            error: (err) => alert("Error al subir acta: " + err.message)
+        });
+    }
+
+    descargarPDF() {
+        this.generarDocPDF().save(`Formato_N_Acta_Inasistencia_${this.audiencia.solicitud?.numeroExpediente}.pdf`);
     }
 
     descargarWord() {
+        // Keep existing Word logic
         const expNum = this.audiencia.solicitud?.numeroExpediente || '_______';
         const hoy = new Date();
         const sol = this.audiencia.solicitud?.solicitante;
@@ -234,7 +244,7 @@ export class GeneracionActaInasistenciaUnaParte implements OnInit {
                 <h3 style="text-align: center; text-decoration: underline; margin-top: 20px;">ACTA DE CONCILIACIÓN N° .........</h3>
                 
                 <p style="text-align: justify;">
-                  En la ciudad de Lima, distrito de _______________ siendo las ____ horas del día ${hoy.getDate()} del mes de ${this.obtenerNombreMes(hoy)} del año ${hoy.getFullYear()}, ante mi ${this.conciliadorNombre}, identificado con DNI ___________ en mi calidad de Conciliador Extrajudicial debidamente autorizado por el Ministerio de Justicia con Registro N° ___________, se presentaron con el objeto que les asista en la solución de su conflicto, la parte solicitante: ${sol?.nombres} ${sol?.apellidos}, identificado con DNI ${sol?.dni || '_________'}, con domicilio en ${this.datosActa.solicitanteDireccion || sol?.domicilio || '______________'}, y la parte invitada: ${inv?.nombres} ${inv?.apellidos}, identificado con DNI ${inv?.dni || '_________'}, con domicilio en ${this.datosActa.invitadoDireccion || inv?.domicilio || '______________'}, con el objeto de que les asista en la solución de su conflicto.
+                  En la ciudad de Lima, distrito de _______________ siendo las ____ horas del día ${hoy.getDate()} del mes de ${this.obtenerNombreMes(hoy)} del año ${hoy.getFullYear()}, ante mi ${this.conciliadorNombre}, identificado con DNI ${this.conciliadorDni} en mi calidad de Conciliador Extrajudicial debidamente autorizado por el Ministerio de Justicia con Registro N° ${this.conciliadorRegistro}, se presentaron con el objeto que les asista en la solución de su conflicto, la parte solicitante: ${sol?.nombres} ${sol?.apellidos}, identificado con DNI ${sol?.dni || '_________'}, con domicilio en ${this.datosActa.solicitanteDireccion || sol?.domicilio || '______________'}, y la parte invitada: ${inv?.nombres} ${inv?.apellidos}, identificado con DNI ${inv?.dni || '_________'}, con domicilio en ${this.datosActa.invitadoDireccion || inv?.domicilio || '______________'}, con el objeto de que les asista en la solución de su conflicto.
                 </p>
 
                 <br>

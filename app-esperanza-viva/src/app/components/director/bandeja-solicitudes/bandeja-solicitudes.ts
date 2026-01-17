@@ -24,6 +24,8 @@ export class BandejaSolicitudes implements OnInit {
 
   isLoading: boolean = true; // Flag de carga
 
+  errorMessage: string = '';
+
   constructor(private solicitudService: SolicitudService, private router: Router) { }
 
   ngOnInit(): void {
@@ -34,8 +36,10 @@ export class BandejaSolicitudes implements OnInit {
 
   cargarSolicitudes() {
     this.isLoading = true; // Iniciar carga
+    this.errorMessage = ''; // Limpiar errores previos
     this.solicitudService.listarSolicitudes().subscribe({
       next: (res) => {
+        console.log("🔍 DATOS RECIBIDOS DEL BACKEND:", res);
         this.solicitudesOriginales = res;
         this.solicitudesFiltradas = res;
         this.actualizarEstadisticas(res);
@@ -43,6 +47,7 @@ export class BandejaSolicitudes implements OnInit {
       },
       error: (err) => {
         console.error("Error al conectar con la API", err);
+        this.errorMessage = 'No se pudieron cargar los datos. Verifique su conexión o intente nuevamente.';
         this.isLoading = false;
       }
     });

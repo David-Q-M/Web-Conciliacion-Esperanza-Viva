@@ -92,13 +92,13 @@
                         <!-- DATA -->
                         <ng-container *ngIf="!isLoading">
                             <tr *ngFor="let h of historial">
-                                <td class="ps-4 text-secondary">{{ h.fechaCreacion | date:'dd/MM/yyyy' }}</td>
-                                <td class="fw-bold text-white">{{ h.numeroExpediente }}</td>
-                                <td class="text-white small">{{ h.solicitante?.nombres }}</td>
+                                <td class="ps-4 text-secondary">{{ h.fechaAudiencia | date:'dd/MM/yyyy' }}</td>
+                                <td class="fw-bold text-white">{{ h.solicitud?.numeroExpediente }}</td>
+                                <td class="text-white small">{{ h.solicitud?.solicitante?.nombres }}</td>
                                 <td>
                                     <span class="badge-status"
-                                        [ngClass]="{'bg-entregado': h.estado === 'NOTIFICADO' || h.estado === 'ENTREGADO', 'bg-devuelto': h.estado === 'DEVUELTO'}">
-                                        {{ h.estado }}
+                                        [ngClass]="{'bg-entregado': h.solicitud?.estado === 'NOTIFICADO' || h.solicitud?.estado === 'ENTREGADO', 'bg-devuelto': h.solicitud?.estado === 'DEVUELTO'}">
+                                        {{ h.solicitud?.estado }}
                                     </span>
                                 </td>
                                 <td class="text-end pe-4">

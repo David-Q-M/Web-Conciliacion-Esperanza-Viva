@@ -35,6 +35,14 @@
       </div>
     </header>
 
+    <!-- Mensaje de Error -->
+    <div *ngIf="errorMessage" class="alert alert-danger mb-4 d-flex align-items-center" role="alert">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i>
+      <div>
+        {{ errorMessage }}
+      </div>
+    </div>
+
     <!-- Estadísticas Rápidas -->
     <div class="row g-4 mb-5">
       <div class="col-md-3" (click)="filtrarPorEstado('TOTAL')" style="cursor: pointer;">

@@ -5,6 +5,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router, ActivatedRoute, RouterLink, RouterLinkActive } from '@angular/router';
 import { jsPDF } from 'jspdf';
 import { UsuarioService } from '../../../../services/usuario.service';
+import { ActaService } from '../../../../services/acta.service';
 
 interface Clause {
     titulo: string;
@@ -49,7 +50,8 @@ export class GeneracionActaAcuerdoParcial implements OnInit {
         private http: HttpClient,
         private router: Router,
         private route: ActivatedRoute,
-        private usuarioService: UsuarioService
+        private usuarioService: UsuarioService,
+        private actaService: ActaService
     ) { }
 
     ngOnInit(): void {
@@ -91,7 +93,7 @@ export class GeneracionActaAcuerdoParcial implements OnInit {
 
                 // Pre-fill
                 this.datosActa.hechos = this.audiencia.solicitud?.hechos || '';
-                this.datosActa.controversia = this.audiencia.solicitud?.controversia || '';
+                this.datosActa.controversia = this.audiencia.solicitud?.materiaConciliable || '';
 
                 const sol = this.audiencia.solicitud?.solicitante;
                 const inv = this.audiencia.solicitud?.invitado;
@@ -119,30 +121,8 @@ export class GeneracionActaAcuerdoParcial implements OnInit {
         }
     }
 
-    finalizarYDescargar() {
-        const token = localStorage.getItem('token');
-        const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-
-        const detalle = {
-            ...this.datosActa,
-            acuerdos: this.acuerdos
-        };
-
-        const payload = {
-            resultadoTipo: 'Acuerdo Parcial',
-            resultadoDetalle: JSON.stringify(detalle)
-        };
-
-        this.http.put(`http://localhost:8080/api/audiencias/${this.audienciaId}/resultado`, payload, { headers }).subscribe({
-            next: () => {
-                alert("Proceso Finalizado. Acta Guardada.");
-                this.router.navigate(['/conciliador/mis-casos']);
-            },
-            error: (err) => alert("Error al finalizar: " + err.message)
-        });
-    }
-
-    descargarPDF() {
+    // Helper to generate doc
+    generarDocPDF(): jsPDF {
         const doc = new jsPDF();
         const sol = this.audiencia.solicitud?.solicitante;
         const inv = this.audiencia.solicitud?.invitado;
@@ -286,7 +266,48 @@ export class GeneracionActaAcuerdoParcial implements OnInit {
         doc.line(110, yPos, 170, yPos);
         doc.text("Nombre, firma y huella del invitado", 140, yPos + 5, { align: "center" });
 
-        doc.save(`Formato_H_AcuerdoParcial_${expNum}.pdf`);
+        return doc;
+    }
+
+    finalizarYDescargar() {
+        const doc = this.generarDocPDF();
+        const pdfBlob = doc.output('blob');
+        const numeroActa = `ACTA-ACUERDO-PARCIAL-${this.audienciaId}-${new Date().getTime()}`;
+
+        // 1. Upload Blob
+        this.actaService.subirActa(this.audienciaId, 'ACUERDO_PARCIAL', numeroActa, pdfBlob).subscribe({
+            next: (res) => {
+                console.log("Acta Acuerdo Parcial subida:", res);
+
+                // 2. Update Status
+                const token = localStorage.getItem('token');
+                const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+                const detalle = {
+                    ...this.datosActa,
+                    acuerdos: this.acuerdos,
+                    actaUrl: res.archivoUrl
+                };
+
+                const payload = {
+                    resultadoTipo: 'Acuerdo Parcial',
+                    resultadoDetalle: JSON.stringify(detalle)
+                };
+
+                this.http.put(`http://localhost:8080/api/audiencias/${this.audienciaId}/resultado`, payload, { headers }).subscribe({
+                    next: () => {
+                        doc.save(`Formato_H_AcuerdoParcial_${this.audiencia.solicitud?.numeroExpediente}.pdf`);
+                        alert("✅ Proceso Finalizado. Acta Guardada en Base de Datos.");
+                        this.router.navigate(['/conciliador/mis-casos']);
+                    },
+                    error: (err) => alert("Error al finalizar: " + err.message)
+                });
+            },
+            error: (err) => alert("Error al subir acta: " + err.message)
+        });
+    }
+
+    descargarPDF() {
+        this.generarDocPDF().save(`Formato_H_AcuerdoParcial_${this.audiencia.solicitud?.numeroExpediente}.pdf`);
     }
 
     descargarWord() {

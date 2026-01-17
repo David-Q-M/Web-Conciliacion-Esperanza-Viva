@@ -1,12 +1,15 @@
 package appesperanzaviva.backend.entity;
 
 import jakarta.persistence.*;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties; // 🔹 Importación necesaria
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "solicitudes")
-@JsonIgnoreProperties(ignoreUnknown = true) // Evita errores si Angular envía campos adicionales
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Solicitud {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -79,6 +82,21 @@ public class Solicitud {
 
     @Column(name = "modalidad")
     private String modalidad;
+
+    // 🔹 NUEVO: Relación bidireccional para que el Director vea la audiencia
+    // programada
+    // 🔹 FIX: Cambio a OneToMany para soportar múltiples audiencias
+    // (reprogramaciones o datos sucios)
+    @OneToMany(mappedBy = "solicitud", fetch = FetchType.LAZY)
+    private java.util.List<Audiencia> audiencias;
+
+    public java.util.List<Audiencia> getAudiencias() {
+        return audiencias;
+    }
+
+    public void setAudiencias(java.util.List<Audiencia> audiencias) {
+        this.audiencias = audiencias;
+    }
 
     public String getModalidad() {
         return modalidad;
@@ -241,4 +259,5 @@ public class Solicitud {
     public void setNotificador(UsuarioSistema notificador) {
         this.notificador = notificador;
     }
+
 }
