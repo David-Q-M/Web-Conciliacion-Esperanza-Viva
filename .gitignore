@@ -7,19 +7,16 @@ backend/.project
 backend/.settings/
 
 #######################################
-# FRONTEND - ANGULAR / VITE / REACT
+# FRONTEND - ANGULAR
 #######################################
 frontend/node_modules/
 frontend/dist/
 frontend/.angular/
-frontend/.vite/
 
 #######################################
-# VARIABLES SENSIBLES
+# VARIABLES SENSIBLES (SOLO .env)
 #######################################
 *.env
-application.properties
-application.yml
 
 #######################################
 # ARCHIVOS SUBIDOS (NO VERSIONAR)
