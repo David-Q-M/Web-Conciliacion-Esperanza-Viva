@@ -120,4 +120,24 @@ public class SolicitudServiceImpl implements SolicitudService {
     public List<Solicitud> listarPorConciliador(@NonNull Long conciliadorId) {
         return repository.findByConciliadorId(Math.toIntExact(conciliadorId));
     }
+
+    @Override
+    public List<Solicitud> listarPorEstado(String estado) {
+        return repository.findByEstado(estado);
+    }
+
+    @Override
+    public List<Solicitud> listarPorConciliadorYEstado(Long conciliadorId, String estado) {
+        return repository.findByConciliadorIdAndEstado(Math.toIntExact(conciliadorId), estado);
+    }
+
+    @Override
+    public java.util.Map<Integer, Long> obtenerCargaLaboral() {
+        List<Object[]> resultados = repository.countCargaLaboralPorConciliador();
+        java.util.Map<Integer, Long> stats = new java.util.HashMap<>();
+        for (Object[] row : resultados) {
+            stats.put((Integer) row[0], (Long) row[1]);
+        }
+        return stats;
+    }
 }

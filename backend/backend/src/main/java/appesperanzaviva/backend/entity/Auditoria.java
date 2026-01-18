@@ -9,18 +9,19 @@ public class Auditoria {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     @Column(name = "fecha_hora")
     private LocalDateTime fechaHora = LocalDateTime.now();
-    
+
     @Column(name = "usuario_nombre")
     private String usuarioNombre;
-    
+
     private String accion;
     private String detalles;
-    
-    @Column(name = "expediente_id")
-    private String expedienteId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "solicitud_id")
+    private Solicitud solicitud;
 
     public Long getId() {
         return id;
@@ -62,11 +63,11 @@ public class Auditoria {
         this.detalles = detalles;
     }
 
-    public String getExpedienteId() {
-        return expedienteId;
+    public Solicitud getSolicitud() {
+        return solicitud;
     }
 
-    public void setExpedienteId(String expedienteId) {
-        this.expedienteId = expedienteId;
+    public void setSolicitud(Solicitud solicitud) {
+        this.solicitud = solicitud;
     }
 }

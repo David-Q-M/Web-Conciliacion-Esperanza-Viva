@@ -6,48 +6,60 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class SolicitudService {
-
   private apiUrl = 'http://localhost:8080/api/solicitudes';
 
   constructor(private http: HttpClient) { }
 
-  // 🔹 Obtener todas las solicitudes para las métricas del Dashboard y Listados
+  registrarSolicitud(formData: FormData): Observable<any> {
+    return this.http.post(this.apiUrl, formData);
+  }
+
   listarSolicitudes(): Observable<any[]> {
     return this.http.get<any[]>(this.apiUrl);
   }
 
-  // Registrar nueva solicitud (Wireframes 2 y 3)
-  registrarSolicitud(formData: FormData): Observable<any> {
-    // El backend espera POST a /api/solicitudes
-    return this.http.post(this.apiUrl, formData);
+  listarTodas(): Observable<any[]> {
+    return this.http.get<any[]>(this.apiUrl);
   }
 
-  // Buscar por número de expediente
-  buscarPorExpediente(numero: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/buscar/${numero}`);
+  obtenerPorId(id: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${id}`);
   }
 
   obtenerExpediente(numero: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/buscar/${numero}`);
   }
 
-  // 🔹 NUEVO: Obtener detalle por ID (Para ver detalles en paneles)
-  obtenerPorId(id: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/${id}`);
+  obtenerCargaLaboral(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/stats/carga-laboral`);
   }
 
-  // 🔹 NUEVO: Actualizar estado (Para Aprobar/Rechazar/Observar)
+  buscarPorNumero(numero: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/buscar/${numero}`);
+  }
+
+  // 🔹 NUEVO: Actualizar estado (Aprobar/Observar)
   actualizarEstado(id: number, estado: string, observacion: string): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${id}/estado`, { estado, observacion });
+    return this.http.put<any>(`${this.apiUrl}/${id}/estado`, { estado, observacion });
   }
 
-  // 🔹 NUEVO: Designar Conciliador (Para el Director)
+  // 🔹 NUEVO: Designar Conciliador (Director)
   designarConciliador(id: number, conciliadorId: number): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${id}/designar`, { conciliadorId });
+    return this.http.post<any>(`${this.apiUrl}/${id}/designar`, { conciliadorId });
   }
 
-  // 🔹 NUEVO: Obtener solicitudes de un conciliador especifico
+  // 🔹 NUEVO: Listar por conciliador (Conciliador)
   listarPorConciliador(conciliadorId: number): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/conciliador/${conciliadorId}`);
+  }
+
+  // 🔹 NUEVO: Listar por estado (Director solo PENDIENTES)
+  listarPorEstado(estado: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/estado/${estado}`);
+  }
+
+  // 🔹 NUEVO: Listar por conciliador y estado (Conciliador solo ASIGNADOS)
+  listarPorConciliadorYEstado(id: number, estado: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/conciliador/${id}/estado/${estado}`);
   }
 }

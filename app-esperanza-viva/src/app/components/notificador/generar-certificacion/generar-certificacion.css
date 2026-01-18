@@ -1,0 +1,113 @@
+/* PREMIUM DESIGN - NOTIFICADOR CERTIFICACION */
+.admin-container {
+    display: flex;
+    min-height: 100vh;
+    background-color: #121212;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.sidebar-viva {
+    width: 260px;
+    background-color: #ffc107;
+    /* Solid Yellow */
+    display: flex;
+    flex-direction: column;
+    color: #000;
+    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.5);
+    z-index: 100;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+}
+
+.logo-section {
+    padding: 30px;
+    border-bottom: 2px solid #000;
+    /* Solid Black Line */
+}
+
+.nav-link-viva {
+    display: flex;
+    align-items: center;
+    padding: 15px 25px;
+    color: #000;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.05rem;
+    transition: all 0.2s ease;
+    border-left: 5px solid transparent;
+}
+
+.nav-link-viva:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.nav-link-viva.active {
+    background-color: #000;
+    color: #ffc107;
+    border-left: 5px solid #fff;
+    /* White Border Restored */
+}
+
+.sidebar-footer {
+    padding: 20px;
+    margin-top: auto;
+}
+
+.main-content-viva {
+    flex: 1;
+    overflow-y: auto;
+    background: radial-gradient(circle at top right, #1e1e1e, #121212);
+    padding: 30px 40px;
+}
+
+.glass-card {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.admin-badge small {
+    display: block;
+    margin-top: 2px;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+}
+
+/* INPUTS & FORMS */
+.form-control,
+.form-select,
+.input-group-text {
+    background-color: rgba(0, 0, 0, 0.4) !important;
+    border: 1px solid #333 !important;
+    color: #fff !important;
+}
+
+.form-control:focus,
+.form-select:focus {
+    box-shadow: 0 0 0 2px rgba(255, 193, 7, 0.3);
+    border-color: #ffc107 !important;
+}
+
+/* BUTTONS */
+.btn-warning {
+    background: linear-gradient(45deg, #ffc107, #ffca2c);
+    border: none;
+    color: #000;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-warning:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 193, 7, 0.3);
+}
+
+/* ALERTS */
+.alert-dark {
+    background: rgba(30, 30, 30, 0.6);
+    backdrop-filter: blur(5px);
+}

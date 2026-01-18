@@ -12,10 +12,18 @@ public class SolicitudDTO {
     private String resultadoTipo;
 
     // Datos planos de relaciones
+    // Datos planos de relaciones
     private String solicitanteNombre;
+    private String solicitanteDni;
     private String invitadoNombre;
+    private String invitadoDni;
+    private String apoderadoNombre;
+    private String apoderadoDni;
     private String conciliadorNombre;
     private Long conciliadorId;
+    // New fields for Report
+    private String notificadorNombre;
+    private String secretarioNombre;
 
     // Datos de audiencia básica (para vistas de lista)
     private java.time.LocalDate fechaAudiencia;
@@ -117,5 +125,53 @@ public class SolicitudDTO {
 
     public void setFechaAudiencia(java.time.LocalDate fechaAudiencia) {
         this.fechaAudiencia = fechaAudiencia;
+    }
+
+    public String getSolicitanteDni() {
+        return solicitanteDni;
+    }
+
+    public void setSolicitanteDni(String solicitanteDni) {
+        this.solicitanteDni = solicitanteDni;
+    }
+
+    public String getInvitadoDni() {
+        return invitadoDni;
+    }
+
+    public void setInvitadoDni(String invitadoDni) {
+        this.invitadoDni = invitadoDni;
+    }
+
+    public String getApoderadoNombre() {
+        return apoderadoNombre;
+    }
+
+    public void setApoderadoNombre(String apoderadoNombre) {
+        this.apoderadoNombre = apoderadoNombre;
+    }
+
+    public String getApoderadoDni() {
+        return apoderadoDni;
+    }
+
+    public void setApoderadoDni(String apoderadoDni) {
+        this.apoderadoDni = apoderadoDni;
+    }
+
+    public String getNotificadorNombre() {
+        return notificadorNombre;
+    }
+
+    public void setNotificadorNombre(String notificadorNombre) {
+        this.notificadorNombre = notificadorNombre;
+    }
+
+    public String getSecretarioNombre() {
+        return secretarioNombre;
+    }
+
+    public void setSecretarioNombre(String secretarioNombre) {
+        this.secretarioNombre = secretarioNombre;
     }
 }

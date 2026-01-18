@@ -45,7 +45,9 @@ export class LoginAdmin {
           else if (roleTarget === 'DIRECTOR') this.router.navigate(['/director/bandeja-solicitudes']);
           else if (roleTarget === 'CONCILIADOR') this.router.navigate(['/conciliador/mis-casos']);
           else if (roleTarget === 'ABOGADO') this.router.navigate(['/abogado/pendientes']);
+          else if (roleTarget === 'ABOGADO') this.router.navigate(['/abogado/pendientes']);
           else if (roleTarget === 'NOTIFICADOR') this.router.navigate(['/notificador/pendientes']);
+          else if (roleTarget === 'SECRETARIO') this.router.navigate(['/secretario/reporte']);
 
           this.cerrar.emit();
           return;
@@ -62,6 +64,8 @@ export class LoginAdmin {
           this.router.navigate(['/abogado/pendientes']);
         } else if (rolesUpper.includes('NOTIFICADOR')) {
           this.router.navigate(['/notificador/pendientes']);
+        } else if (rolesUpper.includes('SECRETARIO')) {
+          this.router.navigate(['/secretario/reporte']);
         } else {
           alert("Rol no reconocido en el sistema.");
           return;

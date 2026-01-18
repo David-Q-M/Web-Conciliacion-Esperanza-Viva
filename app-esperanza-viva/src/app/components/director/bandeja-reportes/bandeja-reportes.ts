@@ -85,13 +85,13 @@ export class BandejaReportes implements OnInit {
       'N° Expediente': item.numeroExpediente,
       'Fecha': item.fechaPresentacion,
       'Estado': item.estado,
-      'Solicitante': `${item.solicitante?.nombres || ''} ${item.solicitante?.apellidos || ''}`,
-      'DNI Solicitante': item.solicitante?.dni,
-      'Apoderado/Representante': item.apoderado?.dni ? `${item.apoderado?.nombres} ${item.apoderado?.apellidos} (DNI: ${item.apoderado?.dni})` : '—',
-      'Invitado': `${item.invitado?.nombres || ''} ${item.invitado?.apellidos || ''}`,
-      'DNI Invitado': item.invitado?.dni,
+      'Solicitante': item.solicitanteNombre,
+      'DNI Solicitante': item.solicitanteDni,
+      'Apoderado/Representante': item.apoderadoNombre ? `${item.apoderadoNombre} (DNI: ${item.apoderadoDni})` : '—',
+      'Invitado': item.invitadoNombre,
+      'DNI Invitado': item.invitadoDni,
       'Materia': item.materiaConciliable,
-      'Pretensión': item.pretension
+      'Conciliador': item.conciliadorNombre
     }];
 
     this.generarExcel(data, `Reporte_Exp_${item.numeroExpediente}`);
@@ -102,13 +102,13 @@ export class BandejaReportes implements OnInit {
       'N° Expediente': item.numeroExpediente,
       'Fecha': item.fechaPresentacion,
       'Estado': item.estado,
-      'Solicitante': `${item.solicitante?.nombres || ''} ${item.solicitante?.apellidos || ''}`,
-      'DNI Solicitante': item.solicitante?.dni,
-      'Apoderado/Representante': item.apoderado?.dni ? `${item.apoderado?.nombres} ${item.apoderado?.apellidos} (DNI: ${item.apoderado?.dni})` : '—',
-      'Invitado': `${item.invitado?.nombres || ''} ${item.invitado?.apellidos || ''}`,
-      'DNI Invitado': item.invitado?.dni,
+      'Solicitante': item.solicitanteNombre,
+      'DNI Solicitante': item.solicitanteDni,
+      'Apoderado/Representante': item.apoderadoNombre ? `${item.apoderadoNombre} (DNI: ${item.apoderadoDni})` : '—',
+      'Invitado': item.invitadoNombre,
+      'DNI Invitado': item.invitadoDni,
       'Materia': item.materiaConciliable,
-      'Pretensión': item.pretension
+      'Conciliador': item.conciliadorNombre
     }));
 
     this.generarExcel(data, `Reporte_Global_${new Date().toISOString().slice(0, 10)}`);

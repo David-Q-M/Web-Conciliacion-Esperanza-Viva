@@ -17,7 +17,7 @@ export class GestionUsuarios implements OnInit {
   modoEdicion = false;
   usuarioActivo: string = '';
 
-  listaRoles = ['ADMINISTRADOR', 'DIRECTOR', 'CONCILIADOR', 'ABOGADO', 'NOTIFICADOR'];
+  listaRoles = ['ADMINISTRADOR', 'DIRECTOR', 'CONCILIADOR', 'ABOGADO', 'NOTIFICADOR', 'SECRETARIO'];
 
   usuarioForm: any = {
     id: null,

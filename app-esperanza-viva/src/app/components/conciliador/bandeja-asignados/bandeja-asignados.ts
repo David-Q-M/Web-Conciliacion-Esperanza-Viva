@@ -37,12 +37,16 @@ export class BandejaAsignados implements OnInit {
 
   cargarExpedientes(conciliadorId: number) {
     this.isLoading = true;
+    // 🔹 UPDATED: Fetch ALL assigned cases to handle feedback loop (OBSERVADA)
     this.solicitudService.listarPorConciliador(conciliadorId).subscribe({
       next: (res) => {
-        this.expedientesOriginales = res;
-        this.expedientesFiltrados = res; // Por defecto mostrar todos
+        // Filter out closed cases (handled in Historial) but KEEP active workflow states, including exceptions like OBSERVADA
+        this.expedientesOriginales = res.filter(e =>
+          ['ASIGNADO', 'DESIGNACION_ACEPTADA', 'PROGRAMADO', 'NOTIFICADO', 'PENDIENTE_FIRMA', 'OBSERVADA', 'PENDIENTE_ACTA'].includes(e.estado)
+        );
+        this.expedientesFiltrados = this.expedientesOriginales;
         this.actualizarEstadisticas();
-        setTimeout(() => this.isLoading = false, 500); // UI Smoothness
+        setTimeout(() => this.isLoading = false, 500);
       },
       error: (err) => {
         console.error("Error cargando expedientes:", err);
@@ -53,10 +57,8 @@ export class BandejaAsignados implements OnInit {
 
   actualizarEstadisticas() {
     this.stats.total = this.expedientesOriginales.length;
-    // Pendientes: Aquellos que acaban de ser asignados por el Director
     this.stats.pendientes = this.expedientesOriginales.filter(e => e.estado === 'ASIGNADO').length;
-    // En Curso: Aquellos que el conciliador ya aceptó (Designación Aceptada)
-    this.stats.enCurso = this.expedientesOriginales.filter(e => e.estado === 'DESIGNACION_ACEPTADA').length;
+    this.stats.enCurso = this.expedientesOriginales.filter(e => e.estado === 'DESIGNACION_ACEPTADA' || e.estado === 'PROGRAMADO' || e.estado === 'NOTIFICADO').length;
   }
 
   /**

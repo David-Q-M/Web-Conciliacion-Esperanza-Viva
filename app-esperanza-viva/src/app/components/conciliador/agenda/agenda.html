@@ -8,8 +8,8 @@
       <a class="nav-link-viva" routerLink="/conciliador/mis-casos" routerLinkActive="active">
         <i class="bi bi-envelope-fill me-2"></i> Mis Casos
       </a>
-      <a class="nav-link-viva active" routerLink="/conciliador/agenda">
-        <i class="bi bi-calendar-event me-2"></i> Mi Agenda
+      <a class="nav-link-viva active" routerLink="/conciliador/agenda" routerLinkActive="active">
+        <i class="bi bi-calendar-check me-2"></i> Mi Agenda
       </a>
       <a class="nav-link-viva" routerLink="/conciliador/historial" routerLinkActive="active">
         <i class="bi bi-clock-history me-2"></i> Historial
@@ -25,8 +25,8 @@
   <main class="main-content-viva">
     <header class="d-flex justify-content-between align-items-center mb-5">
       <div>
-        <h2 class="text-warning fw-bold m-0">Mi Agenda</h2>
-        <p class="text-secondary small m-0">Programación de audiencias y citas</p>
+        <h2 class="text-warning fw-bold m-0"><i class="bi bi-calendar3 me-2"></i> Mi Agenda de Audiencias</h2>
+        <p class="text-secondary small m-0">Gestiona tus próximas sesiones programadas y notificadas</p>
       </div>
       <div class="admin-badge text-end">
         <div class="text-white fw-bold">{{ conciliadorNombre }}</div>
@@ -34,106 +34,81 @@
       </div>
     </header>
 
-    <div class="row g-4 mb-5">
-      <div class="col-md-4" (click)="filtrarPorEstado('cerrados')" style="cursor: pointer;">
-        <div class="glass-card d-flex justify-content-between align-items-center"
-          [style.border-color]="filtroSeleccionado === 'cerrados' ? '#ffc107' : '#333'">
-          <div>
-            <div class="stat-value text-secondary mb-0">{{stats.cerrados}}</div>
-            <small class="stat-label">Cerrados/Pasados</small>
-          </div>
-          <i class="bi bi-archive-fill text-secondary fs-3 opacity-50"></i>
-        </div>
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="text-center py-5">
+      <div class="spinner-border text-warning" role="status">
+        <span class="visually-hidden">Cargando...</span>
       </div>
-      <div class="col-md-4" (click)="filtrarPorEstado('hoy')" style="cursor: pointer;">
-        <div class="glass-card d-flex justify-content-between align-items-center"
-          [style.border-color]="filtroSeleccionado === 'hoy' ? '#ffc107' : '#333'">
-          <div>
-            <div class="stat-value text-warning mb-0">{{stats.hoy}}</div>
-            <small class="stat-label">Audiencias Hoy</small>
-          </div>
-          <i class="bi bi-bell-fill text-warning fs-3 opacity-50"></i>
-        </div>
-      </div>
-      <div class="col-md-4" (click)="filtrarPorEstado('proximos')" style="cursor: pointer;">
-        <div class="glass-card d-flex justify-content-between align-items-center"
-          [style.border-color]="filtroSeleccionado === 'proximos' ? '#ffc107' : '#333'">
-          <div>
-            <div class="stat-value text-info mb-0">{{stats.proximos}}</div>
-            <small class="stat-label">Próximos</small>
-          </div>
-          <i class="bi bi-calendar-plus-fill text-info fs-3 opacity-50"></i>
-        </div>
-      </div>
+      <p class="text-muted mt-2">Cargando tu agenda...</p>
     </div>
 
-    <div class="search-input-wrapper mb-4">
-      <i class="bi bi-search text-secondary me-2"></i>
-      <input type="text" [(ngModel)]="terminoBusqueda" (keyup)="buscar()"
-        placeholder="Buscar por expediente, nombres..." class="viva-report-input">
-    </div>
-
-    <div class="row g-4">
-      <!-- SKELETON LOADER -->
-      <ng-container *ngIf="isLoading">
-        <div class="col-md-6" *ngFor="let i of [1,2,3,4]">
-          <div class="case-card-agenda">
-            <div class="skeleton skeleton-text" style="width: 200px; height: 20px;"></div>
-            <div class="skeleton skeleton-text mt-3" style="width: 150px;"></div>
-            <div class="skeleton skeleton-text mt-2" style="width: 250px;"></div>
-            <div class="text-center mt-4">
-              <div class="skeleton skeleton-btn mx-auto"></div>
-            </div>
+    <!-- Agenda Grid -->
+    <div class="row" *ngIf="!isLoading">
+      <div class="col-md-6 col-lg-4 mb-4" *ngFor="let au of audiencias">
+        <div class="card bg-dark border-warning shadow-lg h-100 agenda-card">
+          <div class="card-header border-warning d-flex justify-content-between align-items-center bg-transparent">
+            <span class="text-warning fw-bold">{{ au.numeroExpediente }}</span>
+            <span class="badge" [ngClass]="{
+                            'bg-info text-dark': au.estado === 'NOTIFICADO', 
+                            'bg-secondary': au.estado === 'PROGRAMADO'
+                        }">
+              {{ au.estado }}
+            </span>
           </div>
-        </div>
-      </ng-container>
 
-      <ng-container *ngIf="!isLoading">
-        <div class="col-md-6" *ngFor="let a of listaMostrada">
-          <div class="case-card-agenda animate__animated animate__fadeIn">
-            <h6 class="text-warning fw-bold mb-2">
-              {{ a.solicitud?.numeroExpediente }}
-            </h6>
-            <small class="text-white d-block mb-3">{{ a.solicitud?.materiaConciliable }}</small>
-
-            <p class="text-info small mb-1">
-              <i class="bi bi-calendar-check me-2"></i>
-              {{ a.fechaAudiencia | date:'dd/MM/yyyy' }} - {{ a.horaAudiencia }}
-            </p>
-            <p class="text-secondary small mb-3">
-              <i class="bi bi-person me-2"></i> {{ a.solicitud?.solicitante?.nombres }} {{
-              a.solicitud?.solicitante?.apellidos }}
-            </p>
-
-            <div class="text-center mt-3">
-              <div class="text-center mt-3">
-                <div *ngIf="a.resultadoTipo">
-                  <span class="badge bg-success w-100 p-2 text-uppercase mb-2">
-                    <i class="bi bi-check-circle-fill me-2"></i> GESTIONADO
-                  </span>
-                  <button class="btn btn-outline-secondary btn-sm w-100"
-                    [routerLink]="['/conciliador/registro-audiencia', a.id]">
-                    <i class="bi bi-eye me-1"></i> Revisar Detalles
-                  </button>
-                </div>
-
-                <div *ngIf="!a.resultadoTipo">
-                  <button class="btn-solucionar-viva shadow w-100"
-                    [routerLink]="['/conciliador/registro-audiencia', a.id]">
-                    <i class="bi bi-pencil-square me-2"></i> Gestionar Audiencia
-                  </button>
-                </div>
+          <div class="card-body text-light">
+            <div class="mb-3">
+              <small class="text-muted d-block text-uppercase fw-bold" style="font-size: 0.7rem;">Fecha y Hora</small>
+              <div class="d-flex align-items-center fs-5">
+                <i class="bi bi-calendar-event me-2 text-warning"></i>
+                {{ au.fechaAudiencia | date:'dd/MM/yyyy' }}
+                <span class="mx-2">|</span>
+                <i class="bi bi-clock me-2 text-warning"></i>
+                {{ au.horaAudiencia }}
               </div>
+            </div>
 
+            <p class="mb-3 small">
+              <i class="bi bi-geo-alt me-2 text-secondary"></i> {{ au.lugar }}
+            </p>
+
+            <hr class="border-secondary opacity-50">
+
+            <div class="small">
+              <p class="mb-1 d-flex justify-content-between">
+                <span class="text-muted">Solicitante:</span>
+                <span class="text-end text-white">{{ au.solicitanteNombre }}</span>
+              </p>
+              <p class="mb-0 d-flex justify-content-between">
+                <span class="text-muted">Invitado:</span>
+                <span class="text-end text-white">{{ au.invitadoNombre }}</span>
+              </p>
+              <p class="mt-2 text-end text-info fw-bold fst-italic">{{ au.materia }}</p>
             </div>
           </div>
-        </div>
 
-        <div *ngIf="listaMostrada.length === 0" class="col-12 text-center p-5">
-          <i class="bi bi-calendar-x text-secondary display-1 opacity-25"></i>
-          <p class="text-secondary mt-3">No hay audiencias con este filtro.</p>
+          <div class="card-footer border-warning bg-transparent pt-3 pb-3">
+            <button *ngIf="au.estado === 'PROGRAMADO'" class="btn btn-outline-secondary w-100 disabled"
+              style="opacity: 0.7; border-style: dashed;">
+              <i class="bi bi-hourglass-split me-1"></i> Esperando Notificador
+            </button>
+
+            <button *ngIf="au.estado === 'NOTIFICADO'"
+              class="btn btn-warning w-100 fw-bold text-dark shadow-sm btn-hover-effect"
+              [routerLink]="['/conciliador/registro-audiencia', au.id]">
+              <i class="bi bi-play-fill me-1"></i> INICIAR AUDIENCIA
+            </button>
+          </div>
         </div>
-      </ng-container>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="audiencias.length === 0 && !isLoading" class="alert alert-dark border-secondary text-center py-5">
+      <i class="bi bi-check-circle fs-1 text-success mb-3 d-block"></i>
+      <h5 class="text-white">¡Todo al día!</h5>
+      <p class="text-secondary m-0 text-white-50">No tienes audiencias programadas ni notificadas pendientes en este
+        momento.</p>
     </div>
   </main>
 </div>

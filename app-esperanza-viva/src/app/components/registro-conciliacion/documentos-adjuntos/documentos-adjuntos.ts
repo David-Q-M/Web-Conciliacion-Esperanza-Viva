@@ -246,6 +246,12 @@ export class DocumentosAdjuntos {
   }
 
   finalizarRegistro() {
+    // 🔹 VALIDACIÓN: DNI Obligatorio
+    if (!this.fileDni) {
+      alert("⚠️ El DNI del solicitante es obligatorio. Por favor adjunte el archivo.");
+      return;
+    }
+
     const solicitudDatos = this.datosService.obtenerDatos();
     solicitudDatos.modalidad = this.modalidadSeleccionada;
     const formData = new FormData();
@@ -253,13 +259,17 @@ export class DocumentosAdjuntos {
     // Sincronización con el Backend (MariaDB)
     formData.append('solicitud', JSON.stringify(solicitudDatos));
 
-    if (this.fileDni) formData.append('dniArchivo', this.fileDni);
+    // Append files (DNI Checked)
+    formData.append('dniArchivo', this.fileDni);
     if (this.filePruebas) formData.append('pruebasArchivo', this.filePruebas);
     if (this.fileFirma) formData.append('firmaArchivo', this.fileFirma);
 
     this.solicitudService.registrarSolicitud(formData).subscribe({
       next: (res) => this.router.navigate(['/resumen-registro', res.numeroExpediente]),
-      error: (err) => alert("Error al procesar la solicitud. Verifique los archivos.")
+      error: (err) => {
+        console.error(err);
+        alert("Error al procesar la solicitud. Verifique los archivos o intente nuevamente.");
+      }
     });
   }
 }

@@ -21,6 +21,9 @@ public class Acta {
     @Column(name = "tipo_acta")
     private String tipoActa; // e.g. "ACUERDO_TOTAL", "FALTA_ACUERDO", etc.
 
+    @Column(name = "tipo_resultado")
+    private String tipoResultado;
+
     @Column(name = "archivo_url", columnDefinition = "TEXT")
     private String archivoUrl;
 
@@ -65,6 +68,14 @@ public class Acta {
 
     public void setTipoActa(String tipoActa) {
         this.tipoActa = tipoActa;
+    }
+
+    public String getTipoResultado() {
+        return tipoResultado;
+    }
+
+    public void setTipoResultado(String tipoResultado) {
+        this.tipoResultado = tipoResultado;
     }
 
     public String getArchivoUrl() {

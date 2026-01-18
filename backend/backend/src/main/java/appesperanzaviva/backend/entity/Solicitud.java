@@ -80,6 +80,11 @@ public class Solicitud {
     @JoinColumn(name = "notificador_id")
     private UsuarioSistema notificador;
 
+    // 🔹 NUEVO: Secretario asignado (Relación con usuarios_sistema)
+    @ManyToOne
+    @JoinColumn(name = "secretario_id")
+    private UsuarioSistema secretario;
+
     @Column(name = "modalidad")
     private String modalidad;
 
@@ -258,6 +263,14 @@ public class Solicitud {
 
     public void setNotificador(UsuarioSistema notificador) {
         this.notificador = notificador;
+    }
+
+    public UsuarioSistema getSecretario() {
+        return secretario;
+    }
+
+    public void setSecretario(UsuarioSistema secretario) {
+        this.secretario = secretario;
     }
 
 }

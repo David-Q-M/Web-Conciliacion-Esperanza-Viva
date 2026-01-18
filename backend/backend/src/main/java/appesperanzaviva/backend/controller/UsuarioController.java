@@ -20,6 +20,9 @@ public class UsuarioController {
     private UsuarioSistemaRepository repository;
 
     @Autowired
+    private appesperanzaviva.backend.config.JwtUtils jwtUtils;
+
+    @Autowired
     private AuditoriaService auditoriaService;
 
     @GetMapping
@@ -75,6 +78,16 @@ public class UsuarioController {
         return repository.findByUsuario(user)
                 .filter(u -> u.getContrasena().equals(pass))
                 .map((@NonNull UsuarioSistema u) -> {
+                    // Generar Token JWT
+                    String rolPrincipal = u.getRoles().isEmpty() ? "USER" : u.getRoles().iterator().next();
+                    // Nota: Si tiene multiples roles, aqui tomamos uno.
+                    // Idealmente el token debería soportar lista, pero JwtUtils.generateToken pide
+                    // String.
+                    // Para simplificar, pasamos el primer rol. O concatenamos.
+
+                    String token = jwtUtils.generateToken(u.getUsuario(), rolPrincipal);
+                    u.setToken(token); // Set transient token
+
                     auditoriaService.registrarAccion(u.getUsuario(), "LOGIN", "Ingreso exitoso", null);
                     return ResponseEntity.ok(u);
                 })
@@ -95,5 +108,11 @@ public class UsuarioController {
     @GetMapping("/rol/{rol}")
     public List<UsuarioSistema> listarPorRol(@PathVariable String rol) {
         return repository.findByRoles(rol.toUpperCase());
+    }
+
+    // 🔹 NUEVO: Endpoint para contar usuarios por rol (Dashboard)
+    @GetMapping("/count/rol/{rol}")
+    public ResponseEntity<Long> contarPorRol(@PathVariable String rol) {
+        return ResponseEntity.ok(repository.countByRoles(rol.toUpperCase()));
     }
 }

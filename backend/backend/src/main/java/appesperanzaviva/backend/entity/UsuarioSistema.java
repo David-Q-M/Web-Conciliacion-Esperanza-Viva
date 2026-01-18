@@ -14,6 +14,9 @@ public class UsuarioSistema {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Transient
+    private String token;
+
     @Column(name = "nombre_completo", nullable = false, length = 150)
     private String nombreCompleto;
 
@@ -176,5 +179,13 @@ public class UsuarioSistema {
 
     public void setNroColegiatura(String nroColegiatura) {
         this.nroColegiatura = nroColegiatura;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

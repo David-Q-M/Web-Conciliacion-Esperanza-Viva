@@ -20,6 +20,9 @@ export class BandejaPendientes implements OnInit {
     observadas: number = 0;
     aprobadas: number = 0;
 
+    filtroActual: string = 'POR_FIRMAR';
+    pendientesOriginales: any[] = []; // Backup of all data
+
     constructor(private http: HttpClient, private router: Router) { }
 
     ngOnInit(): void {
@@ -36,10 +39,17 @@ export class BandejaPendientes implements OnInit {
         this.isLoading = true;
         this.http.get<any[]>('http://localhost:8080/api/solicitudes').subscribe({
             next: (res) => {
-                this.pendientes = res.filter(s => s.estado === 'PENDIENTE_FIRMA' || !s.estado);
-                this.porFirmar = this.pendientes.length;
-                this.observadas = res.filter(s => s.estado === 'OBSERVADA').length;
-                this.aprobadas = res.filter(s => s.estado === 'FINALIZADA').length;
+                // Fetch all relevant lawyer requests
+                this.pendientesOriginales = res.filter(s =>
+                    ['PENDIENTE_FIRMA', 'OBSERVADA', 'FINALIZADA'].includes(s.estado || 'PENDIENTE_FIRMA')
+                );
+
+                this.porFirmar = this.pendientesOriginales.filter(s => s.estado === 'PENDIENTE_FIRMA').length;
+                this.observadas = this.pendientesOriginales.filter(s => s.estado === 'OBSERVADA').length;
+                this.aprobadas = this.pendientesOriginales.filter(s => s.estado === 'FINALIZADA').length;
+
+                // Apply initial filter
+                this.filtrarPorEstado('POR_FIRMAR');
                 setTimeout(() => this.isLoading = false, 500);
             },
             error: (err) => {
@@ -49,8 +59,19 @@ export class BandejaPendientes implements OnInit {
         });
     }
 
+    filtrarPorEstado(tipo: string) {
+        this.filtroActual = tipo;
+        if (tipo === 'POR_FIRMAR') {
+            this.pendientes = this.pendientesOriginales.filter(s => s.estado === 'PENDIENTE_FIRMA');
+        } else if (tipo === 'OBSERVADAS') {
+            this.pendientes = this.pendientesOriginales.filter(s => s.estado === 'OBSERVADA');
+        } else if (tipo === 'APROBADAS') {
+            this.pendientes = this.pendientesOriginales.filter(s => s.estado === 'FINALIZADA');
+        }
+    }
+
     cerrarSesion() {
         localStorage.clear();
-        this.router.navigate(['/consulta']); // ✅ FIXED: Route confirmed in app.routes.ts
+        this.router.navigate(['/consulta']);
     }
 }

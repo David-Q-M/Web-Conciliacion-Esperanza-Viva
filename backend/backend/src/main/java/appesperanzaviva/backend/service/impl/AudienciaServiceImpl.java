@@ -30,6 +30,9 @@ public class AudienciaServiceImpl implements AudienciaService {
     @Autowired
     private appesperanzaviva.backend.repository.UsuarioSistemaRepository usuarioRepo;
 
+    @Autowired
+    private appesperanzaviva.backend.service.EmailService emailService;
+
     @Override
     public List<Audiencia> listarPorConciliador(@NonNull Integer conciliadorId) {
         return repository.findBySolicitudConciliadorId(conciliadorId);
@@ -56,7 +59,7 @@ public class AudienciaServiceImpl implements AudienciaService {
         Solicitud solicitudDb = solicitudRepository.findById(solicitud.getId())
                 .orElseThrow(() -> new RuntimeException("Solicitud no encontrada en MariaDB"));
 
-        solicitudDb.setEstado("AUDIENCIA_PROGRAMADA");
+        solicitudDb.setEstado("PROGRAMADO");
 
         // 🔹 NUEVO: Guardar el notificador si se seleccionó en el frontend
         if (solicitud.getNotificador() != null && solicitud.getNotificador().getId() != null) {
@@ -64,6 +67,39 @@ public class AudienciaServiceImpl implements AudienciaService {
                     .findById(solicitud.getNotificador().getId())
                     .orElseThrow(() -> new RuntimeException("Notificador no encontrado"));
             solicitudDb.setNotificador(notificadorDb);
+        }
+
+        // 📧 EMAIL: Notificar a las partes (Mock o Real si está configurado)
+        if (emailService != null) {
+            String fecha = audiencia.getFechaAudiencia().toString();
+            String hora = audiencia.getHoraAudiencia().toString();
+            String lugar = audiencia.getLugar();
+
+            // Enviar a Solicitante (asumiendo campo email existe o usando mock)
+            if (solicitudDb.getSolicitante() != null && solicitudDb.getSolicitante().getCorreoElectronico() != null) {
+                emailService.enviarNotificacionProgramacion(solicitudDb.getSolicitante().getCorreoElectronico(),
+                        solicitudDb.getNumeroExpediente(), fecha, hora, lugar);
+            }
+            // Enviar a Invitado
+            if (solicitudDb.getInvitado() != null && solicitudDb.getInvitado().getCorreoElectronico() != null) {
+                emailService.enviarNotificacionProgramacion(solicitudDb.getInvitado().getCorreoElectronico(),
+                        solicitudDb.getNumeroExpediente(), fecha, hora, lugar);
+            }
+        }
+
+        // 🛡️ VALIDACIÓN MEJORADA: Evitar cruces de horario (Conciliador O Sala)
+        if (solicitudDb.getConciliador() != null) {
+            long cruces = repository.countByConciliadorOrLugarAndFechaHora(
+                    solicitudDb.getConciliador().getId(),
+                    audiencia.getLugar(), // Validar también el lugar
+                    audiencia.getFechaAudiencia(),
+                    audiencia.getHoraAudiencia());
+
+            if (cruces > 0) {
+                throw new RuntimeException(
+                        "⚠️ CONFLICTO DE AGENDA: El Conciliador o la Sala (" + audiencia.getLugar()
+                                + ") ya están ocupados en esa fecha y hora.");
+            }
         }
 
         solicitudRepository.save(solicitudDb);
@@ -90,15 +126,15 @@ public class AudienciaServiceImpl implements AudienciaService {
             a.setAbogadoVerificador(datos.getAbogadoVerificador());
 
             Solicitud solicitud = a.getSolicitud();
-            if (datos.getResultadoTipo() != null && datos.getResultadoTipo().contains("Acuerdo")) {
-                // 🔹 LOGIC FIX: Si ya tiene URL de acta, pasa a firma del abogado
-                if (datos.getResultadoDetalle() != null && datos.getResultadoDetalle().contains("actaUrl")) {
-                    solicitud.setEstado("PENDIENTE_FIRMA");
-                } else {
-                    solicitud.setEstado("PENDIENTE_ACTA");
-                }
+            // 🔹 LOGIC FIX GLOBAL: Si hay URL de acta en el detalle, SIEMPRE va a firma del
+            // abogado
+            // (Sea Acuerdo, Inasistencia o Falta de Acuerdo)
+            if (datos.getResultadoDetalle() != null && datos.getResultadoDetalle().contains("actaUrl")) {
+                solicitud.setEstado("PENDIENTE_FIRMA");
+            } else if (datos.getResultadoTipo() != null && datos.getResultadoTipo().contains("Acuerdo")) {
+                solicitud.setEstado("PENDIENTE_ACTA"); // Acuerdo verbal pero falta subir PDF
             } else {
-                solicitud.setEstado("CONCLUIDO_SIN_ACUERDO");
+                solicitud.setEstado("CONCLUIDO_SIN_ACUERDO"); // Sin acta aún (o no requiere)
             }
             solicitudRepository.save(solicitud);
 

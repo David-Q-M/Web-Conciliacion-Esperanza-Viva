@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class UsuarioService {
-  
+
   // 🔹 SINCRONIZADO: Debe coincidir exactamente con el @RequestMapping del Backend
   private apiUrl = 'http://localhost:8080/api/usuarios-sistema';
 
@@ -60,5 +60,10 @@ export class UsuarioService {
     // Convertimos a mayúsculas para asegurar coincidencia con la DB
     const rolUpper = rol.toUpperCase();
     return this.http.get<any[]>(`${this.apiUrl}/rol/${rolUpper}`);
+  }
+
+  contarPorRol(rol: string): Observable<number> {
+    const rolUpper = rol.toUpperCase();
+    return this.http.get<number>(`${this.apiUrl}/count/rol/${rolUpper}`);
   }
 }

@@ -17,4 +17,7 @@ public interface UsuarioSistemaRepository extends JpaRepository<UsuarioSistema, 
 
     // Filtra personal por rol (Ej: DIRECTOR, CONCILIADOR)
     List<UsuarioSistema> findByRoles(String rol);
+
+    // 🔹 NUEVO: Contar usuarios por rol (Para Dashboard)
+    long countByRoles(String roles);
 }

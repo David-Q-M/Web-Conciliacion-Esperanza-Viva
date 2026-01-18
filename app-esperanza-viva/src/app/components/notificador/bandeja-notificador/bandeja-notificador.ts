@@ -44,15 +44,18 @@ export class BandejaNotificador implements OnInit {
         // 🔹 FETCH FROM AUDIENCIAS FOR SPECIFIC NOTIFIER
         this.http.get<any[]>(`http://localhost:8080/api/audiencias/notificador/${userId}`).subscribe({
             next: (res) => {
-                // Filter logic can be simpler now, or refined based on status
-                // If backend returns all assignments, we might want to filter completed vs pending in UI
-                // Filter to include Programmed and Pending notification states
-                // 🔹 FIX: Mostrar todo lo que traiga el backend sin filtrar por estado
-                this.pendientes = res;
+                console.log("🔔 NOTIFICACIONES:", res);
+
+                // 🔹 FIX: Mostrar todo lo que NO esté finalizado ni cancelado para asegurar que los datos aparezcan
+                this.pendientes = res.filter(a => {
+                    const estado = a.solicitud?.estado;
+                    return estado !== 'FINALIZADO' && estado !== 'CANCELADO';
+                });
 
                 this.countPendientes = this.pendientes.length;
                 this.countEntregadas = res.filter(a => a.solicitud?.estado === 'NOTIFICADO' || a.solicitud?.estado === 'ENTREGADO').length;
-                this.countUrgente = Math.floor(Math.random() * 2); // Mock
+                // Mock urgente count
+                this.countUrgente = this.pendientes.filter(p => p.urgente).length;
 
                 setTimeout(() => this.isLoading = false, 500);
             },

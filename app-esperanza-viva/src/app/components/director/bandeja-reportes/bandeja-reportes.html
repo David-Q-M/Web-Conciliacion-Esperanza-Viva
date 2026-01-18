@@ -133,13 +133,12 @@
             <ng-container *ngIf="!isLoading">
               <tr *ngFor="let item of reportData.lista">
                 <td class="ps-4 fw-bold text-white">{{item.numeroExpediente}}</td>
-                <td class="text-secondary small">{{item.solicitante?.nombres}} {{item.solicitante?.apellidos}}</td>
+                <td class="text-secondary small">{{item.solicitanteNombre || '—'}}</td>
                 <td class="text-secondary small">
-                  <span *ngIf="item.apoderado?.nombres" class="text-warning">{{item.apoderado?.nombres}}
-                    {{item.apoderado?.apellidos}}</span>
-                  <span *ngIf="!item.apoderado?.nombres" class="text-muted">—</span>
+                  <span *ngIf="item.apoderadoNombre" class="text-warning">{{item.apoderadoNombre}}</span>
+                  <span *ngIf="!item.apoderadoNombre" class="text-muted">—</span>
                 </td>
-                <td class="text-secondary small">{{item.invitado?.nombres}} {{item.invitado?.apellidos}}</td>
+                <td class="text-secondary small">{{item.invitadoNombre || '—'}}</td>
                 <td class="text-secondary small">{{item.fechaPresentacion | date:'dd/MM/yyyy'}}</td>
                 <td class="text-white small">{{item.materiaConciliable}}</td>
                 <td>

@@ -83,6 +83,29 @@ public class AudienciaController {
         return ResponseEntity.ok(registrada);
     }
 
+    @Autowired
+    private appesperanzaviva.backend.service.PdfService pdfService;
+
+    // 📄 PDF ENDPOINT: Descargar Acta Oficial
+    @GetMapping(value = "/{id}/pdf", produces = org.springframework.http.MediaType.APPLICATION_PDF_VALUE)
+    public ResponseEntity<byte[]> descargarActa(@PathVariable @NonNull Long id) {
+        try {
+            Audiencia audiencia = service.obtenerPorId(id);
+            if (audiencia == null)
+                return ResponseEntity.notFound().build();
+
+            byte[] pdfBytes = pdfService.generarActaConciliacion(audiencia);
+
+            return ResponseEntity.ok()
+                    .header("Content-Disposition",
+                            "attachment; filename=Acta_" + audiencia.getSolicitud().getNumeroExpediente() + ".pdf")
+                    .body(pdfBytes);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
     @PostMapping("/finalizar")
     public ResponseEntity<Audiencia> finalizar(@RequestBody Map<String, Object> payload) {
         Object solicitudObj = payload.get("solicitudId");

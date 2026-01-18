@@ -9,7 +9,7 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
     standalone: true,
     imports: [CommonModule, FormsModule, RouterLink, RouterLinkActive],
     templateUrl: './historial-notificador.html',
-    styleUrls: ['../bandeja-notificador/bandeja-notificador.css']
+    styleUrls: ['./historial-notificador.css']
 })
 export class HistorialNotificador implements OnInit {
     notificadorNombre: string = 'Juan Perez';
@@ -62,6 +62,6 @@ export class HistorialNotificador implements OnInit {
 
     cerrarSesion() {
         localStorage.clear();
-        this.router.navigate(['/consulta']); // ✅ Redirect to /consulta confirmed
+        this.router.navigate(['/consulta']);
     }
 }

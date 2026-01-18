@@ -115,29 +115,49 @@
                 <td class="text-secondary small">{{ e.solicitante?.nombres }} {{ e.solicitante?.apellidos }}</td>
                 <td class="text-secondary small">{{ e.fechaAsignacion || e.fechaPresentacion | date:'dd/MM/yyyy' }}</td>
                 <td>
-                  <span class="badge-status" [ngClass]="e.estado === 'ASIGNADO' ? 'bg-pendiente' : 'bg-curso'">
-                    {{ e.estado === 'ASIGNADO' ? 'Por Aceptar' : 'En Proceso' }}
+                  <span class="badge" [ngClass]="{
+                    'bg-warning text-dark': e.estado === 'ASIGNADO', 
+                    'bg-info text-dark': e.estado === 'DESIGNACION_ACEPTADA' || e.estado === 'PROGRAMADO',
+                    'bg-primary': e.estado === 'NOTIFICADO',
+                    'bg-secondary': e.estado === 'PENDIENTE_FIRMA',
+                    'bg-danger': e.estado === 'OBSERVADA'
+                  }">
+                    {{ e.estado }}
                   </span>
                 </td>
                 <td class="text-end pe-4">
+                  <!-- Case: OBSERVADA (Feedback Loop) -->
+                  <div *ngIf="e.estado === 'OBSERVADA'">
+                    <button class="btn btn-sm btn-danger fw-bold"
+                      [routerLink]="['/conciliador/registro-audiencia', e.audiencias ? e.audiencias[e.audiencias.length-1].id : e.id]">
+                      <i class="bi bi-exclamation-triangle-fill me-1"></i> Corregir
+                    </button>
+                  </div>
+
+                  <!-- Case: PENDIENTE_FIRMA (Waiting) -->
+                  <div *ngIf="e.estado === 'PENDIENTE_FIRMA'">
+                    <button class="btn btn-sm btn-secondary" disabled>En Revisión</button>
+                  </div>
+
                   <!-- Case 1: Assigned but not accepted -> Responder -->
                   <button *ngIf="e.estado === 'ASIGNADO'" class="btn btn-sm btn-warning fw-bold"
                     [routerLink]="['/conciliador/evaluar', e.id]">
                     Responder <i class="bi bi-chevron-right ms-1"></i>
                   </button>
 
-                  <!-- Case 2: In Process -->
-                  <ng-container *ngIf="e.estado !== 'ASIGNADO'">
-                    <!-- Subcase 2A: Already Scheduled -> Show Programado -->
-                    <button *ngIf="e.audiencia?.fecha" class="btn btn-sm btn-success fw-bold"
+                  <!-- Case 2: In Process (Designation Accepted) -->
+                  <ng-container *ngIf="e.estado === 'DESIGNACION_ACEPTADA'">
+                    <button class="btn btn-sm btn-outline-info fw-bold"
                       [routerLink]="['/conciliador/programar-audiencia', e.id]">
-                      Programado <i class="bi bi-check-circle-fill ms-1"></i>
+                      Programar <i class="bi bi-calendar-plus ms-1"></i>
                     </button>
+                  </ng-container>
 
-                    <!-- Subcase 2B: Not Scheduled -> Show Gestionar -->
-                    <button *ngIf="!e.audiencia?.fecha" class="btn btn-sm btn-outline-info fw-bold"
-                      [routerLink]="['/conciliador/programar-audiencia', e.id]">
-                      Gestionar <i class="bi bi-chevron-right ms-1"></i>
+                  <!-- Case 3: Programado/Notificado -> Go to Agenda logic -->
+                  <ng-container
+                    *ngIf="e.estado === 'PROGRAMADO' || e.estado === 'NOTIFICADO' || e.estado === 'PENDIENTE_ACTA'">
+                    <button class="btn btn-sm btn-success fw-bold" [routerLink]="['/conciliador/agenda']">
+                      Ver Agenda <i class="bi bi-calendar-check ms-1"></i>
                     </button>
                   </ng-container>
                 </td>

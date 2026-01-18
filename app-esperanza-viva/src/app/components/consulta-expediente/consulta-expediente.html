@@ -1,8 +1,5 @@
 <div class="main-bg text-white">
-  <app-login-admin 
-    *ngIf="mostrarLoginModal"
-    [rolSeleccionado]="rolElegido"
-    (cerrar)="mostrarLoginModal = false">
+  <app-login-admin *ngIf="mostrarLoginModal" [rolSeleccionado]="rolElegido" (cerrar)="mostrarLoginModal = false">
   </app-login-admin>
 
   <header class="d-flex justify-content-between align-items-center p-3 position-relative">
@@ -18,13 +15,14 @@
       <button class="btn btn-outline-warning btn-sm" (click)="toggleMenu()">
         Ingreso personal/Roles {{ mostrarMenuRoles ? '▴' : '▾' }}
       </button>
-      
+
       <ul class="dropdown-menu-custom" *ngIf="mostrarMenuRoles">
         <li (click)="irALoginAdmin('ADMINISTRADOR')">Administrador</li>
         <li (click)="irALoginAdmin('DIRECTOR')">Director</li>
         <li (click)="irALoginAdmin('CONCILIADOR')">Conciliador</li>
         <li (click)="irALoginAdmin('ABOGADO')">Abogado</li>
         <li (click)="irALoginAdmin('NOTIFICADOR')">Notificador</li>
+        <li (click)="irALoginAdmin('SECRETARIO')">Secretario</li>
       </ul>
     </div>
   </header>
@@ -44,8 +42,8 @@
       <h6 class="text-warning mb-3">🔍 Consultar Estado del Expediente</h6>
       <p class="small text-secondary">Ingresa tu numero de seguimiento para verificar el estado de tu solicitud</p>
       <div class="input-group mb-3">
-        <input type="text" class="form-control bg-dark text-white border-warning" 
-               placeholder="Ej: EXP-2025-000009" [(ngModel)]="numeroBusqueda" name="busqueda">
+        <input type="text" class="form-control bg-dark text-white border-warning" placeholder="Ej: EXP-2025-000009"
+          [(ngModel)]="numeroBusqueda" name="busqueda">
         <button class="btn btn-outline-warning" (click)="consultar()">Consultar</button>
       </div>
     </div>

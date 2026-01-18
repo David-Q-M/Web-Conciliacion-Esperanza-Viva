@@ -112,16 +112,17 @@ export class ExitoRegistro implements OnInit, OnDestroy {
     // Lógica manual simple si no hay orden estricto numérico, o usamos índices del array
     // Mapeo simplificado para la UI
     // Etapa 1: Aprobada (Incluye variaciones y estado ASIGNADO)
+    // Etapa 1: Aprobada (Incluye variaciones y estado ASIGNADO)
     if (targetState === 'APROBADA') {
-      return ['APROBADA', 'APROBADO', 'ASIGNADO', 'AUDIENCIA_PROGRAMADA', 'EN_AUDIENCIA', 'FINALIZADA', 'CONCILIADA', 'NO_ACUERDO'].includes(current);
+      return ['APROBADA', 'APROBADO', 'ASIGNADO', 'PROGRAMADO', 'NOTIFICADO', 'AUDIENCIA_PROGRAMADA', 'EN_AUDIENCIA', 'PENDIENTE_FIRMA', 'PENDIENTE_ACTA', 'CONCLUIDO', 'CONCLUIDO_SIN_ACUERDO', 'FINALIZADA', 'CONCILIADA', 'NO_ACUERDO'].includes(current);
     }
     // Etapa 2: Audiencia
     if (targetState === 'AUDIENCIA_PROGRAMADA') {
-      return ['AUDIENCIA_PROGRAMADA', 'EN_AUDIENCIA', 'FINALIZADA', 'CONCILIADA', 'NO_ACUERDO'].includes(current);
+      return ['PROGRAMADO', 'NOTIFICADO', 'AUDIENCIA_PROGRAMADA', 'EN_AUDIENCIA', 'PENDIENTE_FIRMA', 'PENDIENTE_ACTA', 'CONCLUIDO', 'CONCLUIDO_SIN_ACUERDO', 'FINALIZADA', 'CONCILIADA', 'NO_ACUERDO'].includes(current);
     }
     // Etapa 3: Finalizada
     if (targetState === 'FINALIZADA') {
-      return ['FINALIZADA', 'CONCILIADA', 'NO_ACUERDO'].includes(current);
+      return ['CONCLUIDO', 'CONCLUIDO_SIN_ACUERDO', 'FINALIZADA', 'CONCILIADA', 'NO_ACUERDO'].includes(current);
     }
 
     return false;

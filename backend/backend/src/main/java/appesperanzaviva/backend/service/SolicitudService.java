@@ -27,4 +27,13 @@ public interface SolicitudService {
 
     // 🔹 Nuevo: Listar por conciliador
     List<Solicitud> listarPorConciliador(@NonNull Long conciliadorId);
+
+    // 🔹 NUEVO: Estado PENDIENTE para Director
+    List<Solicitud> listarPorEstado(String estado);
+
+    // 🔹 NUEVO: Estado // Listar por conciliador y estado
+    List<Solicitud> listarPorConciliadorYEstado(Long conciliadorId, String estado);
+
+    // Obtener carga laboral
+    java.util.Map<Integer, Long> obtenerCargaLaboral();
 }

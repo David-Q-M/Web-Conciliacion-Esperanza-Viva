@@ -67,13 +67,28 @@ public class SolicitudController {
                 dto.setSubMateria(s.getSubMateria());
 
                 // Mapeo seguro de nombres
-                if (s.getSolicitante() != null)
+                // Mapeo seguro de nombres y DNI
+                if (s.getSolicitante() != null) {
                     dto.setSolicitanteNombre(s.getSolicitante().getNombres() + " " + s.getSolicitante().getApellidos());
-                if (s.getInvitado() != null)
+                    dto.setSolicitanteDni(s.getSolicitante().getDni());
+                }
+                if (s.getInvitado() != null) {
                     dto.setInvitadoNombre(s.getInvitado().getNombres() + " " + s.getInvitado().getApellidos());
+                    dto.setInvitadoDni(s.getInvitado().getDni());
+                }
+                if (s.getApoderado() != null) {
+                    dto.setApoderadoNombre(s.getApoderado().getNombres() + " " + s.getApoderado().getApellidos());
+                    dto.setApoderadoDni(s.getApoderado().getDni());
+                }
                 if (s.getConciliador() != null) {
                     dto.setConciliadorNombre(s.getConciliador().getNombreCompleto());
                     dto.setConciliadorId(s.getConciliador().getId().longValue());
+                }
+                if (s.getNotificador() != null) {
+                    dto.setNotificadorNombre(s.getNotificador().getNombreCompleto());
+                }
+                if (s.getSecretario() != null) {
+                    dto.setSecretarioNombre(s.getSecretario().getNombreCompleto());
                 }
 
                 // Resultado de audiencia (Tomamos la última registrada si hay varias)
@@ -177,5 +192,18 @@ public class SolicitudController {
     @GetMapping("/conciliador/{conciliadorId}")
     public ResponseEntity<List<Solicitud>> listarPorConciliador(@PathVariable @NonNull Long conciliadorId) {
         return ResponseEntity.ok(service.listarPorConciliador(conciliadorId));
+    }
+
+    // 🔹 NUEVO: Endpoint para el Director (PENDIENTES)
+    @GetMapping("/estado/{estado}")
+    public ResponseEntity<List<Solicitud>> listarPorEstado(@PathVariable String estado) {
+        return ResponseEntity.ok(service.listarPorEstado(estado));
+    }
+
+    // 🔹 NUEVO: Endpoint para el Conciliador (ASIGNADOS)
+    @GetMapping("/conciliador/{id}/estado/{estado}")
+    public ResponseEntity<List<Solicitud>> listarPorConciliadorYEstado(@PathVariable Long id,
+            @PathVariable String estado) {
+        return ResponseEntity.ok(service.listarPorConciliadorYEstado(id, estado));
     }
 }

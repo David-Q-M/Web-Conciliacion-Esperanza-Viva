@@ -32,85 +32,122 @@
         </header>
 
         <!-- Filters -->
-        <div class="glass-card mb-4 p-4 d-flex gap-3 align-items-end flex-wrap">
-            <div class="flex-grow-1">
-                <label class="text-secondary small mb-1">Fecha Inicio</label>
-                <input type="date" class="form-control bg-dark text-white border-secondary" [(ngModel)]="fechaInicio">
+        <div class="glass-card mb-4 p-3 d-flex gap-3 align-items-end flex-wrap shadow-sm">
+            <div class="filter-group flex-grow-1" style="min-width: 150px;">
+                <label class="text-secondary small mb-1 fw-bold">Desde</label>
+                <input type="date" class="form-control form-control-sm bg-dark text-white border-secondary"
+                    [(ngModel)]="fechaInicio">
             </div>
-            <div class="flex-grow-1">
-                <label class="text-secondary small mb-1">Fecha Fin</label>
-                <input type="date" class="form-control bg-dark text-white border-secondary" [(ngModel)]="fechaFin">
+            <div class="filter-group flex-grow-1" style="min-width: 150px;">
+                <label class="text-secondary small mb-1 fw-bold">Hasta</label>
+                <input type="date" class="form-control form-control-sm bg-dark text-white border-secondary"
+                    [(ngModel)]="fechaFin">
             </div>
-            <div class="flex-grow-1">
-                <label class="text-secondary small mb-1">Estado</label>
-                <select class="form-select bg-dark text-white border-secondary" [(ngModel)]="estado">
-                    <option value="">[Todos]</option>
+            <div class="filter-group flex-grow-1" style="min-width: 180px;">
+                <label class="text-secondary small mb-1 fw-bold">Estado</label>
+                <select class="form-select form-select-sm bg-dark text-white border-secondary" [(ngModel)]="estado">
+                    <option value="">Todos los Estados</option>
                     <option value="APROBADA">Aprobada</option>
                     <option value="OBSERVADA">Observada</option>
                 </select>
             </div>
-            <button class="btn btn-warning fw-bold px-4" (click)="buscarHistorial()">
-                <i class="bi bi-search me-2"></i> Buscar
+            <button class="btn btn-warning btn-sm fw-bold px-4 h-100" (click)="buscarHistorial()">
+                <i class="bi bi-search me-2"></i> Filtrar
             </button>
         </div>
 
         <!-- Table -->
-        <div class="glass-card p-0 overflow-hidden">
+        <div class="glass-card p-0 overflow-hidden shadow">
             <div class="table-responsive">
                 <table class="table table-dark table-hover m-0 align-middle">
-                    <thead>
+                    <thead class="bg-black">
                         <tr class="text-secondary small text-uppercase">
-                            <th class="ps-4">N° Expediente</th>
-                            <th>Fecha Revisión</th>
-                            <th>Documento</th>
-                            <th>Estado Final</th>
-                            <th class="text-end pe-4">Acción</th>
+                            <th class="ps-4 py-3">N° Expediente</th>
+                            <th class="py-3">Solicitante</th>
+                            <th class="py-3">Invitado</th>
+                            <th class="py-3">Materia</th>
+                            <th class="py-3">Fecha</th>
+                            <th class="py-3">Estado</th>
+                            <th class="text-end pe-4 py-3">Acción</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- SKELETON -->
+                        <!-- SKELETON REFINED -->
                         <ng-container *ngIf="isLoading">
                             <tr *ngFor="let i of [1,2,3,4,5]">
-                                <td class="ps-4">
-                                    <div class="skeleton skeleton-text" style="width: 100px;"></div>
+                                <td class="ps-4 py-3">
+                                    <div class="skeleton-line"
+                                        style="width: 80px; height: 12px; background: rgba(255,255,255,0.1); border-radius: 4px;">
+                                    </div>
                                 </td>
-                                <td>
-                                    <div class="skeleton skeleton-text" style="width: 120px;"></div>
+                                <td class="py-3">
+                                    <div class="skeleton-line"
+                                        style="width: 100px; height: 12px; background: rgba(255,255,255,0.1); border-radius: 4px;">
+                                    </div>
                                 </td>
-                                <td>
-                                    <div class="skeleton skeleton-text" style="width: 150px;"></div>
+                                <td class="py-3">
+                                    <div class="skeleton-line"
+                                        style="width: 100px; height: 12px; background: rgba(255,255,255,0.1); border-radius: 4px;">
+                                    </div>
                                 </td>
-                                <td>
-                                    <div class="skeleton skeleton-badge" style="width: 100px;"></div>
+                                <td class="py-3">
+                                    <div class="skeleton-line"
+                                        style="width: 90px; height: 12px; background: rgba(255,255,255,0.1); border-radius: 4px;">
+                                    </div>
                                 </td>
-                                <td class="text-end pe-4">
-                                    <div class="skeleton skeleton-btn ms-auto"></div>
+                                <td class="py-3">
+                                    <div class="skeleton-line"
+                                        style="width: 80px; height: 12px; background: rgba(255,255,255,0.1); border-radius: 4px;">
+                                    </div>
+                                </td>
+                                <td class="py-3">
+                                    <div class="skeleton-line"
+                                        style="width: 70px; height: 20px; background: rgba(255,255,255,0.1); border-radius: 10px;">
+                                    </div>
+                                </td>
+                                <td class="text-end pe-4 py-3">
+                                    <div class="skeleton-circle ms-auto"
+                                        style="width: 32px; height: 32px; background: rgba(255,255,255,0.1); border-radius: 50%;">
+                                    </div>
                                 </td>
                             </tr>
                         </ng-container>
 
                         <!-- DATA -->
                         <ng-container *ngIf="!isLoading">
-                            <tr *ngFor="let h of historial">
+                            <tr *ngFor="let h of historial" class="animate__animated animate__fadeIn">
                                 <td class="ps-4 fw-bold text-white">{{ h.numeroExpediente }}</td>
-                                <td class="text-secondary small">{{ h.fechaCreacion | date:'dd/MM/yyyy' }}</td>
-                                <td class="text-white small">Acta de Conciliación</td>
+                                <td class="text-white">{{ h.solicitanteNombre || '---' }}</td>
+                                <td class="text-white">{{ h.invitadoNombre || '---' }}</td>
+                                <td class="text-info small">{{ h.materiaConciliable || '---' }}</td>
+                                <td class="text-secondary small">{{ h.fechaPresentacion | date:'dd/MM/yyyy' }}</td>
                                 <td>
-                                    <span class="badge-status"
-                                        [ngClass]="{'bg-aprobado': h.estado === 'APROBADA' || h.estado === 'FINALIZADA', 'bg-warning text-dark': h.estado === 'OBSERVADA'}">
+                                    <span class="badge" [ngClass]="{
+                                            'bg-success bg-opacity-75': h.estado === 'APROBADA' || h.estado === 'FINALIZADA', 
+                                            'bg-warning text-dark bg-opacity-75': h.estado === 'OBSERVADA',
+                                            'bg-info text-dark bg-opacity-75': h.estado === 'PENDIENTE_FIRMA'
+                                        }">
                                         {{ h.estado }}
                                     </span>
                                 </td>
                                 <td class="text-end pe-4">
-                                    <button class="btn btn-outline-light btn-sm fw-bold">
-                                        Ver Detalle
+                                    <button class="btn btn-outline-light btn-sm fw-bold rounded-pill px-3"
+                                        title="Descargar PDF" (click)="descargarPDF(h)">
+                                        <i class="bi bi-download me-1"></i> PDF
                                     </button>
                                 </td>
                             </tr>
                             <tr *ngIf="historial.length === 0">
-                                <td colspan="5" class="text-center text-secondary py-5">
-                                    <i class="bi bi-archive fs-1 d-block mb-3 opacity-25"></i>
-                                    No se encontraron registros en el historial.
+                                <td colspan="7" class="text-center py-5">
+                                    <div class="empty-state">
+                                        <div
+                                            class="icon-circle bg-dark d-inline-flex p-4 rounded-circle mb-3 border border-secondary">
+                                            <i class="bi bi-clock-history fs-1 text-secondary opacity-50"></i>
+                                        </div>
+                                        <h6 class="text-white fw-bold">Sin registros recientes</h6>
+                                        <p class="text-secondary small m-0">No se encontraron actas en este rango de
+                                            fechas.</p>
+                                    </div>
                                 </td>
                             </tr>
                         </ng-container>

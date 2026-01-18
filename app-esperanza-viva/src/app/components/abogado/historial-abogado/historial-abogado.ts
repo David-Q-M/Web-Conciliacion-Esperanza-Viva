@@ -36,9 +36,23 @@ export class HistorialAbogado implements OnInit {
         this.isLoading = true;
         this.http.get<any[]>('http://localhost:8080/api/solicitudes').subscribe({
             next: (res) => {
-                this.historial = res.filter(s =>
-                    ['FINALIZADA', 'OBSERVADA', 'FIRMADA', 'APROBADA'].includes(s.estado)
-                );
+                this.historial = res.filter(s => {
+                    // 1. Base Filter: Only relevant states
+                    const isRelevant = ['FINALIZADA', 'OBSERVADA', 'FIRMADA', 'APROBADA'].includes(s.estado);
+                    if (!isRelevant) return false;
+
+                    // 2. State Filter
+                    if (this.estado && s.estado !== this.estado) return false;
+
+                    // 3. Date Filter (using fechaPresentacion or fechaAsignacion)
+                    const dateRaw = s.fechaPresentacion || s.fechaAsignacion;
+                    const itemDate = dateRaw ? dateRaw.split('T')[0] : '';
+
+                    if (this.fechaInicio && itemDate < this.fechaInicio) return false;
+                    if (this.fechaFin && itemDate > this.fechaFin) return false;
+
+                    return true;
+                });
                 setTimeout(() => this.isLoading = false, 500);
             },
             error: (err) => {
@@ -48,8 +62,19 @@ export class HistorialAbogado implements OnInit {
         });
     }
 
+    descargarPDF(item: any) {
+        if (item.firmaArchivoUrl) {
+            window.open(item.firmaArchivoUrl, '_blank');
+        } else if (item.dniArchivoUrl) {
+            // Fallback to other docs if signed act not available
+            window.open(item.dniArchivoUrl, '_blank');
+        } else {
+            alert('No hay documento adjunto disponible para este expediente.');
+        }
+    }
+
     cerrarSesion() {
         localStorage.clear();
-        this.router.navigate(['/consulta']); // ✅ FIXED: Route confirmed in app.routes.ts
+        this.router.navigate(['/consulta']);
     }
 }

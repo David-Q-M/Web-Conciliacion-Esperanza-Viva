@@ -1,0 +1,135 @@
+<div class="secretario-container">
+    <!-- Sidebar -->
+    <aside class="sidebar-viva">
+        <!-- Logo Header -->
+        <div class="logo-section">
+            <h5>ESPERANZA VIVA</h5>
+            <small>SECRETARÍA</small>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="sidebar-nav">
+            <!-- Active Item: Black Background, Yellow Text -->
+            <a class="nav-link-viva active" routerLink="/secretario/reporte" routerLinkActive="active">
+                <i class="bi bi-file-earmark-bar-graph"></i>
+                Reporte Final
+            </a>
+            <!-- Placeholder for future items -->
+            <!-- <a class="nav-link-viva" routerLink="/secretario/config"><i class="bi bi-gear"></i> Configuración</a> -->
+        </nav>
+
+        <!-- Logout Button (Bottom) -->
+        <div class="sidebar-footer">
+            <button class="btn-logout-black" (click)="cerrarSesion()">
+                <i class="bi bi-box-arrow-left"></i>
+                Cerrar Sesión
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="mb-5 d-flex justify-content-between">
+            <div>
+                <h2 class="header-title">GENERACIÓN DE HOJA RESUMEN</h2>
+                <p class="header-subtitle">Consolidado de actas para el Ministerio de Justicia</p>
+            </div>
+            <div class="text-end">
+                <div class="fw-bold">{{ secretarioNombre }}</div>
+                <div class="small text-white-50">Secretario de Conciliación</div>
+            </div>
+        </header>
+
+        <!-- Filtros -->
+        <div class="card-filter mb-5">
+            <h6 class="text-white text-uppercase mb-3 fw-bold ls-1" style="letter-spacing: 1px;">Selección de Periodo
+            </h6>
+            <div class="row g-3">
+                <div class="col-md-5">
+                    <label class="label-filter mb-2 d-block">Mes</label>
+                    <select class="form-select input-custom" [(ngModel)]="mes">
+                        <option value="">Seleccionar Mes</option>
+                        <option value="1">Enero</option>
+                        <option value="2">Febrero</option>
+                        <option value="3">Marzo</option>
+                        <option value="4">Abril</option>
+                        <option value="5">Mayo</option>
+                        <option value="6">Junio</option>
+                        <option value="7">Julio</option>
+                        <option value="8">Agosto</option>
+                        <option value="9">Septiembre</option>
+                        <option value="10">Octubre</option>
+                        <option value="11">Noviembre</option>
+                        <option value="12">Diciembre</option>
+                    </select>
+                </div>
+                <div class="col-md-5">
+                    <label class="label-filter mb-2 d-block">Año</label>
+                    <input type="number" class="form-control input-custom" [(ngModel)]="anio" placeholder="Ej. 2026">
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button class="btn btn-action-yellow w-100 py-2 text-uppercase" (click)="cargarDatos()">
+                        CARGAR
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla 1: Materias -->
+        <h6 class="text-white text-uppercase fw-bold mb-3" style="letter-spacing: 1px;">Vista Previa de los Datos</h6>
+
+        <div class="table-custom-container mb-4">
+            <table class="table-custom">
+                <thead>
+                    <tr>
+                        <th class="ps-4 text-start">Materias Conciliables</th>
+                        <th class="text-center text-cyan">Cantidad</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let m of materias">
+                        <td class="ps-4 fw-bold">{{ m.tipo }}</td>
+                        <td class="text-center fs-5 fw-bold text-cyan">{{ m.cantidad }}</td>
+                        <td class="text-center fw-bold">{{ m.porcentaje }}%</td>
+                    </tr>
+                    <tr *ngIf="materias.length === 0 && !isLoading">
+                        <td colspan="3" class="text-center text-white-50 py-4">No hay datos disponibles</td>
+                    </tr>
+                    <tr *ngIf="isLoading">
+                        <td colspan="3" class="text-center text-warning py-4">Cargando...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Tabla 2: Resultados -->
+        <div class="table-custom-container mb-5">
+            <table class="table-custom">
+                <thead>
+                    <tr>
+                        <th class="ps-4 text-start">Resultados</th>
+                        <th class="text-center text-cyan">Cantidad</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let r of resultados">
+                        <td class="ps-4">{{ r.tipo }}</td>
+                        <td class="text-center fs-5 fw-bold text-white">{{ r.cantidad }}</td>
+                    </tr>
+                    <tr *ngIf="resultados.length === 0 && !isLoading">
+                        <td colspan="2" class="text-center text-white-50 py-4">No hay datos disponibles</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Boton Generar -->
+        <div class="text-center">
+            <button class="btn btn-action-yellow px-5 py-3 fs-5 shadow-lg" (click)="generarHojaSumaria()">
+                GENERAR HOJA SUMARIA
+            </button>
+        </div>
+
+    </main>
+</div>

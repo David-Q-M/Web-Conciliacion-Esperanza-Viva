@@ -40,16 +40,19 @@ export class RevisionActa implements OnInit {
     }
 
     descargarPDF() {
-        if (!this.expediente || !this.expediente.audiencia) {
+        if (!this.expediente || !this.expediente.audiencias || this.expediente.audiencias.length === 0) {
             alert("No hay audiencia registrada.");
             return;
         }
 
+        // 🔹 FIX: Obtener la última audiencia
+        const ultimaAudiencia = this.expediente.audiencias[this.expediente.audiencias.length - 1];
+
         try {
             // 🔹 FIX: Parse JSON to get URL
             let detalle = {};
-            if (this.expediente.audiencia.resultadoDetalle) {
-                detalle = JSON.parse(this.expediente.audiencia.resultadoDetalle);
+            if (ultimaAudiencia.resultadoDetalle) {
+                detalle = JSON.parse(ultimaAudiencia.resultadoDetalle);
             }
 
             // @ts-ignore
@@ -74,11 +77,18 @@ export class RevisionActa implements OnInit {
     }
 
     aprobarLegalidad() {
-        if (this.archivoFirmado && this.expediente && this.expediente.audiencia) {
+        if (!this.expediente || !this.expediente.audiencias || this.expediente.audiencias.length === 0) {
+            alert("No se puede aprobar sin audiencia registrada.");
+            return;
+        }
+
+        const ultimaAudiencia = this.expediente.audiencias[this.expediente.audiencias.length - 1];
+
+        if (this.archivoFirmado) {
             // 1. Upload Signed File
             const numExp = this.expediente.numeroExpediente || 'SN';
             this.actaService.subirActa(
-                this.expediente.audiencia.id,
+                ultimaAudiencia.id,
                 'ACTA_FIRMADA',
                 `ACTA-FIRMADA-${numExp}`,
                 this.archivoFirmado

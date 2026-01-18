@@ -170,6 +170,20 @@ export const routes: Routes = [
         path: 'certificacion/:id',
         loadComponent: () => import('./components/notificador/generar-certificacion/generar-certificacion').then(m => m.GenerarCertificacion)
       }
+
+    ]
+  },
+
+  // 7. 🛡️ Rutas de SECRETARIO (Protegidas)
+  {
+    path: 'secretario',
+    canActivate: [authGuard(['SECRETARIO'])],
+    children: [
+      { path: '', redirectTo: 'reporte', pathMatch: 'full' },
+      {
+        path: 'reporte',
+        loadComponent: () => import('./components/secretario/reporte-final/reporte-final').then(m => m.ReporteFinal)
+      }
     ]
   },
   // Comodín para rutas no encontradas

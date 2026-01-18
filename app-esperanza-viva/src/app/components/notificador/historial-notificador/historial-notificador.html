@@ -32,30 +32,44 @@
         </header>
 
         <!-- Filters -->
-        <div class="glass-card mb-4 p-4 d-flex gap-3 align-items-end flex-wrap">
-            <div class="flex-grow-1">
-                <label class="text-secondary small mb-1">Fecha Inicio</label>
-                <input type="date" class="form-control bg-dark text-white border-secondary" [(ngModel)]="fechaInicio">
+        <div class="glass-card mb-4 animate__animated animate__fadeInDown">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label class="text-secondary small mb-1 fw-bold">Fecha Inicio</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-dark border-secondary text-secondary"><i
+                                class="bi bi-calendar"></i></span>
+                        <input type="date" class="form-control bg-dark text-white border-secondary"
+                            [(ngModel)]="fechaInicio">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label class="text-secondary small mb-1 fw-bold">Fecha Fin</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-dark border-secondary text-secondary"><i
+                                class="bi bi-calendar"></i></span>
+                        <input type="date" class="form-control bg-dark text-white border-secondary"
+                            [(ngModel)]="fechaFin">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label class="text-secondary small mb-1 fw-bold">Estado</label>
+                    <select class="form-select bg-dark text-white border-secondary" [(ngModel)]="estado">
+                        <option value="">[Todos]</option>
+                        <option value="NOTIFICADO">Entregado</option>
+                        <option value="DEVUELTO">Devuelto</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <button class="btn btn-warning fw-bold w-100 shadow-sm" (click)="buscarHistorial()">
+                        <i class="bi bi-search me-2"></i> Filtrar Diligencias
+                    </button>
+                </div>
             </div>
-            <div class="flex-grow-1">
-                <label class="text-secondary small mb-1">Fecha Fin</label>
-                <input type="date" class="form-control bg-dark text-white border-secondary" [(ngModel)]="fechaFin">
-            </div>
-            <div class="flex-grow-1">
-                <label class="text-secondary small mb-1">Estado</label>
-                <select class="form-select bg-dark text-white border-secondary" [(ngModel)]="estado">
-                    <option value="">[Todos]</option>
-                    <option value="NOTIFICADO">Entregado</option>
-                    <option value="DEVUELTO">Devuelto</option>
-                </select>
-            </div>
-            <button class="btn btn-warning fw-bold px-4" (click)="buscarHistorial()">
-                <i class="bi bi-search me-2"></i> Buscar
-            </button>
         </div>
 
         <!-- Table -->
-        <div class="glass-card p-0 overflow-hidden">
+        <div class="glass-card p-0 overflow-hidden shadow-lg animate__animated animate__fadeIn">
             <div class="table-responsive">
                 <table class="table table-dark table-hover m-0 align-middle">
                     <thead>
@@ -108,9 +122,11 @@
                                 </td>
                             </tr>
                             <tr *ngIf="historial.length === 0">
-                                <td colspan="5" class="text-center text-secondary py-5">
-                                    <i class="bi bi-archive fs-1 d-block mb-3 opacity-25"></i>
-                                    No se encontraron registros.
+                                <td colspan="5" class="text-center py-5">
+                                    <div class="opacity-25">
+                                        <i class="bi bi-archive fs-1 d-block mb-3"></i>
+                                        <h5 class="fw-light">No hay notificaciones registradas con estos filtros</h5>
+                                    </div>
                                 </td>
                             </tr>
                         </ng-container>

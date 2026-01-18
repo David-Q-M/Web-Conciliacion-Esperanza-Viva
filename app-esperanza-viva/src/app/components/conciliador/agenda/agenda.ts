@@ -13,12 +13,13 @@ import { AudienciaService } from '../../../services/audiencia.service';
 })
 export class AgendaConciliador implements OnInit {
   conciliadorNombre: string = '';
-  listaOriginal: any[] = [];
-  listaMostrada: any[] = [];
-  stats = { cerrados: 0, hoy: 0, proximos: 0 };
-  filtroSeleccionado: 'todos' | 'cerrados' | 'hoy' | 'proximos' = 'todos';
-  terminoBusqueda: string = '';
+  // Listas para separar lógica visual
+  audiencias: any[] = [];
+
+  listaOriginal: any[] = []; // Base completa para filtros
+
   isLoading: boolean = true;
+  filtroActual: string = 'TODOS'; // 'TODOS' (Programado/Notificado), 'HISTORIAL'
 
   constructor(private audienciaService: AudienciaService, private router: Router) { }
 
@@ -30,58 +31,55 @@ export class AgendaConciliador implements OnInit {
     }
     const user = JSON.parse(userJson);
     this.conciliadorNombre = user.nombreCompleto;
-    // 🛡️ Cargamos los datos reales desde la base de datos
-    this.cargarCasosAgenda(user.id);
+    this.cargarAgenda(user.id);
   }
 
-  cargarCasosAgenda(id: number) {
+  cargarAgenda(id: number) {
     this.isLoading = true;
     this.audienciaService.listarPorConciliador(id).subscribe({
       next: (res) => {
-        this.listaOriginal = res;
-        this.listaMostrada = res;
+        // Mapeo seguro de datos para la vista (Flat Objects)
+        this.listaOriginal = res.map((a: any) => ({
+          id: a.id,
+          numeroExpediente: a.solicitud?.numeroExpediente || '---',
+          fechaAudiencia: a.fechaAudiencia,
+          horaAudiencia: a.horaAudiencia,
+          lugar: a.lugar || 'Centro de Conciliación',
+          estado: a.solicitud?.estado || 'PROGRAMADO', // El estado suele estar en la solicitud
 
-        // 📊 Cálculo dinámico de métricas para los cuadros superiores
-        const hoy = new Date().toISOString().split('T')[0];
+          // Datos de Personas
+          solicitanteNombre: a.solicitud?.solicitanteNombre || (a.solicitud?.solicitante ? `${a.solicitud.solicitante.nombres} ${a.solicitud.solicitante.apellidos}` : '---'),
+          solicitanteApellido: '', // Integrado en nombre arriba
+          invitadoNombre: a.solicitud?.invitadoNombre || (a.solicitud?.invitado ? `${a.solicitud.invitado.nombres} ${a.solicitud.invitado.apellidos}` : '---'),
+          invitadoApellido: '',
 
-        // "Cerrados" lo tomaremos como audiencias pasadas (historial) o con resultado
-        this.stats.cerrados = res.filter(a => a.fechaAudiencia < hoy || a.resultadoTipo).length;
-        this.stats.hoy = res.filter(a => a.fechaAudiencia === hoy).length;
-        this.stats.proximos = res.filter(a => a.fechaAudiencia > hoy).length;
-        setTimeout(() => this.isLoading = false, 500);
+          materia: a.solicitud?.materiaConciliable || 'General',
+
+          // Helpers
+          esProgramado: (a.solicitud?.estado === 'PROGRAMADO'),
+          esNotificado: (a.solicitud?.estado === 'NOTIFICADO')
+        }));
+
+        this.filtrarPrincipal();
+        this.isLoading = false;
       },
       error: (err) => {
-        console.error("Error al conectar con la API de Agenda:", err);
+        console.error("Error cargando agenda:", err);
         this.isLoading = false;
       }
     });
   }
 
-  buscar() {
-    const busq = this.terminoBusqueda.toLowerCase();
-    this.listaMostrada = this.listaOriginal.filter(a =>
-      a.solicitud?.numeroExpediente?.toLowerCase().includes(busq) ||
-      a.solicitud?.solicitante?.nombres?.toLowerCase().includes(busq) ||
-      a.solicitud?.invitado?.nombres?.toLowerCase().includes(busq)
+  // Muestra solo lo activo por defecto
+  filtrarPrincipal() {
+    this.filtroActual = 'TODOS'; // Alias para "Activos"
+    // DEBUG: Mostrar todo provisionalmente para ver qué estados llegan
+    this.audiencias = this.listaOriginal;
+    /*
+    this.audiencias = this.listaOriginal.filter(a => 
+      ['PROGRAMADO', 'NOTIFICADO'].includes(a.estado)
     );
-  }
-
-  filtrarPorEstado(filtro: 'todos' | 'cerrados' | 'hoy' | 'proximos') {
-    this.filtroSeleccionado = filtro;
-    const hoy = new Date().toISOString().split('T')[0];
-
-    // Primero reiniciamos la lista a la original
-    let listaFiltrada = this.listaOriginal;
-
-    if (filtro === 'hoy') {
-      listaFiltrada = this.listaOriginal.filter(a => a.fechaAudiencia === hoy);
-    } else if (filtro === 'proximos') {
-      listaFiltrada = this.listaOriginal.filter(a => a.fechaAudiencia > hoy);
-    } else if (filtro === 'cerrados') {
-      listaFiltrada = this.listaOriginal.filter(a => a.fechaAudiencia < hoy || a.resultadoTipo);
-    }
-
-    this.listaMostrada = listaFiltrada;
+    */
   }
 
   cerrarSesion() {

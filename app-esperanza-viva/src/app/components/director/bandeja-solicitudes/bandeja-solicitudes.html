@@ -43,57 +43,84 @@
       </div>
     </div>
 
-    <!-- Estadísticas Rápidas -->
+    <!-- Estadísticas Rápidas (Macro Visión) -->
     <div class="row g-4 mb-5">
-      <div class="col-md-3" (click)="filtrarPorEstado('TOTAL')" style="cursor: pointer;">
-        <div class="glass-card d-flex justify-content-between align-items-center"
+      <!-- Total -->
+      <div class="col" (click)="filtrarPorEstado('TOTAL')" style="cursor: pointer;">
+        <div class="glass-card d-flex justify-content-between align-items-center h-100"
           [style.border-color]="estadoSeleccionado === 'TOTAL' ? '#ffc107' : '#333'">
           <div>
-            <div class="stat-value text-white mb-0" style="font-size: 2rem;">{{stats.total}}</div>
-            <small class="text-secondary text-uppercase fw-bold" style="font-size: 0.7rem;">Total Solicitudes</small>
+            <div class="stat-value text-white mb-0" style="font-size: 1.8rem;">{{stats.total}}</div>
+            <small class="text-secondary text-uppercase fw-bold" style="font-size: 0.65rem;">Total</small>
           </div>
-          <i class="bi bi-folder2-open text-warning fs-3 opacity-50"></i>
+          <i class="bi bi-folder2-open text-white fs-3 opacity-25"></i>
         </div>
       </div>
-      <div class="col-md-3" (click)="filtrarPorEstado('PENDIENTE')" style="cursor: pointer;">
-        <div class="glass-card d-flex justify-content-between align-items-center"
+      <!-- Pendientes -->
+      <div class="col" (click)="filtrarPorEstado('PENDIENTE')" style="cursor: pointer;">
+        <div class="glass-card d-flex justify-content-between align-items-center h-100"
           [style.border-color]="estadoSeleccionado === 'PENDIENTE' ? '#ffc107' : '#333'">
           <div>
-            <div class="stat-value text-warning mb-0" style="font-size: 2rem;">{{stats.pendientes}}</div>
-            <small class="text-secondary text-uppercase fw-bold" style="font-size: 0.7rem;">Pendientes</small>
+            <div class="stat-value text-warning mb-0" style="font-size: 1.8rem;">{{stats.pendientes}}</div>
+            <small class="text-secondary text-uppercase fw-bold" style="font-size: 0.65rem;">Pendientes</small>
           </div>
           <i class="bi bi-hourglass-split text-warning fs-3 opacity-50"></i>
         </div>
       </div>
-      <div class="col-md-3" (click)="filtrarPorEstado('ASIGNADO')" style="cursor: pointer;">
-        <div class="glass-card d-flex justify-content-between align-items-center"
-          [style.border-color]="estadoSeleccionado === 'ASIGNADO' ? '#ffc107' : '#333'">
+      <!-- Observadas -->
+      <div class="col" (click)="filtrarPorEstado('OBSERVADA')" style="cursor: pointer;">
+        <div class="glass-card d-flex justify-content-between align-items-center h-100"
+          [style.border-color]="estadoSeleccionado === 'OBSERVADA' ? '#ffc107' : '#333'">
           <div>
-            <div class="stat-value text-info mb-0" style="font-size: 2rem;">{{stats.revision}}</div>
-            <small class="text-secondary text-uppercase fw-bold" style="font-size: 0.7rem;">En Revisión</small>
+            <div class="stat-value text-danger mb-0" style="font-size: 1.8rem;">{{stats.observadas}}</div>
+            <small class="text-secondary text-uppercase fw-bold" style="font-size: 0.65rem;">Observadas</small>
           </div>
-          <i class="bi bi-eye text-info fs-3 opacity-50"></i>
+          <i class="bi bi-exclamation-circle text-danger fs-3 opacity-50"></i>
         </div>
       </div>
-      <div class="col-md-3" (click)="filtrarPorEstado('FINALIZADO')" style="cursor: pointer;">
-        <div class="glass-card d-flex justify-content-between align-items-center"
-          [style.border-color]="estadoSeleccionado === 'FINALIZADO' ? '#ffc107' : '#333'">
+      <!-- Finalizadas/Aprobadas -->
+      <div class="col" (click)="filtrarPorEstado('FINALIZADA')" style="cursor: pointer;">
+        <div class="glass-card d-flex justify-content-between align-items-center h-100"
+          [style.border-color]="estadoSeleccionado === 'FINALIZADA' ? '#ffc107' : '#333'">
           <div>
-            <div class="stat-value text-success mb-0" style="font-size: 2rem;">{{stats.aprobadas}}</div>
-            <small class="text-secondary text-uppercase fw-bold" style="font-size: 0.7rem;">Finalizadas</small>
+            <div class="stat-value text-success mb-0" style="font-size: 1.8rem;">{{stats.finalizadas}}</div>
+            <small class="text-secondary text-uppercase fw-bold" style="font-size: 0.65rem;">Éxito</small>
           </div>
-          <i class="bi bi-check-circle text-success fs-3 opacity-50"></i>
+          <i class="bi bi-check-circle-fill text-success fs-3 opacity-50"></i>
+        </div>
+      </div>
+      <!-- Sin Acuerdo -->
+      <div class="col" (click)="filtrarPorEstado('CONCLUIDO_SIN_ACUERDO')" style="cursor: pointer;">
+        <div class="glass-card d-flex justify-content-between align-items-center h-100"
+          [style.border-color]="estadoSeleccionado === 'CONCLUIDO_SIN_ACUERDO' ? '#ffc107' : '#333'">
+          <div>
+            <div class="stat-value text-secondary mb-0" style="font-size: 1.8rem;">{{stats.sinAcuerdo}}</div>
+            <small class="text-secondary text-uppercase fw-bold" style="font-size: 0.65rem;">Sin Acuerdo</small>
+          </div>
+          <i class="bi bi-x-circle text-secondary fs-3 opacity-50"></i>
+        </div>
+      </div>
+      <!-- Conciliadores Activos (Nuevo) -->
+      <div class="col">
+        <div class="glass-card d-flex justify-content-between align-items-center h-100" style="border-color: #0d6efd;">
+          <div>
+            <div class="stat-value text-primary mb-0" style="font-size: 1.8rem;">{{stats.conciliadoresActivos}}</div>
+            <small class="text-secondary text-uppercase fw-bold" style="font-size: 0.65rem;">Conciliadores</small>
+          </div>
+          <i class="bi bi-person-workspace text-primary fs-3 opacity-50"></i>
         </div>
       </div>
     </div>
 
     <!-- Filtros -->
     <div class="d-flex justify-content-between align-items-center mb-3">
-      <h5 class="text-white fw-bold m-0">Expedientes Recientes</h5>
+      <h5 class="text-white fw-bold m-0">
+        {{ estadoSeleccionado === 'TOTAL' ? 'Todos los Expedientes' : 'Expedientes: ' + estadoSeleccionado }}
+      </h5>
       <div class="search-input-wrapper"
         style="width: 300px; background: #000; border: 1px solid #333; border-radius: 6px; padding: 0 10px;">
         <i class="bi bi-search text-secondary"></i>
-        <input type="text" [(ngModel)]="filtroTexto" (input)="buscar()" placeholder="Buscar expediente..."
+        <input type="text" [(ngModel)]="filtroTexto" (input)="buscar()" placeholder="Buscar por expediente, nombre..."
           class="form-control border-0 bg-transparent text-white shadow-none">
       </div>
     </div>
@@ -102,43 +129,50 @@
     <div class="glass-card p-0 overflow-hidden">
       <div class="table-responsive">
         <table class="table table-dark table-hover m-0 align-middle">
-          <thead>
+          <thead class="bg-black">
             <tr class="text-secondary small text-uppercase">
-              <th class="ps-4">Nº Expediente</th>
-              <th>Solicitante</th>
-              <th>Invitado</th>
-              <th>Fecha</th>
-              <th>Materia</th>
-              <th>Estado</th>
-              <th class="text-end pe-4">Acciones</th>
+              <th class="ps-4 py-3">Nº Expediente</th>
+              <th class="py-3">Solicitante</th>
+              <th class="py-3">Invitado</th>
+              <th class="py-3">Fecha</th>
+              <th class="py-3">Materia</th>
+              <th class="py-3">Estado</th>
+              <th class="text-end pe-4 py-3">Acciones</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let s of solicitudesFiltradas">
+            <tr *ngFor="let s of solicitudesFiltradas" class="animate__animated animate__fadeIn">
               <td class="ps-4 fw-bold text-white">{{s.numeroExpediente}}</td>
-              <td>{{s.solicitante?.nombres}} {{s.solicitante?.apellidos}}</td>
-              <td>{{s.invitado?.nombres}} {{s.invitado?.apellidos}}</td>
+              <td class="text-white small">{{s.solicitanteNombre || '---'}}</td>
+              <td class="text-white small">{{s.invitadoNombre || '---'}}</td>
               <td class="text-secondary small">{{s.fechaPresentacion | date:'dd/MM/yyyy'}}</td>
-              <td class="text-secondary small">{{s.materiaConciliable}}</td>
+              <td class="text-info small">{{s.materiaConciliable || '---'}}</td>
               <td>
-                <span class="badge-status" [ngClass]="{
-                        'bg-pendiente': s.estado === 'PENDIENTE',
-                        'bg-asignado': s.estado !== 'PENDIENTE' && s.estado !== 'FINALIZADO',
-                        'bg-finalizado': s.estado === 'FINALIZADO'
-                      }">
+                <span class="badge rounded-pill fw-normal" [ngClass]="{
+                                    'bg-warning text-dark': s.estado === 'PENDIENTE',
+                                    'bg-danger': s.estado === 'OBSERVADA',
+                                    'bg-success': s.estado === 'FINALIZADA' || s.estado === 'APROBADA',
+                                    'bg-secondary': s.estado === 'CONCLUIDO_SIN_ACUERDO',
+                                    'bg-info text-dark': s.estado === 'ASIGNADO' || s.estado === 'PENDIENTE_FIRMA'
+                                  }">
                   {{s.estado}}
                 </span>
               </td>
               <td class="text-end pe-4">
-                <button class="btn-detail-viva" [routerLink]="['/director/detalle', s.id]">
-                  Ver Detalle
+                <button class="btn btn-warning btn-sm fw-bold px-3 ms-2" [routerLink]="['/director/detalle', s.id]">
+                  <i class="bi bi-eye-fill me-1"></i> Ver Detalle
                 </button>
               </td>
             </tr>
-            <tr *ngIf="solicitudesFiltradas.length === 0">
+            <tr *ngIf="solicitudesFiltradas.length === 0 && !isLoading">
               <td colspan="7" class="text-center text-secondary py-5">
                 <i class="bi bi-inbox fs-1 d-block mb-3 opacity-50"></i>
                 No se encontraron expedientes con este filtro.
+              </td>
+            </tr>
+            <tr *ngIf="isLoading">
+              <td colspan="7" class="text-center text-warning py-5">
+                <div class="spinner-border spinner-border-sm me-2"></div> Cargando expedientes...
               </td>
             </tr>
           </tbody>

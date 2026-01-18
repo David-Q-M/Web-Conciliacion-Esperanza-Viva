@@ -72,17 +72,23 @@
             <!-- DATA -->
             <ng-container *ngIf="!isLoading">
               <tr *ngFor="let c of casosCerrados">
-                <td class="ps-4 fw-bold text-white">{{ c.numeroExpediente }}</td>
-                <td class="text-white small">{{ c.materiaConciliable }}</td>
-                <td class="text-secondary small">{{ c.solicitante?.nombres }} {{ c.solicitante?.apellidos }}</td>
+                <td class="ps-4 fw-bold text-white">{{ c.solicitud?.numeroExpediente }}</td>
+                <td class="text-white small">{{ c.solicitud?.materiaConciliable }}</td>
+                <td class="text-secondary small">{{ c.solicitud?.solicitante?.nombres }} {{
+                  c.solicitud?.solicitante?.apellidos }}</td>
                 <td>
-                  <span class="badge-status" [ngClass]="c.estado === 'NO_ACUERDO' ? 'bg-danger' : 'bg-success'">
-                    {{ c.estado }}
+                  <span class="badge" [ngClass]="{
+                      'bg-success': c.resultadoTipo?.includes('Acuerdo'),
+                      'bg-danger': c.resultadoTipo?.includes('Falta') || c.resultadoTipo?.includes('Inasistencia'),
+                      'bg-warning text-dark': c.resultadoTipo === 'Suspension'
+                    }">
+                    {{ c.resultadoTipo || c.solicitud?.estado }}
                   </span>
                 </td>
                 <td class="text-end pe-4">
-                  <button class="btn btn-sm btn-outline-warning">
-                    <i class="bi bi-file-earmark-pdf me-1"></i> Ver Acta
+                  <button class="btn btn-sm btn-outline-warning" *ngIf="c.id"
+                    [routerLink]="['/conciliador/registro-audiencia', c.id]">
+                    <i class="bi bi-eye me-1"></i> Ver Detalle
                   </button>
                 </td>
               </tr>
