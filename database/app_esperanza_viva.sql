@@ -97,7 +97,7 @@ CREATE TABLE IF NOT EXISTS `auditoria` (
   CONSTRAINT `FK_auditoria_solicitud` FOREIGN KEY (`solicitud_id`) REFERENCES `solicitudes` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=323 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- Volcando datos para la tabla app_esperanza_viva.auditoria: ~61 rows (aproximadamente)
+-- Volcando datos para la tabla app_esperanza_viva.auditoria: ~73 rows (aproximadamente)
 INSERT INTO `auditoria` (`id`, `fecha_hora`, `usuario_nombre`, `accion`, `detalles`, `solicitud_id`) VALUES
 	(256, '2026-01-16 17:12:06', 'rut123', 'LOGIN', 'Ingreso exitoso', NULL),
 	(257, '2026-01-16 17:15:36', 'Conciliador', 'RESULTADO', 'Resultado registrado: Inasistencias', 11),
@@ -204,7 +204,7 @@ CREATE TABLE IF NOT EXISTS `personas` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- Volcando datos para la tabla app_esperanza_viva.personas: ~38 rows (aproximadamente)
+-- Volcando datos para la tabla app_esperanza_viva.personas: ~40 rows (aproximadamente)
 INSERT INTO `personas` (`id`, `nombres`, `apellidos`, `dni`, `correo_electronico`, `domicilio`, `telefono`) VALUES
 	(1, 'Carlos', 'Mendoza Riva', '10203040', 'carlos@mail.com', 'Av. Sol 450 - Cusco', '987123456'),
 	(2, 'Ana', 'Guzmán Loayza', '50607080', 'ana@mail.com', 'Calle Nueva 123 - Cusco', '955444333'),
@@ -285,7 +285,7 @@ CREATE TABLE IF NOT EXISTS `solicitudes` (
   CONSTRAINT `FK_solicitante` FOREIGN KEY (`solicitante_id`) REFERENCES `personas` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- Volcando datos para la tabla app_esperanza_viva.solicitudes: ~19 rows (aproximadamente)
+-- Volcando datos para la tabla app_esperanza_viva.solicitudes: ~20 rows (aproximadamente)
 INSERT INTO `solicitudes` (`id`, `numero_expediente`, `estado`, `materia_conciliable`, `sub_materia`, `fecha_presentacion`, `hechos`, `pretension`, `otras_personas_alimentario`, `observacion`, `modalidad`, `solicitante_id`, `invitado_id`, `apoderado_id`, `conciliador_id`, `notificador_id`, `secretario_id`, `dni_archivo_url`, `pruebas_archivo_url`, `firma_archivo_url`) VALUES
 	(1, 'EXP-2026-000001', 'APROBADO', 'FAMILIA', NULL, '2026-01-01 10:00:00.000000', 'Pensión de alimentos para menor.', '1000 soles mensuales.', NULL, '', 'Presencial', 1, 2, NULL, 3, NULL, NULL, NULL, NULL, NULL),
 	(2, 'EXP-2026-000002', 'DESIGNACION_ACEPTADA', 'CIVIL', NULL, '2026-01-01 11:30:00.000000', 'Incumplimiento de contrato de alquiler.', 'Desalojo y pago de meses.', NULL, 'Ha aceptado el caso con éxito.', 'Presencial', 3, 4, NULL, 3, NULL, NULL, NULL, NULL, NULL),
