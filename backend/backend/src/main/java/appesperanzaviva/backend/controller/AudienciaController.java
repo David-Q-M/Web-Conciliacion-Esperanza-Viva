@@ -12,7 +12,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/audiencias")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "https://lucid-consideration-production.up.railway.app")
 public class AudienciaController {
 
     @Autowired

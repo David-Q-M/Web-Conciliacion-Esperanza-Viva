@@ -20,7 +20,8 @@ import appesperanzaviva.backend.repository.ConfiguracionRepository;
 
 @RestController
 @RequestMapping("/api/configuracion")
-@CrossOrigin(origins = "http://localhost:4200", allowedHeaders = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
+@CrossOrigin(origins = "https://lucid-consideration-production.up.railway.app", allowedHeaders = "*", methods = {
+        RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE })
 public class ConfiguracionController {
 
     @Autowired
@@ -42,9 +43,11 @@ public class ConfiguracionController {
         return repository.save(config);
     }
 
-    // 🔹 NUEVO: Método para actualizar configuraciones existentes (Edición de Estados)
+    // 🔹 NUEVO: Método para actualizar configuraciones existentes (Edición de
+    // Estados)
     @PutMapping("/{id}")
-    public ResponseEntity<ConfiguracionSistema> actualizar(@PathVariable @NonNull Integer id, @RequestBody @NonNull ConfiguracionSistema configDetails) {
+    public ResponseEntity<ConfiguracionSistema> actualizar(@PathVariable @NonNull Integer id,
+            @RequestBody @NonNull ConfiguracionSistema configDetails) {
         return repository.findById(id).map(config -> {
             config.setClave(configDetails.getClave());
             config.setValor(configDetails.getValor());

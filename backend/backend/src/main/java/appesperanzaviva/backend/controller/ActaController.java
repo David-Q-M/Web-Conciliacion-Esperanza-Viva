@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/actas")
-@CrossOrigin(origins = "http://localhost:4200", allowedHeaders = "*")
+@CrossOrigin(origins = "https://lucid-consideration-production.up.railway.app", allowedHeaders = "*")
 public class ActaController {
 
     @Autowired

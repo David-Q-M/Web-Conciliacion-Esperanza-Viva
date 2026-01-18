@@ -13,7 +13,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/reportes")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "https://lucid-consideration-production.up.railway.app")
 public class ReporteController {
 
     @Autowired
@@ -31,11 +31,11 @@ public class ReporteController {
 
         // 1. Obtener estados configurados
         List<ConfiguracionSistema> estadosConfig = configRepo.findByCategoria("ESTADO");
-        
+
         // 2. Indicadores Clave
         long total = solicitudRepo.count();
         long activos = usuarioRepo.countByEstado("ACTIVO");
-        
+
         // Buscamos el valor para el estado final (ej. "FINALIZADO")
         String estadoFinal = estadosConfig.stream()
                 .filter(c -> c.getClave().contains("estado_3") || c.getValor().equalsIgnoreCase("FINALIZADO"))
@@ -43,10 +43,10 @@ public class ReporteController {
                 .findFirst().orElse("FINALIZADO");
 
         long finalizados = solicitudRepo.countByEstado(estadoFinal);
-        
+
         stats.put("totalSolicitudes", total);
         stats.put("personalActivo", activos);
-        
+
         // 🔹 Cálculo de Tasa de Finalización para las barras de progreso
         double tasa = (total > 0) ? Math.round(((double) finalizados / total) * 100.0) : 0.0;
         stats.put("tasaFinalizacion", tasa);
@@ -58,7 +58,7 @@ public class ReporteController {
             // Normalizamos: "PENDIENTE" -> "pendienteCount"
             stats.put(nombreEstado.toLowerCase() + "Count", conteo);
         }
-        
+
         stats.put("finalizadosContador", finalizados);
 
         return stats;
