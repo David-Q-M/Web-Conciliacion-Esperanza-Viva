@@ -162,7 +162,7 @@ export class ProgramarAudiencia implements OnInit {
       lugar: this.form.lugar
     };
 
-    this.http.post('http://localhost:8080/api/audiencias/programar', payload, { headers }).subscribe({
+    this.http.post('https://web-conciliacion-esperanza-viva-production.up.railway.app/api/audiencias/programar', payload, { headers }).subscribe({
       next: () => {
         alert(`✅ Audiencia Programada\nSe asignó al notificador: ${this.selectedNotificador?.nombreCompleto}`);
         this.router.navigate(['/conciliador/mis-casos']);

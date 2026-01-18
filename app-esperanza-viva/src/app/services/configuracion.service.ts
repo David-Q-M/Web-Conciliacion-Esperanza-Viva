@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ConfiguracionService {
-  private apiUrl = 'http://localhost:8080/api/configuracion';
+  private apiUrl = 'https://web-conciliacion-esperanza-viva-production.up.railway.app/api/configuracion';
 
   constructor(private http: HttpClient) {}
 

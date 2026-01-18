@@ -81,7 +81,7 @@ export class GeneracionActaAcuerdoTotal implements OnInit {
   cargarDatos() {
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    this.http.get<any>(`http://localhost:8080/api/audiencias/${this.audienciaId}`, { headers }).subscribe({
+    this.http.get<any>(`https://web-conciliacion-esperanza-viva-production.up.railway.app/api/audiencias/${this.audienciaId}`, { headers }).subscribe({
       next: (data) => {
         this.audiencia = data;
         this.datosActa.hechos = this.audiencia.solicitud?.hechos || '';
@@ -228,7 +228,7 @@ export class GeneracionActaAcuerdoTotal implements OnInit {
           resultadoDetalle: JSON.stringify(detalle)
         };
 
-        this.http.put(`http://localhost:8080/api/audiencias/${this.audienciaId}/resultado`, payload, { headers }).subscribe({
+        this.http.put(`https://web-conciliacion-esperanza-viva-production.up.railway.app/api/audiencias/${this.audienciaId}/resultado`, payload, { headers }).subscribe({
           next: () => {
             // 3. Download for user and navigate
             doc.save(`Formato_G_AcuerdoTotal_${numeroActa}.pdf`);

@@ -43,7 +43,7 @@ export class HistorialNotificador implements OnInit {
     buscarHistorial() {
         if (!this.currentUserId) return;
         this.isLoading = true;
-        this.http.get<any[]>(`http://localhost:8080/api/audiencias/notificador/${this.currentUserId}`).subscribe({
+        this.http.get<any[]>(`https://web-conciliacion-esperanza-viva-production.up.railway.app/api/audiencias/notificador/${this.currentUserId}`).subscribe({
             next: (res) => {
                 // 🔹 FIX: Mostrar todo el historial sin filtrar estrictamente por estado
                 this.historial = res;

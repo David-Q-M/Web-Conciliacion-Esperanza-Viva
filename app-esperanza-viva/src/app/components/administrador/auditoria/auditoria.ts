@@ -32,7 +32,7 @@ export class Auditoria implements OnInit {
   }
 
   cargarLogs() {
-    this.http.get<any[]>('http://localhost:8080/api/auditoria').subscribe({
+    this.http.get<any[]>('https://web-conciliacion-esperanza-viva-production.up.railway.app/api/auditoria').subscribe({
       next: (res) => {
         this.todosLogs = res;
         this.filtrarLogs();

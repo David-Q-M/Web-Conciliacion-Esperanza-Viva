@@ -37,7 +37,7 @@ export class BandejaPendientes implements OnInit {
 
     cargarPendientes() {
         this.isLoading = true;
-        this.http.get<any[]>('http://localhost:8080/api/solicitudes').subscribe({
+        this.http.get<any[]>('https://web-conciliacion-esperanza-viva-production.up.railway.app/api/solicitudes').subscribe({
             next: (res) => {
                 // Fetch all relevant lawyer requests
                 this.pendientesOriginales = res.filter(s =>

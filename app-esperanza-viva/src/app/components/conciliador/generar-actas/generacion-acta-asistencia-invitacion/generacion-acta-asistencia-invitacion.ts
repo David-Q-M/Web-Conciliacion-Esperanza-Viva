@@ -52,7 +52,7 @@ export class GeneracionActaAsistenciaInvitacion implements OnInit {
     cargarDatos() {
         const token = localStorage.getItem('token');
         const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-        this.http.get<any>(`http://localhost:8080/api/audiencias/${this.audienciaId}`, { headers }).subscribe({
+        this.http.get<any>(`https://web-conciliacion-esperanza-viva-production.up.railway.app/api/audiencias/${this.audienciaId}`, { headers }).subscribe({
             next: (data) => {
                 this.audiencia = data;
 
@@ -195,7 +195,7 @@ export class GeneracionActaAsistenciaInvitacion implements OnInit {
                     })
                 };
 
-                this.http.put(`http://localhost:8080/api/audiencias/${this.audienciaId}/resultado`, payload, { headers }).subscribe({
+                this.http.put(`https://web-conciliacion-esperanza-viva-production.up.railway.app/api/audiencias/${this.audienciaId}/resultado`, payload, { headers }).subscribe({
                     next: () => {
                         doc.save(`Formato_D_Constancia_${this.audiencia.solicitud?.numeroExpediente}.pdf`);
                         alert("✅ Proceso Finalizado. Se ha registrado la reprogramación y guardado la constancia.");

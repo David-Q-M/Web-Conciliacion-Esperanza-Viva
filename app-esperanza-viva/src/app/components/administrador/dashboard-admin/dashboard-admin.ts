@@ -121,7 +121,7 @@ export class DashboardAdmin implements OnInit {
   }
 
   cargarSesionesActivas() {
-    this.http.get<any[]>('http://localhost:8080/api/auditoria').subscribe({
+    this.http.get<any[]>('https://web-conciliacion-esperanza-viva-production.up.railway.app/api/auditoria').subscribe({
       next: (logs) => {
         // 1. Ordenar por fecha descendente (lo más reciente primero)
         // Usamos una función robusta por si la fecha viene como string o timestamp

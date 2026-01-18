@@ -492,7 +492,7 @@ export class DetalleDirector implements OnInit {
 
     // Constructing a hypothetical URL for now as per common practices if explicit URL isn't in JSON
     // If the user's backend is Spring Boot (likely), serving files might be at a specific endpoint.
-    const url = `http://localhost:8080/api/solicitudes/${id}/archivo/dni`;
+    const url = `https://web-conciliacion-esperanza-viva-production.up.railway.app/api/solicitudes/${id}/archivo/dni`;
 
     // Trigger download
     const link = document.createElement('a');

@@ -64,7 +64,7 @@ export class GeneracionActaFaltaAcuerdoPosicionesPropuesta implements OnInit {
     cargarDatos() {
         const token = localStorage.getItem('token');
         const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-        this.http.get<any>(`http://localhost:8080/api/audiencias/${this.audienciaId}`, { headers }).subscribe({
+        this.http.get<any>(`https://web-conciliacion-esperanza-viva-production.up.railway.app/api/audiencias/${this.audienciaId}`, { headers }).subscribe({
             next: (data) => {
                 this.audiencia = data;
                 this.datosActa.hechos = this.audiencia.solicitud?.hechos || '';
@@ -231,7 +231,7 @@ export class GeneracionActaFaltaAcuerdoPosicionesPropuesta implements OnInit {
                     resultadoDetalle: JSON.stringify(detalle)
                 };
 
-                this.http.put(`http://localhost:8080/api/audiencias/${this.audienciaId}/resultado`, payload, { headers }).subscribe({
+                this.http.put(`https://web-conciliacion-esperanza-viva-production.up.railway.app/api/audiencias/${this.audienciaId}/resultado`, payload, { headers }).subscribe({
                     next: () => {
                         doc.save(`Formato_L_FaltaDeAcuerdoPosiciones_${this.audiencia.solicitud?.numeroExpediente}.pdf`);
                         alert("✅ Proceso Finalizado. Acta Guardada.");

@@ -57,7 +57,7 @@ export class RegistroAudiencia implements OnInit {
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 
-    this.http.get(`http://localhost:8080/api/audiencias/${id}`, { headers }).subscribe({
+    this.http.get(`https://web-conciliacion-esperanza-viva-production.up.railway.app/api/audiencias/${id}`, { headers }).subscribe({
       next: (res: any) => {
         this.audiencia = res;
         // 🛡️ Sincronización crucial: Si en DB es null o Boolean, lo mapeamos a String para la UI
@@ -110,7 +110,7 @@ export class RegistroAudiencia implements OnInit {
       resultadoDetalle: this.subResultado || this.resultadoSeleccionado
     };
 
-    this.http.put(`http://localhost:8080/api/audiencias/${this.audiencia.id}/resultado`, payload, { headers }).subscribe({
+    this.http.put(`https://web-conciliacion-esperanza-viva-production.up.railway.app/api/audiencias/${this.audiencia.id}/resultado`, payload, { headers }).subscribe({
       next: () => {
         alert("Sesión registrada correctamente.");
 

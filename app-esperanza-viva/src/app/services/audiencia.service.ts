@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AudienciaService {
-  private url = 'http://localhost:8080/api/audiencias';
+  private url = 'https://web-conciliacion-esperanza-viva-production.up.railway.app/api/audiencias';
 
   constructor(private http: HttpClient) {}
 

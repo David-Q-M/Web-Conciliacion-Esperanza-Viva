@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 export class UsuarioService {
 
   // 🔹 SINCRONIZADO: Debe coincidir exactamente con el @RequestMapping del Backend
-  private apiUrl = 'http://localhost:8080/api/usuarios-sistema';
+  private apiUrl = 'https://web-conciliacion-esperanza-viva-production.up.railway.app/api/usuarios-sistema';
 
   constructor(private http: HttpClient) { }
 

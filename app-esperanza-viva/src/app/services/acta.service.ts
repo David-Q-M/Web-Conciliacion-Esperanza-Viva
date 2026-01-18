@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
     providedIn: 'root'
 })
 export class ActaService {
-    private apiUrl = 'http://localhost:8080/api/actas';
+    private apiUrl = 'https://web-conciliacion-esperanza-viva-production.up.railway.app/api/actas';
 
     constructor(private http: HttpClient) { }
 

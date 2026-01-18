@@ -33,7 +33,7 @@ export class RevisionActa implements OnInit {
     }
 
     cargarDetalle() {
-        this.http.get<any>(`http://localhost:8080/api/solicitudes/${this.idSolicitud}`).subscribe({
+        this.http.get<any>(`https://web-conciliacion-esperanza-viva-production.up.railway.app/api/solicitudes/${this.idSolicitud}`).subscribe({
             next: (res) => this.expediente = res,
             error: (err) => console.error("Error cargando expediente", err)
         });
@@ -113,7 +113,7 @@ export class RevisionActa implements OnInit {
     actualizarEstado(nuevoEstado: string) {
         if (!this.idSolicitud) return;
 
-        this.http.put(`http://localhost:8080/api/solicitudes/${this.idSolicitud}/estado`, {
+        this.http.put(`https://web-conciliacion-esperanza-viva-production.up.railway.app/api/solicitudes/${this.idSolicitud}/estado`, {
             estado: nuevoEstado,
             observacion: nuevoEstado === 'OBSERVADA' ? 'Observación realizada por abogado' : 'Aprobado legalmente'
         }).subscribe({

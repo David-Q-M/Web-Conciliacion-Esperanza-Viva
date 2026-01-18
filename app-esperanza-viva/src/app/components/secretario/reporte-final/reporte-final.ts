@@ -44,7 +44,7 @@ export class ReporteFinal implements OnInit {
         }
 
         this.isLoading = true;
-        this.http.get<any[]>('http://localhost:8080/api/solicitudes').subscribe({
+        this.http.get<any[]>('https://web-conciliacion-esperanza-viva-production.up.railway.app/api/solicitudes').subscribe({
             next: (data) => {
                 // Filter by date
                 this.rawSolicitudes = data.filter(s => {

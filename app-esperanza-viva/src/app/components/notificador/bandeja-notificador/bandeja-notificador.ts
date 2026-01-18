@@ -42,7 +42,7 @@ export class BandejaNotificador implements OnInit {
     cargarPendientes(userId: number) {
         this.isLoading = true;
         // 🔹 FETCH FROM AUDIENCIAS FOR SPECIFIC NOTIFIER
-        this.http.get<any[]>(`http://localhost:8080/api/audiencias/notificador/${userId}`).subscribe({
+        this.http.get<any[]>(`https://web-conciliacion-esperanza-viva-production.up.railway.app/api/audiencias/notificador/${userId}`).subscribe({
             next: (res) => {
                 console.log("🔔 NOTIFICACIONES:", res);
 
