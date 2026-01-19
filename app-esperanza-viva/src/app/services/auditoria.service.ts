@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 export class AuditoriaService {
   private apiUrl = 'https://web-conciliacion-esperanza-viva-production.up.railway.app/api/auditoria';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   obtenerLogs(): Observable<any[]> {
     return this.http.get<any[]>(this.apiUrl);

@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 export class AudienciaService {
   private url = 'https://web-conciliacion-esperanza-viva-production.up.railway.app/api/audiencias';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   // 🛡️ Genera las cabeceras con el token para evitar el Error 403
   private getHeaders() {

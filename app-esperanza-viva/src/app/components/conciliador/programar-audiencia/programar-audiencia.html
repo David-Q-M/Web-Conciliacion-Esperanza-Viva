@@ -44,157 +44,103 @@
       Generar Invitación (Formato C)
     </h5>
 
-    <!-- SECCION PRINCIPAL: DATOS Y VERIFICACION -->
     <div class="row g-4 mb-4">
-      <!-- COLUMNA IZQUIERDA: DATOS DE AUDIENCIA -->
       <div class="col-lg-6">
         <div class="viva-card">
           <span class="card-header-viva">
             <i class="bi bi-calendar-event me-2"></i> Datos de la Audiencia
           </span>
-
           <div class="row mb-4">
             <div class="col-md-6">
               <label class="viva-label">Fecha de Audiencia</label>
-              <input type="date" class="viva-input" [(ngModel)]="form.fechaAudiencia">
+              <input type="date" class="viva-input" [(ngModel)]="form.fechaAudiencia" [disabled]="isYaProgramado">
             </div>
             <div class="col-md-6">
               <label class="viva-label">Hora (10 min tolerancia)</label>
-              <input type="time" class="viva-input" [(ngModel)]="form.horaAudiencia">
+              <input type="time" class="viva-input" [(ngModel)]="form.horaAudiencia" [disabled]="isYaProgramado">
             </div>
           </div>
-
           <div>
             <label class="viva-label">Lugar de la Audiencia</label>
-            <input type="text" class="viva-input" [(ngModel)]="form.lugar"
-              placeholder="Dirección del Centro de Conciliación">
+            <input type="text" class="viva-input" [(ngModel)]="form.lugar" [disabled]="isYaProgramado">
           </div>
         </div>
       </div>
 
-      <!-- COLUMNA DERECHA: VERIFICACION DE PARTES -->
       <div class="col-lg-6">
         <div class="viva-card">
           <span class="card-header-viva">
             <i class="bi bi-people-fill me-2"></i> Verificación de Partes
           </span>
-
           <div class="person-card-container">
-            <!-- SOLICITANTE -->
-            <div class="person-card mb-4" *ngIf="expediente.solicitante; else noSolicitante">
-              <div class="person-icon-box">
-                <i class="bi bi-person-badge-fill"></i>
-              </div>
+            <div class="person-card mb-4" *ngIf="expediente.solicitante">
               <div class="person-info">
                 <span class="person-label">SOLICITANTE</span>
                 <h4 class="person-name">{{expediente.solicitante.nombres}} {{expediente.solicitante.apellidos}}</h4>
-                <div class="person-address">
-                  <i class="bi bi-geo-alt-fill me-2 text-warning"></i>
-                  {{expediente.solicitante.domicilio || 'Domicilio no registrado'}}
-                </div>
               </div>
             </div>
-            <ng-template #noSolicitante>
-              <div class="person-card empty mb-4">
-                <i class="bi bi-person-slash"></i>
-                <span>Solicitante no registrado</span>
-              </div>
-            </ng-template>
-
-            <!-- INVITADO -->
-            <div class="person-card" *ngIf="expediente.invitado; else noInvitado">
-              <div class="person-icon-box invitado">
-                <i class="bi bi-person-badge"></i>
-              </div>
+            <div class="person-card" *ngIf="expediente.invitado">
               <div class="person-info">
                 <span class="person-label">INVITADO</span>
                 <h4 class="person-name">{{expediente.invitado.nombres}} {{expediente.invitado.apellidos}}</h4>
-                <div class="person-address">
-                  <i class="bi bi-geo-alt-fill me-2 text-warning"></i>
-                  {{expediente.invitado.domicilio || 'Domicilio no registrado'}}
-                </div>
               </div>
             </div>
-            <ng-template #noInvitado>
-              <div class="person-card empty">
-                <i class="bi bi-person-slash"></i>
-                <span>Invitado no registrado</span>
-              </div>
-            </ng-template>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- SECCION INFERIOR: SELECCION DE NOTIFICADOR (DROPDOWN) -->
     <h5 class="text-white mb-4 fw-bold text-uppercase ps-1 mt-5"
       style="border-left: 4px solid #ffc107; padding-left: 15px;">
       Seleccione un Notificador
     </h5>
 
     <div class="viva-card mb-5 notificador-card-compact">
-      <div class="notificador-dropdown-container">
-
-        <!-- Trigger / Search Input -->
-        <div class="notificador-trigger" (click)="toggleNotificadores()">
-          <div class="d-flex align-items-center justify-content-between w-100">
-            <div class="d-flex align-items-center text-white">
-              <i class="bi bi-search me-3 text-warning"></i>
-              <span *ngIf="selectedNotificador" class="fw-bold me-2 text-warning">{{ selectedNotificador.nombreCompleto
-                }}</span>
-              <span *ngIf="!selectedNotificador" class="text-secondary">Buscar o seleccionar notificador...</span>
-            </div>
-            <i class="bi bi-chevron-down text-secondary transition-icon" [class.rotate-180]="showNotificadoresList"></i>
+      <div class="notificador-trigger" (click)="!isYaProgramado && toggleNotificadores()">
+        <div class="d-flex align-items-center justify-content-between w-100">
+          <div class="d-flex align-items-center text-white">
+            <i class="bi bi-search me-3 text-warning"></i>
+            <span *ngIf="selectedNotificador" class="fw-bold me-2 text-warning">{{ selectedNotificador.nombreCompleto
+              }}</span>
+            <span *ngIf="!selectedNotificador" class="text-secondary">Buscar o seleccionar notificador...</span>
           </div>
+          <i class="bi bi-chevron-down text-secondary" [class.rotate-180]="showNotificadoresList"></i>
         </div>
+      </div>
 
-        <!-- Collapsible List -->
-        <div class="notificador-dropdown-list animate__animated animate__fadeIn" *ngIf="showNotificadoresList">
-          <div class="p-3 border-bottom border-secondary bg-black">
-            <input type="text" class="viva-input" placeholder="Escriba para filtrar..."
-              (click)="$event.stopPropagation()">
-          </div>
-
-          <div class="custom-scroll" style="max-height: 250px; overflow-y: auto;">
-            <div *ngFor="let notif of notificadores" class="notificador-item-dropdown"
-              (click)="seleccionarNotificador(notif)">
-
-              <div class="d-flex align-items-center gap-3">
-                <div class="notificador-avatar-small">
-                  <i class="bi bi-person-fill"></i>
-                </div>
-                <div class="notificador-info">
-                  <h6 class="mb-0 text-white">{{ notif.nombreCompleto }}</h6>
-                  <span class="small text-muted">ID: {{notif.id}}</span>
-                </div>
-              </div>
-
-              <span class="status-badge" [ngClass]="{
-                      'disponible': notif.estado === 'Disponible',
-                      'ocupado': notif.estado === 'Ocupado'
-                    }">
-                {{ notif.estado || 'Disponible' }}
-              </span>
-            </div>
-          </div>
+      <div class="notificador-dropdown-list" *ngIf="showNotificadoresList">
+        <div *ngFor="let notif of notificadores" class="notificador-item-dropdown"
+          (click)="seleccionarNotificador(notif)">
+          <h6 class="mb-0 text-white">{{ notif.nombreCompleto }}</h6>
         </div>
-
       </div>
     </div>
 
-    <!-- BOTONES DE ACCION -->
     <div class="action-buttons">
-      <button class="btn-viva btn-word" (click)="generarWord()">
-        <i class="bi bi-file-word-fill fs-5"></i> Descargar Word
+      <div class="d-flex gap-2">
+        <button class="btn-viva btn-pdf" (click)="generarInvitacion()">
+          <i class="bi bi-file-pdf-fill fs-5"></i> Descargar PDF
+        </button>
+        <button class="btn-viva btn-word" (click)="generarWord()"
+          style="background-color: #0d6efd; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; transition: all 0.3s ease;">
+          <i class="bi bi-file-word-fill fs-5"></i> Descargar Word
+        </button>
+      </div>
+
+      <button *ngIf="!isYaProgramado" class="btn-viva btn-save ms-auto" (click)="guardarYSalir()"
+        [disabled]="!selectedNotificador || isLoading">
+        <i class="bi bi-check-circle-fill fs-5"></i> {{ isLoading ? 'Procesando...' : 'Guardar Audiencia' }}
       </button>
 
-      <button class="btn-viva btn-pdf" (click)="generarInvitacion()">
-        <i class="bi bi-file-pdf-fill fs-5"></i> Descargar PDF
+      <button *ngIf="isYaProgramado" class="btn btn-success fw-bold px-4 ms-auto" disabled style="opacity: 1;">
+        <i class="bi bi-shield-check me-2"></i> AUDIENCIA YA REGISTRADA
       </button>
 
-      <button class="btn-viva btn-save" (click)="guardarYSalir()">
-        <i class="bi bi-check-circle-fill fs-5"></i> Guardar Audiencia
-      </button>
+      <div *ngIf="!selectedNotificador && !isYaProgramado" class="mt-2 text-end w-100">
+        <small class="text-danger fw-bold bg-black px-2 py-1 rounded border border-danger">
+          <i class="bi bi-exclamation-circle-fill me-1"></i> Notificador Obligatorio
+        </small>
+      </div>
     </div>
   </main>
 </div>

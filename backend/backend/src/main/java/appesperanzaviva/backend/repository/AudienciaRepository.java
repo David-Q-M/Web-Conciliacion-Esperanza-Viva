@@ -13,11 +13,11 @@ public interface AudienciaRepository extends JpaRepository<Audiencia, Long> {
 
         List<Audiencia> findBySolicitudConciliadorId(Integer id);
 
-        // 🔹 NUEVO: Buscar audiencias para un notificador específico (Query Explícito +
-        // Eager Load)
+        // 🔹 NUEVO: Buscar audiencias para un notificador específico (Sin filtrar
+        // estado para ver historial)
         @org.springframework.data.jpa.repository.Query("SELECT a FROM Audiencia a JOIN FETCH a.solicitud s LEFT JOIN FETCH s.solicitante LEFT JOIN FETCH s.invitado WHERE s.notificador.id = :id")
         List<Audiencia> findBySolicitudNotificadorId(
-                        @org.springframework.web.bind.annotation.PathVariable("id") Integer id);
+                        @Param("id") Integer id);
 
         // 🛡️ VALIDACIÓN FECHAS: Contar si ya existe una audiencia para este
         // conciliador en esa fecha y hora

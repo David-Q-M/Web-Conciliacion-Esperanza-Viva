@@ -206,4 +206,20 @@ public class SolicitudController {
             @PathVariable String estado) {
         return ResponseEntity.ok(service.listarPorConciliadorYEstado(id, estado));
     }
+
+    // 🔹 NUEVO: Descargar archivo
+    @GetMapping("/{id}/archivo/{tipo}")
+    public ResponseEntity<org.springframework.core.io.Resource> descargarArchivo(@PathVariable Long id,
+            @PathVariable String tipo) {
+        try {
+            org.springframework.core.io.Resource file = service.obtenerArchivo(id, tipo);
+            return ResponseEntity.ok()
+                    .header(org.springframework.http.HttpHeaders.CONTENT_DISPOSITION,
+                            "attachment; filename=\"" + file.getFilename() + "\"")
+                    .body(file);
+        } catch (Exception e) {
+            logger.error("Error descargando archivo", e);
+            return ResponseEntity.notFound().build();
+        }
+    }
 }

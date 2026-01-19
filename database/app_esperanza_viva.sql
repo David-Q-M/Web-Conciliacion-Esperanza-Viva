@@ -32,14 +32,16 @@ CREATE TABLE IF NOT EXISTS `actas` (
   UNIQUE KEY `UK_audiencia_acta` (`audiencia_id`),
   UNIQUE KEY `UK_numero_acta` (`numero_acta`),
   CONSTRAINT `FK_acta_audiencia` FOREIGN KEY (`audiencia_id`) REFERENCES `audiencias` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- Volcando datos para la tabla app_esperanza_viva.actas: ~4 rows (aproximadamente)
+-- Volcando datos para la tabla app_esperanza_viva.actas: ~6 rows (aproximadamente)
 INSERT INTO `actas` (`id`, `archivo_url`, `fecha_generacion`, `numero_acta`, `tipo_acta`, `tipo_resultado`, `audiencia_id`) VALUES
 	(1, 'http://localhost:8080/uploads/ACTA_15_0e7c0503-8068-45ef-9e08-65982cd6bf35.pdf', '2026-01-16 17:23:19.367865', 'ACTA-ACUERDO-PARCIAL-SUSTENTO-15-1768669328316', 'ACUERDO_PARCIAL_SUSTENTO', 'INASISTENCIA', 15),
 	(2, 'http://localhost:8080/uploads/ACTA_DEMO_ABOGADO.pdf', '2026-01-17 11:49:28.000000', 'ACTA-DEMO-0013', 'ACUERDO_TOTAL', 'ACUERDO', 3),
 	(3, 'http://localhost:8080/uploads/ACTA_5_e088de27-1ed7-4a62-a3a1-187cb7881dd5.pdf', '2026-01-17 12:01:04.197879', 'ACTA-INASISTENCIA-AMBAS-5-1768704440385', 'INASISTENCIA_AMBAS_PARTES', NULL, 5),
-	(4, 'http://localhost:8080/uploads/ACTA_12_e97e64ee-1d3b-47ce-b280-9af3c06fb3fd.pdf', '2026-01-17 17:57:48.429210', 'ACTA-FALTA-ACUERDO-PROP-12-1768690667647', 'FALTA_ACUERDO_POSICIONES', NULL, 12);
+	(4, 'http://localhost:8080/uploads/ACTA_12_e97e64ee-1d3b-47ce-b280-9af3c06fb3fd.pdf', '2026-01-17 17:57:48.429210', 'ACTA-FALTA-ACUERDO-PROP-12-1768690667647', 'FALTA_ACUERDO_POSICIONES', NULL, 12),
+	(5, 'http://localhost:8080/uploads/ACTA_2_9634f9e7-6489-4dd0-bf68-3c515af3aa36.pdf', '2026-01-19 01:36:54.544039', 'ACTA-INASISTENCIA-2-1768804614404', 'INASISTENCIA_UNA_PARTE', NULL, 2),
+	(6, 'http://localhost:8080/uploads/ACTA_18_36382c0e-c329-4f4b-b5ac-bb19a22982c9.pdf', '2026-01-19 01:37:55.285288', 'ACTA-18-2026', 'ACUERDO_TOTAL', NULL, 18);
 
 -- Volcando estructura para tabla app_esperanza_viva.audiencias
 CREATE TABLE IF NOT EXISTS `audiencias` (
@@ -58,18 +60,25 @@ CREATE TABLE IF NOT EXISTS `audiencias` (
   UNIQUE KEY `UK_solicitud` (`solicitud_id`),
   KEY `FK_audiencia_solicitud` (`solicitud_id`),
   KEY `FK_audiencia_abogado` (`abogado_verificador_id`),
+  CONSTRAINT `FK4193evg6yyic9afww6utgy1ay` FOREIGN KEY (`solicitud_id`) REFERENCES `solicitudes` (`id`),
   CONSTRAINT `FK_audiencia_abogado` FOREIGN KEY (`abogado_verificador_id`) REFERENCES `usuarios_sistema` (`id`),
-  CONSTRAINT `FK_audiencia_solicitud` FOREIGN KEY (`solicitud_id`) REFERENCES `solicitudes` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+  CONSTRAINT `FK_audiencia_solicitud` FOREIGN KEY (`solicitud_id`) REFERENCES `solicitudes` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `FKbgmiulxndhl6yndvwjgqulc4v` FOREIGN KEY (`abogado_verificador_id`) REFERENCES `usuarios_sistema` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- Volcando datos para la tabla app_esperanza_viva.audiencias: ~6 rows (aproximadamente)
+-- Volcando datos para la tabla app_esperanza_viva.audiencias: ~10 rows (aproximadamente)
 INSERT INTO `audiencias` (`id`, `solicitud_id`, `fecha_audiencia`, `hora_audiencia`, `lugar`, `asistencia_solicitante`, `asistencia_invitado`, `resultado_tipo`, `resultado_detalle`, `abogado_verificador_id`, `fecha_registro`) VALUES
-	(2, 12, '2026-01-10', '11:00:00', 'Sala B', '0', '0', NULL, NULL, NULL, '2026-01-07 23:56:04'),
+	(2, 12, '2026-01-10', '11:00:00', 'Sala B', NULL, NULL, 'Inasistencia de una de las partes', '{"hechos":"Resolución de contrato.","controversia":"CIVIL","fechaPrimeraCitacion":"2026-01-19","horaPrimeraCitacion":"10:00","fechaSegundaCitacion":"2026-01-19","horaSegundaCitacion":"10:00","parteNoAsistio":"Javier Flores Gil Nadia Ríos Franco","solicitanteDireccion":"Calle Hospital 12","invitadoDireccion":"Av. Tullumayo 88","lugarAudiencia":"Av. Sol 450 - Cusco","horaVerificacion":"01:36 a. m.","actaUrl":"http://localhost:8080/uploads/ACTA_2_9634f9e7-6489-4dd0-bf68-3c515af3aa36.pdf"}', NULL, '2026-01-07 23:56:04'),
 	(3, 13, '2026-01-11', '10:00:00', 'Sala Virtual', '0', '0', NULL, NULL, NULL, '2026-01-07 23:56:04'),
 	(4, 14, '2026-01-12', '15:00:00', 'Sala A', '0', '0', NULL, NULL, NULL, '2026-01-07 23:56:04'),
 	(5, 15, '2026-01-13', '10:30:00', 'Sala B', NULL, NULL, 'Inasistencia de ambas partes', '{"hechos":"Exoneración de alimentos.","controversia":"FAMILIA","fechaPrimeraCitacion":"2026-01-18","horaPrimeraCitacion":"10:00","fechaSegundaCitacion":"2026-01-18","horaSegundaCitacion":"10:00","solicitanteDireccion":"Jr. San Juan 15","invitadoDireccion":"Av. Pardo 600","lugarAudiencia":"Av. Sol 450 - Cusco","horaVerificacion":"09:47 p. m.","actaUrl":"http://localhost:8080/uploads/ACTA_5_e088de27-1ed7-4a62-a3a1-187cb7881dd5.pdf"}', NULL, '2026-01-07 23:56:04'),
 	(12, 16, '2026-01-20', '11:22:00', 'Av. Sol 450 - Cusco (Sede Principal)', NULL, NULL, 'Falta de Acuerdo con Posiciones', '{"hechos":"incumplimiento de trabajo de jordana en la obra, y sin justificacion","controversia":"no quiero cumplir con el contrato","motivoFaltaAcuerdo":"nadie esta de acuerdo","posicionSolicitante":"quiero que si o si me cumpla","posicionInvitado":"no no quiero por que no hay plata","propuestaSolicitante":"no quiero que se cumpla","propuestaInvitado":"para que si todo es igual","lugarAudiencia":"Av. Sol 450 - Cusco","solicitanteDireccion":"av. cahuide sn","invitadoDireccion":"av. Las Intimpas","conciliadorDni":"12233333","conciliadorRegistro":"12323","conciliadorEspecialidad":"","actaUrl":"http://localhost:8080/uploads/ACTA_12_e97e64ee-1d3b-47ce-b280-9af3c06fb3fd.pdf"}', NULL, '2026-01-09 23:21:48'),
-	(15, 11, '2026-01-15', '20:17:00', 'Av. Sol 450 - Cusco (Sede Principal)', NULL, NULL, 'Acuerdo Parcial con Sustento de Reconvencion', '{"hechos":"Reducción de alimentos.","controversia":"","puntosSinAcuerdo":"","abogadoVerificador":"","lugarAudiencia":"Av. Sol 450 - Cusco","solicitanteDireccion":"Jr. Grau 550","invitadoDireccion":"Urb. Santa Rosa","conciliadorDni":"12233333","conciliadorRegistro":"12323","conciliadorEspecialidad":"","hechosInvitado":"","controversiaInvitado":"","acuerdos":[{"titulo":"PRIMERO","contenido":""},{"titulo":"SEGUNDO","contenido":""}],"actaUrl":"http://localhost:8080/uploads/ACTA_15_0e7c0503-8068-45ef-9e08-65982cd6bf35.pdf"}', NULL, '2026-01-14 18:17:24');
+	(15, 11, '2026-01-15', '20:17:00', 'Av. Sol 450 - Cusco (Sede Principal)', NULL, NULL, 'Acuerdo Parcial con Sustento de Reconvencion', '{"hechos":"Reducción de alimentos.","controversia":"","puntosSinAcuerdo":"","abogadoVerificador":"","lugarAudiencia":"Av. Sol 450 - Cusco","solicitanteDireccion":"Jr. Grau 550","invitadoDireccion":"Urb. Santa Rosa","conciliadorDni":"12233333","conciliadorRegistro":"12323","conciliadorEspecialidad":"","hechosInvitado":"","controversiaInvitado":"","acuerdos":[{"titulo":"PRIMERO","contenido":""},{"titulo":"SEGUNDO","contenido":""}],"actaUrl":"http://localhost:8080/uploads/ACTA_15_0e7c0503-8068-45ef-9e08-65982cd6bf35.pdf"}', NULL, '2026-01-14 18:17:24'),
+	(18, 2, '2026-01-22', '02:13:00', 'Av. Sol 450 - Cusco (Sede Principal)', NULL, NULL, 'Acuerdo Total', '{"hechos":"Incumplimiento de contrato de alquiler.","controversia":"si pagare","abogadoVerificador":"davicito","lugarAudiencia":"Av. Sol 450 - Cusco","solicitanteDireccion":"Urb. Los Pinos A-12","invitadoDireccion":"Jr. Comercio 500","acuerdos":[{"titulo":"PRIMERO","contenido":"si todo esta bien"},{"titulo":"SEGUNDO","contenido":""}],"actaUrl":"http://localhost:8080/uploads/ACTA_18_36382c0e-c329-4f4b-b5ac-bb19a22982c9.pdf"}', NULL, '2026-01-19 01:13:27'),
+	(19, 6, '2026-01-22', '01:25:00', 'Av. Sol 450 - Cusco (Sede Principal)', 'No asistio', 'No asistio', 'Inasistencias', 'Asistencia e invitacion para conciliar', NULL, '2026-01-19 01:23:42'),
+	(21, 7, '2026-01-20', '04:39:00', 'Av. Sol 450 - Cusco (Sede Principal)', NULL, NULL, NULL, NULL, NULL, '2026-01-19 01:39:19'),
+	(22, 5, '2026-01-20', '05:51:00', 'Av. Sol 450 - Cusco (Sede Principal)', NULL, NULL, NULL, NULL, NULL, '2026-01-19 01:52:00'),
+	(23, 8, '2026-01-20', '04:36:00', 'Av. Sol 450 - Cusco (Sede Principal)', NULL, NULL, NULL, NULL, NULL, '2026-01-19 02:36:26');
 
 -- Volcando estructura para tabla app_esperanza_viva.audiencia_clausulas
 CREATE TABLE IF NOT EXISTS `audiencia_clausulas` (
@@ -95,9 +104,9 @@ CREATE TABLE IF NOT EXISTS `auditoria` (
   PRIMARY KEY (`id`),
   KEY `FK_auditoria_solicitud` (`solicitud_id`),
   CONSTRAINT `FK_auditoria_solicitud` FOREIGN KEY (`solicitud_id`) REFERENCES `solicitudes` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=323 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=383 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- Volcando datos para la tabla app_esperanza_viva.auditoria: ~73 rows (aproximadamente)
+-- Volcando datos para la tabla app_esperanza_viva.auditoria: ~108 rows (aproximadamente)
 INSERT INTO `auditoria` (`id`, `fecha_hora`, `usuario_nombre`, `accion`, `detalles`, `solicitud_id`) VALUES
 	(256, '2026-01-16 17:12:06', 'rut123', 'LOGIN', 'Ingreso exitoso', NULL),
 	(257, '2026-01-16 17:15:36', 'Conciliador', 'RESULTADO', 'Resultado registrado: Inasistencias', 11),
@@ -171,7 +180,55 @@ INSERT INTO `auditoria` (`id`, `fecha_hora`, `usuario_nombre`, `accion`, `detall
 	(331, '2026-01-17 23:09:50', 'jamileth', 'LOGIN', 'Ingreso exitoso', NULL),
 	(332, '2026-01-17 23:14:55', 'jamileth', 'LOGIN', 'Ingreso exitoso', NULL),
 	(333, '2026-01-17 23:23:46', 'davico', 'LOGIN', 'Ingreso exitoso', NULL),
-	(334, '2026-01-17 23:46:36', 'Usuario Web', 'REGISTRO', 'Nueva solicitud ingresada: EXP-2025-000020', 20);
+	(334, '2026-01-17 23:46:36', 'Usuario Web', 'REGISTRO', 'Nueva solicitud ingresada: EXP-2025-000020', 20),
+	(335, '2026-01-18 23:42:05', 'david', 'LOGIN', 'Ingreso exitoso', NULL),
+	(336, '2026-01-18 23:42:32', 'rut123', 'LOGIN', 'Ingreso exitoso', NULL),
+	(337, '2026-01-19 00:10:47', 'jamileth', 'LOGIN', 'Ingreso exitoso', NULL),
+	(338, '2026-01-19 00:22:18', 'jamileth', 'LOGIN', 'Ingreso exitoso', NULL),
+	(339, '2026-01-19 00:22:44', 'rut123', 'LOGIN', 'Ingreso exitoso', NULL),
+	(340, '2026-01-19 00:23:37', 'Director/Sistema', 'ACTUALIZACION', 'Estado actualizado a DESIGNACION_ACEPTADA (Obs: Ha aceptado el caso con éxito.)', 6),
+	(341, '2026-01-19 00:31:11', 'davico', 'LOGIN', 'Ingreso exitoso', NULL),
+	(342, '2026-01-19 00:31:29', 'davicito', 'LOGIN', 'Ingreso exitoso', NULL),
+	(343, '2026-01-19 00:31:43', 'Director/Sistema', 'ACTUALIZACION', 'Estado actualizado a FINALIZADA (Obs: Aprobado legalmente)', 15),
+	(344, '2026-01-19 00:32:01', 'rut123', 'LOGIN', 'Ingreso exitoso', NULL),
+	(345, '2026-01-19 01:13:27', 'Conciliador/Director', 'PROGRAMACION', 'Audiencia programada para el 2026-01-22', 2),
+	(346, '2026-01-19 01:14:09', 'jamileth', 'LOGIN', 'Ingreso exitoso', NULL),
+	(347, '2026-01-19 01:18:03', 'rut123', 'LOGIN', 'Ingreso exitoso', NULL),
+	(348, '2026-01-19 01:23:42', 'Conciliador/Director', 'PROGRAMACION', 'Audiencia programada para el 2026-01-22', 6),
+	(349, '2026-01-19 01:24:22', 'jamileth', 'LOGIN', 'Ingreso exitoso', NULL),
+	(350, '2026-01-19 01:35:18', 'Director/Sistema', 'ACTUALIZACION', 'Estado actualizado a NOTIFICADO', 2),
+	(351, '2026-01-19 01:35:37', 'rut123', 'LOGIN', 'Ingreso exitoso', NULL),
+	(352, '2026-01-19 01:36:47', 'Conciliador', 'RESULTADO', 'Resultado registrado: Inasistencias', 12),
+	(353, '2026-01-19 01:36:54', 'Conciliador', 'RESULTADO', 'Resultado registrado: Inasistencia de una de las partes', 12),
+	(354, '2026-01-19 01:37:26', 'Conciliador', 'RESULTADO', 'Resultado registrado: Suspension', 2),
+	(355, '2026-01-19 01:37:55', 'Conciliador', 'RESULTADO', 'Resultado registrado: Inasistencia/Suspensión', 2),
+	(356, '2026-01-19 01:38:28', 'davicito', 'LOGIN', 'Ingreso exitoso', NULL),
+	(357, '2026-01-19 01:38:34', 'Director/Sistema', 'ACTUALIZACION', 'Estado actualizado a FINALIZADA (Obs: Aprobado legalmente)', 16),
+	(358, '2026-01-19 01:38:45', 'rut123', 'LOGIN', 'Ingreso exitoso', NULL),
+	(359, '2026-01-19 01:39:09', 'Director/Sistema', 'ACTUALIZACION', 'Estado actualizado a DESIGNACION_ACEPTADA (Obs: Ha aceptado el caso con éxito.)', 7),
+	(360, '2026-01-19 01:39:19', 'Conciliador/Director', 'PROGRAMACION', 'Audiencia programada para el 2026-01-20', 7),
+	(361, '2026-01-19 01:39:32', 'jamileth', 'LOGIN', 'Ingreso exitoso', NULL),
+	(362, '2026-01-19 01:40:29', 'Director/Sistema', 'ACTUALIZACION', 'Estado actualizado a NOTIFICADO', 6),
+	(363, '2026-01-19 01:40:53', 'rut123', 'LOGIN', 'Ingreso exitoso', NULL),
+	(364, '2026-01-19 01:43:32', 'Conciliador', 'RESULTADO', 'Resultado registrado: Inasistencias', 6),
+	(365, '2026-01-19 01:50:09', 'Conciliador', 'RESULTADO', 'Resultado registrado: Acuerdo Total', 2),
+	(366, '2026-01-19 01:50:42', 'Conciliador', 'RESULTADO', 'Resultado registrado: Acuerdo Total', 2),
+	(367, '2026-01-19 01:51:09', 'davicito', 'LOGIN', 'Ingreso exitoso', NULL),
+	(368, '2026-01-19 01:51:39', 'rut123', 'LOGIN', 'Ingreso exitoso', NULL),
+	(369, '2026-01-19 01:52:00', 'Conciliador/Director', 'PROGRAMACION', 'Audiencia programada para el 2026-01-20', 5),
+	(370, '2026-01-19 01:55:35', 'Conciliador', 'RESULTADO', 'Resultado registrado: Acuerdo Total', 2),
+	(371, '2026-01-19 01:55:54', 'Conciliador', 'RESULTADO', 'Resultado registrado: Acuerdo Total', 2),
+	(372, '2026-01-19 01:56:13', 'davicito', 'LOGIN', 'Ingreso exitoso', NULL),
+	(373, '2026-01-19 01:56:19', 'Director/Sistema', 'ACTUALIZACION', 'Estado actualizado a FINALIZADA (Obs: Aprobado legalmente)', 2),
+	(374, '2026-01-19 01:56:38', 'rut123', 'LOGIN', 'Ingreso exitoso', NULL),
+	(375, '2026-01-19 02:01:42', 'director', 'LOGIN', 'Ingreso exitoso', NULL),
+	(376, '2026-01-19 02:02:17', 'Director/Sistema', 'ACTUALIZACION', 'Estado actualizado a APROBADO (Obs: )', 17),
+	(377, '2026-01-19 02:05:44', 'Director/Sistema', 'ACTUALIZACION', 'Estado actualizado a APROBADO (Obs: )', 3),
+	(378, '2026-01-19 02:20:53', 'Director/Sistema', 'ACTUALIZACION', 'Estado actualizado a APROBADO (Obs: )', 4),
+	(379, '2026-01-19 02:21:09', 'Director/Sistema', 'ACTUALIZACION', 'Estado actualizado a APROBADO (Obs: )', 19),
+	(380, '2026-01-19 02:30:36', 'rut123', 'LOGIN', 'Ingreso exitoso', NULL),
+	(381, '2026-01-19 02:30:43', 'Director/Sistema', 'ACTUALIZACION', 'Estado actualizado a DESIGNACION_ACEPTADA (Obs: Ha aceptado el caso con éxito.)', 8),
+	(382, '2026-01-19 02:36:26', 'Conciliador/Director', 'PROGRAMACION', 'Audiencia programada para el 2026-01-20', 8);
 
 -- Volcando estructura para tabla app_esperanza_viva.configuracion_sistema
 CREATE TABLE IF NOT EXISTS `configuracion_sistema` (
@@ -202,7 +259,7 @@ CREATE TABLE IF NOT EXISTS `personas` (
   `domicilio` varchar(255) DEFAULT NULL,
   `telefono` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 -- Volcando datos para la tabla app_esperanza_viva.personas: ~40 rows (aproximadamente)
 INSERT INTO `personas` (`id`, `nombres`, `apellidos`, `dni`, `correo_electronico`, `domicilio`, `telefono`) VALUES
@@ -251,7 +308,7 @@ INSERT INTO `personas` (`id`, `nombres`, `apellidos`, `dni`, `correo_electronico
 CREATE TABLE IF NOT EXISTS `solicitudes` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `numero_expediente` varchar(255) DEFAULT NULL,
-  `estado` enum('PENDIENTE','ASIGNADO','DESIGNACION_ACEPTADA','PROGRAMADO','NOTIFICADO','ENTREGADO','PENDIENTE_FIRMA','PENDIENTE_ACTA','CONCLUIDO_SIN_ACUERDO','CONCLUIDO','OBSERVADA','FINALIZADA','APROBADO') DEFAULT 'PENDIENTE',
+  `estado` varchar(255) DEFAULT NULL,
   `materia_conciliable` varchar(255) DEFAULT NULL,
   `sub_materia` varchar(255) DEFAULT NULL,
   `fecha_presentacion` datetime(6) DEFAULT NULL,
@@ -283,29 +340,29 @@ CREATE TABLE IF NOT EXISTS `solicitudes` (
   CONSTRAINT `FK_notificador` FOREIGN KEY (`notificador_id`) REFERENCES `usuarios_sistema` (`id`),
   CONSTRAINT `FK_secretario` FOREIGN KEY (`secretario_id`) REFERENCES `usuarios_sistema` (`id`),
   CONSTRAINT `FK_solicitante` FOREIGN KEY (`solicitante_id`) REFERENCES `personas` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 -- Volcando datos para la tabla app_esperanza_viva.solicitudes: ~20 rows (aproximadamente)
 INSERT INTO `solicitudes` (`id`, `numero_expediente`, `estado`, `materia_conciliable`, `sub_materia`, `fecha_presentacion`, `hechos`, `pretension`, `otras_personas_alimentario`, `observacion`, `modalidad`, `solicitante_id`, `invitado_id`, `apoderado_id`, `conciliador_id`, `notificador_id`, `secretario_id`, `dni_archivo_url`, `pruebas_archivo_url`, `firma_archivo_url`) VALUES
 	(1, 'EXP-2026-000001', 'APROBADO', 'FAMILIA', NULL, '2026-01-01 10:00:00.000000', 'Pensión de alimentos para menor.', '1000 soles mensuales.', NULL, '', 'Presencial', 1, 2, NULL, 3, NULL, NULL, NULL, NULL, NULL),
-	(2, 'EXP-2026-000002', 'DESIGNACION_ACEPTADA', 'CIVIL', NULL, '2026-01-01 11:30:00.000000', 'Incumplimiento de contrato de alquiler.', 'Desalojo y pago de meses.', NULL, 'Ha aceptado el caso con éxito.', 'Presencial', 3, 4, NULL, 3, NULL, NULL, NULL, NULL, NULL),
-	(3, 'EXP-2026-000003', 'PENDIENTE', 'FAMILIA', NULL, '2026-01-02 09:15:00.000000', 'Régimen de visitas.', 'Fines de semana.', NULL, NULL, 'Presencial', 5, 6, NULL, 3, NULL, NULL, NULL, NULL, NULL),
-	(4, 'EXP-2026-000004', 'PENDIENTE', 'CIVIL', NULL, '2026-01-02 15:45:00.000000', 'Deuda de dinero.', 'Pago de 5000 soles.', NULL, NULL, 'Presencial', 7, 8, NULL, 3, NULL, NULL, NULL, NULL, NULL),
-	(5, 'EXP-2026-000005', 'DESIGNACION_ACEPTADA', 'FAMILIA', NULL, '2026-01-03 08:00:00.000000', 'Tenencia de menor.', 'Tenencia compartida.', NULL, 'Ha aceptado el caso con éxito.', 'Presencial', 9, 10, NULL, 3, NULL, NULL, NULL, NULL, NULL),
-	(6, 'EXP-2026-000006', 'ASIGNADO', 'CIVIL', NULL, '2026-01-04 10:00:00.000000', 'Indemnización por daños.', 'Pago de daños en vehículo.', NULL, NULL, 'Presencial', 11, 12, NULL, 3, NULL, NULL, NULL, NULL, NULL),
-	(7, 'EXP-2026-000007', 'ASIGNADO', 'FAMILIA', NULL, '2026-01-04 12:00:00.000000', 'Aumento de pensión.', 'Subir a 800 soles.', NULL, NULL, 'Presencial', 13, 14, NULL, 3, NULL, NULL, NULL, NULL, NULL),
-	(8, 'EXP-2026-000008', 'ASIGNADO', 'CIVIL', NULL, '2026-01-05 09:30:00.000000', 'Otorgamiento de escritura.', 'Firma de documentos.', NULL, NULL, 'Presencial', 15, 16, NULL, 3, NULL, NULL, NULL, NULL, NULL),
+	(2, 'EXP-2026-000002', 'FINALIZADA', 'CIVIL', NULL, '2026-01-01 11:30:00.000000', 'Incumplimiento de contrato de alquiler.', 'Desalojo y pago de meses.', NULL, 'Aprobado legalmente', 'Presencial', 3, 4, NULL, 3, 4, NULL, NULL, NULL, NULL),
+	(3, 'EXP-2026-000003', 'APROBADO', 'FAMILIA', NULL, '2026-01-02 09:15:00.000000', 'Régimen de visitas.', 'Fines de semana.', NULL, '', 'Presencial', 5, 6, NULL, 3, NULL, NULL, NULL, NULL, NULL),
+	(4, 'EXP-2026-000004', 'APROBADO', 'CIVIL', NULL, '2026-01-02 15:45:00.000000', 'Deuda de dinero.', 'Pago de 5000 soles.', NULL, '', 'Presencial', 7, 8, NULL, 3, NULL, NULL, NULL, NULL, NULL),
+	(5, 'EXP-2026-000005', 'PROGRAMADO', 'FAMILIA', NULL, '2026-01-03 08:00:00.000000', 'Tenencia de menor.', 'Tenencia compartida.', NULL, 'Ha aceptado el caso con éxito.', 'Presencial', 9, 10, NULL, 3, 4, NULL, NULL, NULL, NULL),
+	(6, 'EXP-2026-000006', 'CONCLUIDO_SIN_ACUERDO', 'CIVIL', NULL, '2026-01-04 10:00:00.000000', 'Indemnización por daños.', 'Pago de daños en vehículo.', NULL, NULL, 'Presencial', 11, 12, NULL, 3, 4, NULL, NULL, NULL, NULL),
+	(7, 'EXP-2026-000007', 'PROGRAMADO', 'FAMILIA', NULL, '2026-01-04 12:00:00.000000', 'Aumento de pensión.', 'Subir a 800 soles.', NULL, 'Ha aceptado el caso con éxito.', 'Presencial', 13, 14, NULL, 3, 4, NULL, NULL, NULL, NULL),
+	(8, 'EXP-2026-000008', 'PROGRAMADO', 'CIVIL', NULL, '2026-01-05 09:30:00.000000', 'Otorgamiento de escritura.', 'Firma de documentos.', NULL, 'Ha aceptado el caso con éxito.', 'Presencial', 15, 16, NULL, 3, 4, NULL, NULL, NULL, NULL),
 	(9, 'EXP-2026-000009', 'ASIGNADO', 'FAMILIA', NULL, '2026-01-05 14:00:00.000000', 'Gastos de embarazo.', 'Pago de gastos médicos.', NULL, NULL, 'Presencial', 17, 18, NULL, 3, NULL, NULL, NULL, NULL, NULL),
 	(10, 'EXP-2026-000010', 'ASIGNADO', 'CIVIL', NULL, '2026-01-06 11:00:00.000000', 'División y partición.', 'Reparto de herencia.', NULL, NULL, 'Presencial', 19, 20, NULL, 3, NULL, NULL, NULL, NULL, NULL),
 	(11, 'EXP-2026-000011', 'FINALIZADA', 'FAMILIA', NULL, '2026-01-01 10:00:00.000000', 'Reducción de alimentos.', 'Bajar a 300 soles.', NULL, 'Aprobado legalmente', 'Presencial', 21, 22, NULL, 3, NULL, NULL, NULL, NULL, NULL),
-	(12, 'EXP-2026-000012', 'NOTIFICADO', 'CIVIL', NULL, '2026-01-02 11:00:00.000000', 'Resolución de contrato.', 'Anulación de purchase.', NULL, NULL, 'Presencial', 23, 24, NULL, 3, 4, NULL, NULL, NULL, NULL),
+	(12, 'EXP-2026-000012', 'PENDIENTE_FIRMA', 'CIVIL', NULL, '2026-01-02 11:00:00.000000', 'Resolución de contrato.', 'Anulación de purchase.', NULL, NULL, 'Presencial', 23, 24, NULL, 3, 4, NULL, NULL, NULL, NULL),
 	(13, 'EXP-2026-000013', 'FINALIZADA', 'FAMILIA', NULL, '2026-01-03 14:00:00.000000', 'Reconocimiento de unión de hecho.', 'Declaración legal.', NULL, 'Aprobado legalmente', 'Presencial', 25, 26, NULL, 3, NULL, NULL, NULL, NULL, NULL),
 	(14, 'EXP-2026-000014', 'DESIGNACION_ACEPTADA', 'CIVIL', NULL, '2026-01-04 15:30:00.000000', 'Reivindicación.', 'Recuperación de propiedad.', NULL, NULL, 'Presencial', 27, 28, NULL, 3, NULL, NULL, NULL, NULL, NULL),
-	(15, 'EXP-2026-000015', 'PENDIENTE_FIRMA', 'FAMILIA', NULL, '2026-01-05 08:45:00.000000', 'Exoneración de alimentos.', 'Cese de pago por mayoría de edad.', NULL, 'Observación realizada por abogado', 'Presencial', 29, 30, NULL, 3, NULL, NULL, NULL, NULL, NULL),
-	(16, 'EXP-2025-000016', 'PENDIENTE_FIRMA', 'CIVIL', 'Incumplimiento de contrato', '2026-01-09 22:17:43.802164', 'incumplimiento de trabajo de jordana en la obra, y sin justificacion', 'quiero que ya no trabaje y que me pague 4000 soles por el tiempo de perdida', '', 'Ha aceptado el caso con éxito.', 'Presencial', 32, 31, NULL, 3, NULL, NULL, 'cbb618a3-2ee8-4a0e-84e6-2520ad8b9e15_WhatsApp Image 2026-01-09 at 7.42.28 PM.jpeg', '9317076c-8ada-4a77-8f5b-023acfd4b490_WhatsApp Image 2026-01-08 at 3.48.50 AM.jpeg', '7fee9c13-70de-478a-8bfb-da77d83fb185_Formato_A_74555592.doc'),
-	(17, 'EXP-2025-000017', 'PENDIENTE', 'FAMILIA', 'Pensión de alimentos a favor de conviviente', '2026-01-14 19:11:27.914656', 'shjklñsaa  jsnj  aj skdjkjk abskj kj nkjan ans lsdnkj   a', 'saf a   ajshbdhfbdsj kj ajshfb', 'sd ad kjak ja s dkjm kajshjnsbfkjbdkbbdjb kjdb s dfbsh ', NULL, 'Presencial', 34, 33, NULL, 3, NULL, NULL, '149a711c-270f-4e65-a77a-d2194bee937d_Captura de pantalla 2025-10-07 183906.png', NULL, '05ed64d8-1da3-4880-be55-1e857c92cafc_Formato_A_12345675 (1).pdf'),
+	(15, 'EXP-2026-000015', 'FINALIZADA', 'FAMILIA', NULL, '2026-01-05 08:45:00.000000', 'Exoneración de alimentos.', 'Cese de pago por mayoría de edad.', NULL, 'Aprobado legalmente', 'Presencial', 29, 30, NULL, 3, NULL, NULL, NULL, NULL, NULL),
+	(16, 'EXP-2025-000016', 'FINALIZADA', 'CIVIL', 'Incumplimiento de contrato', '2026-01-09 22:17:43.802164', 'incumplimiento de trabajo de jordana en la obra, y sin justificacion', 'quiero que ya no trabaje y que me pague 4000 soles por el tiempo de perdida', '', 'Aprobado legalmente', 'Presencial', 32, 31, NULL, 3, NULL, NULL, 'cbb618a3-2ee8-4a0e-84e6-2520ad8b9e15_WhatsApp Image 2026-01-09 at 7.42.28 PM.jpeg', '9317076c-8ada-4a77-8f5b-023acfd4b490_WhatsApp Image 2026-01-08 at 3.48.50 AM.jpeg', '7fee9c13-70de-478a-8bfb-da77d83fb185_Formato_A_74555592.doc'),
+	(17, 'EXP-2025-000017', 'APROBADO', 'FAMILIA', 'Pensión de alimentos a favor de conviviente', '2026-01-14 19:11:27.914656', 'shjklñsaa  jsnj  aj skdjkjk abskj kj nkjan ans lsdnkj   a', 'saf a   ajshbdhfbdsj kj ajshfb', 'sd ad kjak ja s dkjm kajshjnsbfkjbdkbbdjb kjdb s dfbsh ', '', 'Presencial', 34, 33, NULL, 3, NULL, NULL, '149a711c-270f-4e65-a77a-d2194bee937d_Captura de pantalla 2025-10-07 183906.png', NULL, '05ed64d8-1da3-4880-be55-1e857c92cafc_Formato_A_12345675 (1).pdf'),
 	(18, 'EXP-2025-000018', 'PENDIENTE', 'CIVIL', 'Desalojo', '2026-01-16 18:30:54.374915', 'No ha pagado la renta durante 6 meses de renta de la habitacion 104 del segundo piso', 'quiero que me pague los 1200 soles y que se retire', '', NULL, 'Presencial', 36, 35, NULL, 3, NULL, NULL, NULL, NULL, NULL),
-	(19, 'EXP-2025-000019', 'PENDIENTE', 'CIVIL', 'Desalojo', '2026-01-16 18:32:06.143435', 'No ha pagado la renta durante 6 meses de renta de la habitacion 104 del segundo piso', 'quiero que me pague los 1200 soles y que se retire', '', NULL, 'Virtual', 38, 37, NULL, 3, NULL, NULL, '99c6a7fe-98da-4712-97d6-9087c3afbe88_WhatsApp Image 2026-01-15 at 5.12.34 PM.jpeg', '4fee93c4-6b67-46af-91d9-7df1905bd8f0_Formato_N_Acta_Inasistencia_EXP-2026-011 (1).pdf', 'bef5bcb6-4882-42b3-8b21-6e968cf3f046_Formato_A_12345675 (2).pdf'),
+	(19, 'EXP-2025-000019', 'APROBADO', 'CIVIL', 'Desalojo', '2026-01-16 18:32:06.143435', 'No ha pagado la renta durante 6 meses de renta de la habitacion 104 del segundo piso', 'quiero que me pague los 1200 soles y que se retire', '', '', 'Virtual', 38, 37, NULL, 3, NULL, NULL, '99c6a7fe-98da-4712-97d6-9087c3afbe88_WhatsApp Image 2026-01-15 at 5.12.34 PM.jpeg', '4fee93c4-6b67-46af-91d9-7df1905bd8f0_Formato_N_Acta_Inasistencia_EXP-2026-011 (1).pdf', 'bef5bcb6-4882-42b3-8b21-6e968cf3f046_Formato_A_12345675 (2).pdf'),
 	(20, 'EXP-2025-000020', 'PENDIENTE', 'CIVIL', 'Incumplimiento de contrato', '2026-01-17 23:46:36.458987', 'no cumplio la contrada, son horas de jordas dejadas a un lado sin ningun motivo', 'quiero que me pague 3200 soles por que eso sucedio por un mes competo', '', NULL, 'Virtual', 40, 39, NULL, NULL, NULL, NULL, '344b15f7-a325-473b-8899-fb02ba5fa2bc_WhatsApp Image 2026-01-17 at 12.27.01 PM (1).jpeg', '589276da-7312-4f8e-bed8-c999ed0fc4e0_Formato_N_Acta_Inasistencia_EXP-2026-015.pdf', 'fc25e500-6e56-4d70-9c13-8a52ff31b3ae_Formato_A_11113289.doc');
 
 -- Volcando estructura para tabla app_esperanza_viva.usuarios
@@ -333,7 +390,7 @@ CREATE TABLE IF NOT EXISTS `usuarios_sistema` (
   `usuario` varchar(50) NOT NULL,
   `contrasena` varchar(255) NOT NULL,
   `rol` enum('ADMINISTRADOR','DIRECTOR','CONCILIADOR','ABOGADO','NOTIFICADOR','SECRETARIO') NOT NULL,
-  `estado` enum('ACTIVO','INACTIVO') DEFAULT 'ACTIVO',
+  `estado` varchar(20) DEFAULT NULL,
   `fecha_registro` date NOT NULL,
   `nro_colegiatura` varchar(50) DEFAULT NULL,
   `nro_especializacion` varchar(50) DEFAULT NULL,

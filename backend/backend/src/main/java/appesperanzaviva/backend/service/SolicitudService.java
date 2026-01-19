@@ -36,4 +36,7 @@ public interface SolicitudService {
 
     // Obtener carga laboral
     java.util.Map<Integer, Long> obtenerCargaLaboral();
+
+    // 🔹 NUEVO: Obtener archivo
+    org.springframework.core.io.Resource obtenerArchivo(@NonNull Long id, String tipo) throws java.io.IOException;
 }

@@ -140,4 +140,38 @@ public class SolicitudServiceImpl implements SolicitudService {
         }
         return stats;
     }
+
+    @Override
+    public org.springframework.core.io.Resource obtenerArchivo(@NonNull Long id, String tipo) throws IOException {
+        Solicitud solicitud = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
+
+        String filename = null;
+        switch (tipo) {
+            case "dni":
+                filename = solicitud.getDniArchivoUrl();
+                break;
+            case "pruebas":
+                filename = solicitud.getPruebasArchivoUrl();
+                break;
+            case "firma":
+                filename = solicitud.getFirmaArchivoUrl();
+                break;
+            default:
+                throw new RuntimeException("Tipo de archivo no válido: " + tipo);
+        }
+
+        if (filename == null || filename.isEmpty()) {
+            throw new RuntimeException("El archivo solicitado no existe para este expediente.");
+        }
+
+        Path file = root.resolve(filename);
+        org.springframework.core.io.Resource resource = new org.springframework.core.io.UrlResource(file.toUri());
+
+        if (resource.exists() || resource.isReadable()) {
+            return resource;
+        } else {
+            throw new RuntimeException("No se puede leer el archivo: " + filename);
+        }
+    }
 }

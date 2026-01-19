@@ -252,6 +252,12 @@ export class DocumentosAdjuntos {
       return;
     }
 
+    // 🔹 VALIDACIÓN: Solicitud Firmada Obligatoria
+    if (!this.fileFirma) {
+      alert("⚠️ La solicitud firmada es obligatoria. Por favor descargue el PDF, fírmelo y súbalo.");
+      return;
+    }
+
     const solicitudDatos = this.datosService.obtenerDatos();
     solicitudDatos.modalidad = this.modalidadSeleccionada;
     const formData = new FormData();

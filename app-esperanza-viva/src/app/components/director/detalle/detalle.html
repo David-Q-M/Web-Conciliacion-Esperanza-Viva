@@ -128,14 +128,22 @@
             </span>
           </div>
 
-          <button class="btn-viva-white w-100 text-warning border-warning mt-1"
-            style="background: transparent; border: 1px solid #FFD700;" (click)="descargarAdjuntos()">
-            Descargar Documentos Adjuntos como (documento de dni)
-          </button>
+          <div *ngIf="expediente.dniArchivoUrl; else noDocs">
+            <button class="btn-viva-white w-100 text-warning border-warning mt-1"
+              style="background: transparent; border: 1px solid #FFD700;" (click)="descargarAdjuntos()">
+              Descargar Documentos Adjuntos (DNI)
+            </button>
+          </div>
+          <ng-template #noDocs>
+            <div class="text-center text-secondary small p-2 border border-secondary rounded mt-1"
+              style="border-style: dashed !important;">
+              <i class="bi bi-file-earmark-x"></i> No hay documentos adjuntos
+            </div>
+          </ng-template>
         </div>
 
         <div class="info-card-wireframe p-4 shadow"
-          *ngIf="(expediente.estado === 'PENDIENTE' || expediente.estado === 'EN_REVISION' || expediente.estado === 'APROBADO') && !expediente.conciliador">
+          *ngIf="!expediente.conciliador || !expediente.conciliador.id; else yaAsignado">
           <h6 class="text-warning mb-2 fw-bold"><i class="bi bi-person-badge"></i> Designar Conciliador</h6>
           <p class="text-secondary small mb-3">Asigne un conciliador para este expediente (formato B)</p>
 

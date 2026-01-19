@@ -12,7 +12,9 @@ import { HttpClient } from '@angular/common/http';
 })
 export class BandejaNotificador implements OnInit {
     notificadorNombre: string = 'Juan Perez';
-    pendientes: any[] = [];
+    originalList: any[] = [];
+    filteredList: any[] = [];
+    filterType: 'PENDIENTES' | 'ENTREGADAS' | 'URGENTE' = 'PENDIENTES';
     isLoading: boolean = true;
 
     // Contadores
@@ -41,23 +43,19 @@ export class BandejaNotificador implements OnInit {
 
     cargarPendientes(userId: number) {
         this.isLoading = true;
-        // 🔹 FETCH FROM AUDIENCIAS FOR SPECIFIC NOTIFIER
         this.http.get<any[]>(`https://web-conciliacion-esperanza-viva-production.up.railway.app/api/audiencias/notificador/${userId}`).subscribe({
             next: (res) => {
                 console.log("🔔 NOTIFICACIONES:", res);
+                this.originalList = res || [];
 
-                // 🔹 FIX: Mostrar todo lo que NO esté finalizado ni cancelado para asegurar que los datos aparezcan
-                this.pendientes = res.filter(a => {
-                    const estado = a.solicitud?.estado;
-                    return estado !== 'FINALIZADO' && estado !== 'CANCELADO';
-                });
+                // Calcular contadores
+                this.countPendientes = this.originalList.filter(a => a.solicitud?.estado === 'PROGRAMADO').length;
+                this.countEntregadas = this.originalList.filter(a => ['NOTIFICADO', 'ENTREGADO', 'FINALIZADO'].includes(a.solicitud?.estado)).length;
+                this.countUrgente = this.originalList.filter(p => p.urgente).length;
 
-                this.countPendientes = this.pendientes.length;
-                this.countEntregadas = res.filter(a => a.solicitud?.estado === 'NOTIFICADO' || a.solicitud?.estado === 'ENTREGADO').length;
-                // Mock urgente count
-                this.countUrgente = this.pendientes.filter(p => p.urgente).length;
-
-                setTimeout(() => this.isLoading = false, 500);
+                // Aplicar filtro inicial
+                this.aplicarFiltro('PENDIENTES');
+                this.isLoading = false;
             },
             error: (err) => {
                 console.error("Error cargando notificaciones", err);
@@ -66,8 +64,21 @@ export class BandejaNotificador implements OnInit {
         });
     }
 
+    aplicarFiltro(tipo: 'PENDIENTES' | 'ENTREGADAS' | 'URGENTE') {
+        this.filterType = tipo;
+        if (tipo === 'PENDIENTES') {
+            // Mostrar PROGRAMADO (lo que debe notificar)
+            this.filteredList = this.originalList.filter(a => a.solicitud?.estado === 'PROGRAMADO');
+        } else if (tipo === 'ENTREGADAS') {
+            // Mostrar ya notificados
+            this.filteredList = this.originalList.filter(a => ['NOTIFICADO', 'ENTREGADO', 'FINALIZADO'].includes(a.solicitud?.estado));
+        } else if (tipo === 'URGENTE') {
+            this.filteredList = this.originalList.filter(a => a.urgente);
+        }
+    }
+
     cerrarSesion() {
         localStorage.clear();
-        this.router.navigate(['/consulta']); // ✅ Redirect to /consulta confirmed
+        this.router.navigate(['/consulta']);
     }
 }

@@ -478,29 +478,26 @@ export class DetalleDirector implements OnInit {
     document.body.removeChild(link);
   }
 
-  // --- NUEVO: Descargar Documentos Adjuntos ---
+  // --- DESCARGAR DOCUMENTO ADJUNTO (DNI) ---
   descargarAdjuntos() {
-    // Assuming backend endpoint or if we have the file blob/url
-    // Standard approach given user request: "llamar a la bd"
-    // We will try an endpoint like /api/solicitudes/{id}/descargar-dni
-    // For now, if we don't have that endpoint, we can try to assume it follows a convention or use a service method.
-    // Since I need this to work, I will assume a standard pattern.
-    // But actually, I'll add a check. If 'expediente.dniUrl' exists use it.
-
     const id = this.expediente.id;
     if (!id) return;
 
-    // Constructing a hypothetical URL for now as per common practices if explicit URL isn't in JSON
-    // If the user's backend is Spring Boot (likely), serving files might be at a specific endpoint.
-    const url = `https://web-conciliacion-esperanza-viva-production.up.railway.app/api/solicitudes/${id}/archivo/dni`;
-
-    // Trigger download
-    const link = document.createElement('a');
-    link.href = url;
-    link.target = '_blank';
-    link.download = `DNI_Adjunto_${this.expediente.numeroExpediente}.pdf`; // Assuming PDF or let browser decide
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    this.solicitudService.descargarArchivo(id, 'dni').subscribe({
+      next: (blob: Blob) => {
+        // Crear una URL temporal para el blob
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        // Intentar obtener el nombre del archivo o usar uno genérico
+        link.download = `Documento_DNI_${this.expediente.numeroExpediente || 'adjunto'}.pdf`; // Asumimos PDF o dejamos que el navegador detecte
+        link.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => {
+        console.error("Error descargando archivo:", err);
+        alert("No se pudo descargar el archivo. Puede que no exista o no tengas permisos.");
+      }
+    });
   }
 }

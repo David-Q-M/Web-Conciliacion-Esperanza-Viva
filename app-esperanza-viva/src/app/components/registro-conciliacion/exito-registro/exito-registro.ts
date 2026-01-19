@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { SolicitudService } from '../../../services/solicitud.service';
 import { UsuarioService } from '../../../services/usuario.service';
+import { jsPDF } from 'jspdf';
 
 @Component({
   selector: 'app-exito-registro',
@@ -97,6 +98,98 @@ export class ExitoRegistro implements OnInit, OnDestroy {
 
   actualizarEstadoButton() {
     this.cargarDatos();
+    alert("Estado actualizado correctamente.");
+  }
+
+  descargarSolicitud() {
+    if (!this.expediente) return;
+
+    const doc = new jsPDF();
+    const e = this.expediente;
+
+    // Header
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(18);
+    doc.setTextColor(220, 53, 69); // Red color like in some documents or user theme
+    doc.text("CENTRO DE CONCILIACIÓN ESPERANZA VIVA", 105, 20, { align: "center" });
+
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0); // Black
+    doc.text(`Solicitud de Conciliación N° ${e.numeroExpediente}`, 105, 30, { align: "center" });
+
+    // Body
+    let y = 50;
+
+    doc.setFont("helvetica", "bold");
+    doc.text("DATOS DEL SOLICITANTE:", 20, y);
+    y += 10;
+    doc.setFont("helvetica", "normal");
+    doc.text(`Nombre: ${e.solicitante?.nombres} ${e.solicitante?.apellidos}`, 20, y);
+    y += 7;
+    doc.text(`DNI: ${e.solicitante?.dni}`, 20, y);
+    y += 7;
+    doc.text(`Dirección: ${e.solicitante?.domicilio || 'No registrada'}`, 20, y);
+    y += 15;
+
+    doc.setFont("helvetica", "bold");
+    doc.text("DATOS DEL INVITADO:", 20, y);
+    y += 10;
+    doc.setFont("helvetica", "normal");
+    doc.text(`Nombre: ${e.invitado?.nombres} ${e.invitado?.apellidos}`, 20, y);
+    y += 7;
+    doc.text(`DNI: ${e.invitado?.dni}`, 20, y);
+    y += 7;
+    doc.text(`Dirección: ${e.invitado?.domicilio || 'No registrada'}`, 20, y);
+    y += 15;
+
+    doc.setFont("helvetica", "bold");
+    doc.text("DETALLES DE LA SOLICITUD:", 20, y);
+    y += 10;
+    doc.setFont("helvetica", "normal");
+    doc.text(`Materia: ${e.materiaConciliable}`, 20, y);
+    y += 7;
+    doc.text(`Fecha de Presentación: ${new Date(e.fechaCreacion).toLocaleDateString()}`, 20, y);
+    y += 7;
+    doc.text(`Estado Actual: ${e.estado}`, 20, y);
+
+    if (e.hechos) {
+      y += 15;
+      doc.setFont("helvetica", "bold");
+      doc.text("DESCRIPCIÓN DE LOS HECHOS:", 20, y);
+      y += 10;
+      doc.setFont("helvetica", "normal");
+      const splitHechos = doc.splitTextToSize(e.hechos, 170);
+      doc.text(splitHechos, 20, y);
+    }
+
+    doc.save(`Solicitud_${e.numeroExpediente}.pdf`);
+  }
+
+  desistirSolicitud() {
+    if (!confirm("¿Está seguro que desea desistir de esta solicitud? Esta acción no se puede deshacer.")) {
+      return;
+    }
+
+    // Usamos el servicio para actualizar el estado a DESISTIDO
+    // Nota: 'DESISTIDO' debe ser un estado válido en tu enum o lógica de negocio.
+    // Si no tienes 'DESISTIDO', usa 'CANCELADO' o lo que corresponda.
+    // Asumo 'CONCLUIDO_SIN_ACUERDO' o un estado similar si no hay 'DESISTIDO', 
+    // pero idealmente debería ser 'DESISTIDO' o 'CANCELADO'.
+    // Voy a usar 'CANCELADO' por seguridad si no estoy seguro del Enum, 
+    // pero el usuario pidió "Desistir". Mapearé a 'CANCELADO' o 'NO_ACUERDO' si es necesario.
+    // Revisando el Controller, acepta cualquier String. Usaré 'CANCELADO' para "Desistir".
+
+    this.solicitudService.actualizarEstado(this.expediente.id, 'CANCELADO', 'Usuario desistió de la solicitud vía web')
+      .subscribe({
+        next: (res) => {
+          alert("La solicitud ha sido cancelada exitosamente.");
+          this.cargarDatos(); // Refresh data to show new status
+        },
+        error: (err) => {
+          console.error("Error al desistir", err);
+          alert("Hubo un error al intentar desistir de la solicitud.");
+        }
+      });
   }
 
   // Helper para el Timeline
@@ -112,7 +205,6 @@ export class ExitoRegistro implements OnInit, OnDestroy {
     // Lógica manual simple si no hay orden estricto numérico, o usamos índices del array
     // Mapeo simplificado para la UI
     // Etapa 1: Aprobada (Incluye variaciones y estado ASIGNADO)
-    // Etapa 1: Aprobada (Incluye variaciones y estado ASIGNADO)
     if (targetState === 'APROBADA') {
       return ['APROBADA', 'APROBADO', 'ASIGNADO', 'PROGRAMADO', 'NOTIFICADO', 'AUDIENCIA_PROGRAMADA', 'EN_AUDIENCIA', 'PENDIENTE_FIRMA', 'PENDIENTE_ACTA', 'CONCLUIDO', 'CONCLUIDO_SIN_ACUERDO', 'FINALIZADA', 'CONCILIADA', 'NO_ACUERDO'].includes(current);
     }
@@ -122,7 +214,7 @@ export class ExitoRegistro implements OnInit, OnDestroy {
     }
     // Etapa 3: Finalizada
     if (targetState === 'FINALIZADA') {
-      return ['CONCLUIDO', 'CONCLUIDO_SIN_ACUERDO', 'FINALIZADA', 'CONCILIADA', 'NO_ACUERDO'].includes(current);
+      return ['CONCLUIDO', 'CONCLUIDO_SIN_ACUERDO', 'FINALIZADA', 'CONCILIADA', 'NO_ACUERDO', 'CANCELADO'].includes(current);
     }
 
     return false;

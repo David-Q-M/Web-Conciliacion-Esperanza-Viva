@@ -56,35 +56,26 @@ public class AudienciaServiceImpl implements AudienciaService {
             throw new RuntimeException("Error: La solicitud vinculada es nula.");
         }
 
+        // 1. Obtener la solicitud real de la BD
         Solicitud solicitudDb = solicitudRepository.findById(solicitud.getId())
                 .orElseThrow(() -> new RuntimeException("Solicitud no encontrada en MariaDB"));
 
-        solicitudDb.setEstado("PROGRAMADO");
+        // 🛡️ BLOQUEO DE SEGURIDAD: Evitar duplicidad si ya está programado
+        if ("PROGRAMADO".equals(solicitudDb.getEstado())) {
+            throw new RuntimeException("ERROR: Este expediente ya cuenta con una audiencia programada.");
+        }
 
-        // 🔹 NUEVO: Guardar el notificador si se seleccionó en el frontend
+        System.out.println("DEBUG: Cambiando estado de Solicitud " + solicitudDb.getId() + " a PROGRAMADO");
+
+        // 2. ACTUALIZAR ESTADO: Forzamos la actualización
+        solicitudDb.setEstado("PROGRAMADO");
+        solicitudRepository.saveAndFlush(solicitudDb); // FORCE FLUSH
+
         if (solicitud.getNotificador() != null && solicitud.getNotificador().getId() != null) {
             appesperanzaviva.backend.entity.UsuarioSistema notificadorDb = usuarioRepo
                     .findById(solicitud.getNotificador().getId())
                     .orElseThrow(() -> new RuntimeException("Notificador no encontrado"));
             solicitudDb.setNotificador(notificadorDb);
-        }
-
-        // 📧 EMAIL: Notificar a las partes (Mock o Real si está configurado)
-        if (emailService != null) {
-            String fecha = audiencia.getFechaAudiencia().toString();
-            String hora = audiencia.getHoraAudiencia().toString();
-            String lugar = audiencia.getLugar();
-
-            // Enviar a Solicitante (asumiendo campo email existe o usando mock)
-            if (solicitudDb.getSolicitante() != null && solicitudDb.getSolicitante().getCorreoElectronico() != null) {
-                emailService.enviarNotificacionProgramacion(solicitudDb.getSolicitante().getCorreoElectronico(),
-                        solicitudDb.getNumeroExpediente(), fecha, hora, lugar);
-            }
-            // Enviar a Invitado
-            if (solicitudDb.getInvitado() != null && solicitudDb.getInvitado().getCorreoElectronico() != null) {
-                emailService.enviarNotificacionProgramacion(solicitudDb.getInvitado().getCorreoElectronico(),
-                        solicitudDb.getNumeroExpediente(), fecha, hora, lugar);
-            }
         }
 
         // 🛡️ VALIDACIÓN MEJORADA: Evitar cruces de horario (Conciliador O Sala)
@@ -102,14 +93,32 @@ public class AudienciaServiceImpl implements AudienciaService {
             }
         }
 
-        solicitudRepository.save(solicitudDb);
+        // 4. (Ya guardado con flush arriba)
+        // solicitudRepository.save(solicitudDb);
 
-        // 🛡️ CRITICO: Asignar la solicitud gestionada (con el notificador actualizado)
-        // a la audiencia
-        // Si no hacemos esto, Hibernate podria usar el objeto parcial
-        // 'audiencia.getSolicitud()'
-        // y planchar los cambios o dejar el notificador nulo.
+        // 5. Vincular y guardar la Audiencia
         audiencia.setSolicitud(solicitudDb);
+
+        // EMAIL: Notificar a las partes (Mock o Real si está configurado)
+        if (emailService != null) {
+            try {
+                String fecha = audiencia.getFechaAudiencia().toString();
+                String hora = audiencia.getHoraAudiencia().toString();
+                String lugar = audiencia.getLugar();
+
+                if (solicitudDb.getSolicitante() != null
+                        && solicitudDb.getSolicitante().getCorreoElectronico() != null) {
+                    emailService.enviarNotificacionProgramacion(solicitudDb.getSolicitante().getCorreoElectronico(),
+                            solicitudDb.getNumeroExpediente(), fecha, hora, lugar);
+                }
+                if (solicitudDb.getInvitado() != null && solicitudDb.getInvitado().getCorreoElectronico() != null) {
+                    emailService.enviarNotificacionProgramacion(solicitudDb.getInvitado().getCorreoElectronico(),
+                            solicitudDb.getNumeroExpediente(), fecha, hora, lugar);
+                }
+            } catch (Exception e) {
+                System.err.println("Error enviando correos (no bloqueante): " + e.getMessage());
+            }
+        }
 
         return repository.save(audiencia);
     }
@@ -126,10 +135,24 @@ public class AudienciaServiceImpl implements AudienciaService {
             a.setAbogadoVerificador(datos.getAbogadoVerificador());
 
             Solicitud solicitud = a.getSolicitud();
-            // 🔹 LOGIC FIX GLOBAL: Si hay URL de acta en el detalle, SIEMPRE va a firma del
-            // abogado
-            // (Sea Acuerdo, Inasistencia o Falta de Acuerdo)
-            if (datos.getResultadoDetalle() != null && datos.getResultadoDetalle().contains("actaUrl")) {
+
+            // 🔹 REPROGRAMACIÓN AUTOMÁTICA (Segunda Audiencia)
+            if (datos.getFechaAudiencia() != null && datos.getHoraAudiencia() != null) {
+                System.out.println("🔄 REPROGRAMANDO AUDIENCIA: Creando nueva fecha...");
+
+                Audiencia nuevaAudiencia = new Audiencia();
+                nuevaAudiencia.setSolicitud(solicitud);
+                nuevaAudiencia.setFechaAudiencia(datos.getFechaAudiencia());
+                nuevaAudiencia.setHoraAudiencia(datos.getHoraAudiencia());
+                nuevaAudiencia.setLugar(datos.getLugar() != null ? datos.getLugar() : a.getLugar());
+                // nuevaAudiencia.setNroAudiencia(2); // Si tuviéramos campo nroAudiencia
+
+                repository.save(nuevaAudiencia);
+
+                solicitud.setEstado("PROGRAMADO"); // Reactiva el flujo para notificador
+            }
+            // 🔹 LÓGICA EXISTENTE DE ESTADOS
+            else if (datos.getResultadoDetalle() != null && datos.getResultadoDetalle().contains("actaUrl")) {
                 solicitud.setEstado("PENDIENTE_FIRMA");
             } else if (datos.getResultadoTipo() != null && datos.getResultadoTipo().contains("Acuerdo")) {
                 solicitud.setEstado("PENDIENTE_ACTA"); // Acuerdo verbal pero falta subir PDF

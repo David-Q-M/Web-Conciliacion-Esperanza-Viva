@@ -11,8 +11,8 @@ import { SolicitudService } from '../../../services/solicitud.service';
   styleUrls: ['./bandeja-asignados.css']
 })
 export class BandejaAsignados implements OnInit {
-  expedientesOriginales: any[] = []; // Backup de la DB
-  expedientesFiltrados: any[] = [];   // Lo que se muestra en pantalla
+  expedientesOriginales: any[] = [];
+  expedientesFiltrados: any[] = [];
   conciliadorNombre: string = '';
   filtroActual: string = 'TOTAL';
   stats = { total: 0, pendientes: 0, enCurso: 0 };
@@ -37,16 +37,15 @@ export class BandejaAsignados implements OnInit {
 
   cargarExpedientes(conciliadorId: number) {
     this.isLoading = true;
-    // 🔹 UPDATED: Fetch ALL assigned cases to handle feedback loop (OBSERVADA)
     this.solicitudService.listarPorConciliador(conciliadorId).subscribe({
       next: (res) => {
-        // Filter out closed cases (handled in Historial) but KEEP active workflow states, including exceptions like OBSERVADA
+        // Mantenemos los expedientes que están en el flujo activo de trabajo
         this.expedientesOriginales = res.filter(e =>
           ['ASIGNADO', 'DESIGNACION_ACEPTADA', 'PROGRAMADO', 'NOTIFICADO', 'PENDIENTE_FIRMA', 'OBSERVADA', 'PENDIENTE_ACTA'].includes(e.estado)
         );
-        this.expedientesFiltrados = this.expedientesOriginales;
+        this.expedientesFiltrados = [...this.expedientesOriginales];
         this.actualizarEstadisticas();
-        setTimeout(() => this.isLoading = false, 500);
+        this.isLoading = false;
       },
       error: (err) => {
         console.error("Error cargando expedientes:", err);
@@ -58,25 +57,28 @@ export class BandejaAsignados implements OnInit {
   actualizarEstadisticas() {
     this.stats.total = this.expedientesOriginales.length;
     this.stats.pendientes = this.expedientesOriginales.filter(e => e.estado === 'ASIGNADO').length;
-    this.stats.enCurso = this.expedientesOriginales.filter(e => e.estado === 'DESIGNACION_ACEPTADA' || e.estado === 'PROGRAMADO' || e.estado === 'NOTIFICADO').length;
+    // IMPORTANTE: 'En Proceso' ahora incluye casos ya programados pero no finalizados
+    this.stats.enCurso = this.expedientesOriginales.filter(e =>
+      ['DESIGNACION_ACEPTADA', 'PROGRAMADO', 'NOTIFICADO', 'PENDIENTE_ACTA'].includes(e.estado)
+    ).length;
   }
 
-  /**
-   * 🖱️ FILTRO POR CLIC EN CUADROS
-   */
   filtrarPorEstado(criterio: string) {
     this.filtroActual = criterio;
     if (criterio === 'TOTAL') {
-      this.expedientesFiltrados = this.expedientesOriginales;
+      this.expedientesFiltrados = [...this.expedientesOriginales];
     } else if (criterio === 'PENDIENTES') {
       this.expedientesFiltrados = this.expedientesOriginales.filter(e => e.estado === 'ASIGNADO');
     } else if (criterio === 'CURSO') {
-      this.expedientesFiltrados = this.expedientesOriginales.filter(e => e.estado === 'DESIGNACION_ACEPTADA');
+      // El filtro 'CURSO' ahora muestra todo lo que ya se aceptó y está en marcha
+      this.expedientesFiltrados = this.expedientesOriginales.filter(e =>
+        ['DESIGNACION_ACEPTADA', 'PROGRAMADO', 'NOTIFICADO'].includes(e.estado)
+      );
     }
   }
 
   cerrarSesion() {
     localStorage.clear();
-    this.router.navigate(['consulta']);
+    this.router.navigate(['consultar-expedientes']);
   }
 }

@@ -34,7 +34,6 @@
       </div>
     </header>
 
-    <!-- Stats Row -->
     <div class="row g-4 mb-5">
       <div class="col-md-4" (click)="filtrarPorEstado('TOTAL')" style="cursor: pointer;">
         <div class="glass-card d-flex justify-content-between align-items-center"
@@ -68,7 +67,6 @@
       </div>
     </div>
 
-    <!-- Table -->
     <div class="glass-card p-0 overflow-hidden">
       <div class="table-responsive">
         <table class="table table-dark table-hover m-0 align-middle">
@@ -83,31 +81,12 @@
             </tr>
           </thead>
           <tbody>
-            <!-- SKELETON -->
             <ng-container *ngIf="isLoading">
               <tr *ngFor="let i of [1,2,3,4,5]">
-                <td class="ps-4">
-                  <div class="skeleton skeleton-text" style="width: 100px;"></div>
-                </td>
-                <td>
-                  <div class="skeleton skeleton-text" style="width: 150px;"></div>
-                </td>
-                <td>
-                  <div class="skeleton skeleton-text" style="width: 150px;"></div>
-                </td>
-                <td>
-                  <div class="skeleton skeleton-text" style="width: 100px;"></div>
-                </td>
-                <td>
-                  <div class="skeleton skeleton-badge"></div>
-                </td>
-                <td class="text-end pe-4">
-                  <div class="skeleton skeleton-btn ms-auto"></div>
-                </td>
+                <td colspan="6" class="text-center py-3">Cargando expedientes...</td>
               </tr>
             </ng-container>
 
-            <!-- DATA -->
             <ng-container *ngIf="!isLoading">
               <tr *ngFor="let e of expedientesFiltrados">
                 <td class="ps-4 fw-bold text-white">{{ e.numeroExpediente }}</td>
@@ -126,46 +105,41 @@
                   </span>
                 </td>
                 <td class="text-end pe-4">
-                  <!-- Case: OBSERVADA (Feedback Loop) -->
-                  <div *ngIf="e.estado === 'OBSERVADA'">
-                    <button class="btn btn-sm btn-danger fw-bold"
-                      [routerLink]="['/conciliador/registro-audiencia', e.audiencias ? e.audiencias[e.audiencias.length-1].id : e.id]">
-                      <i class="bi bi-exclamation-triangle-fill me-1"></i> Corregir
-                    </button>
-                  </div>
+                  <!-- Logic Updated to use *ngIf as requested -->
+                  <div class="d-flex justify-content-end gap-2">
 
-                  <!-- Case: PENDIENTE_FIRMA (Waiting) -->
-                  <div *ngIf="e.estado === 'PENDIENTE_FIRMA'">
-                    <button class="btn btn-sm btn-secondary" disabled>En Revisión</button>
-                  </div>
-
-                  <!-- Case 1: Assigned but not accepted -> Responder -->
-                  <button *ngIf="e.estado === 'ASIGNADO'" class="btn btn-sm btn-warning fw-bold"
-                    [routerLink]="['/conciliador/evaluar', e.id]">
-                    Responder <i class="bi bi-chevron-right ms-1"></i>
-                  </button>
-
-                  <!-- Case 2: In Process (Designation Accepted) -->
-                  <ng-container *ngIf="e.estado === 'DESIGNACION_ACEPTADA'">
-                    <button class="btn btn-sm btn-outline-info fw-bold"
+                    <!-- 1. Programar (Visible si Aceptado) -->
+                    <button *ngIf="e.estado === 'DESIGNACION_ACEPTADA' || e.estado === 'DISEÑO ACEPTADO'"
+                      class="btn btn-sm btn-outline-info fw-bold"
                       [routerLink]="['/conciliador/programar-audiencia', e.id]">
-                      Programar <i class="bi bi-calendar-plus ms-1"></i>
+                      Programar 📅
                     </button>
-                  </ng-container>
 
-                  <!-- Case 3: Programado/Notificado -> Go to Agenda logic -->
-                  <ng-container
-                    *ngIf="e.estado === 'PROGRAMADO' || e.estado === 'NOTIFICADO' || e.estado === 'PENDIENTE_ACTA'">
-                    <button class="btn btn-sm btn-success fw-bold" [routerLink]="['/conciliador/agenda']">
+                    <!-- 2. Programado (Visible si Programado - DISABLED) -->
+                    <button *ngIf="e.estado === 'PROGRAMADO'" class="btn btn-success btn-sm fw-bold" [disabled]="true"
+                      style="cursor: not-allowed; opacity: 0.8;">
+                      Audiencia Programada ✅
+                    </button>
+
+                    <!-- 3. Agenda (Visible si Notificado/Pendiente) -->
+                    <button *ngIf="e.estado === 'NOTIFICADO' || e.estado === 'PENDIENTE_ACTA'"
+                      class="btn btn-sm btn-success fw-bold" [routerLink]="['/conciliador/agenda']">
                       Ver Agenda <i class="bi bi-calendar-check ms-1"></i>
                     </button>
-                  </ng-container>
-                </td>
-              </tr>
-              <tr *ngIf="expedientesFiltrados.length === 0">
-                <td colspan="6" class="text-center text-secondary py-5">
-                  <i class="bi bi-inbox fs-1 d-block mb-3 opacity-50"></i>
-                  No tienes expedientes en esta categoría.
+
+                    <!-- 4. Responder (Visible si Asignado) -->
+                    <button *ngIf="e.estado === 'ASIGNADO'" class="btn btn-sm btn-warning fw-bold"
+                      [routerLink]="['/conciliador/evaluar', e.id]">
+                      Responder <i class="bi bi-chevron-right ms-1"></i>
+                    </button>
+
+                    <!-- 5. Corregir (Visible si Observada) -->
+                    <button *ngIf="e.estado === 'OBSERVADA'" class="btn btn-sm btn-danger fw-bold"
+                      [routerLink]="['/conciliador/registro-audiencia', e.id]">
+                      Corregir
+                    </button>
+
+                  </div>
                 </td>
               </tr>
             </ng-container>

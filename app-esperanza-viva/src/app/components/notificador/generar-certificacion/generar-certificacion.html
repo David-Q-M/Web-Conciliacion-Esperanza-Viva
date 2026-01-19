@@ -33,12 +33,56 @@
 
         <div class="row g-4">
             <div class="col-12 mb-4">
-                <div class="alert alert-dark border-secondary d-flex align-items-center mb-0">
+                <div class="alert alert-dark border-secondary d-flex align-items-center mb-4">
                     <i class="bi bi-info-circle-fill text-info me-3 fs-4"></i>
                     <div>
                         <h6 class="text-white mb-0 fw-bold">Registro de Fechas de Entrega</h6>
-                        <small class="text-secondary">Ingrese las fechas exactas en que se entregaron las invitaciones a
-                            las partes.</small>
+                        <small class="text-secondary">Verifique los datos de las partes y registre las fechas de
+                            notificación.</small>
+                    </div>
+                </div>
+
+                <!-- INFO CARDS -->
+                <div class="row g-3">
+                    <!-- CARD SOLICITANTE -->
+                    <div class="col-md-6">
+                        <div class="p-3 rounded border border-warning bg-dark bg-opacity-50">
+                            <small class="text-warning fw-bold text-uppercase d-block mb-2">Datos del
+                                Solicitante</small>
+                            <h5 class="text-white fw-bold mb-1">
+                                {{ expediente.solicitante?.nombres }} {{ expediente.solicitante?.apellidos }}
+                            </h5>
+                            <div class="d-flex flex-column gap-1 mt-2 text-secondary small">
+                                <div><i class="bi bi-card-heading me-2"></i> DNI: <span class="text-white">{{
+                                        expediente.solicitante?.dni }}</span></div>
+                                <div><i class="bi bi-geo-alt me-2"></i> Dirección: <span class="text-white">{{
+                                        expediente.solicitante?.domicilio || 'No registrada' }}</span></div>
+                                <div><i class="bi bi-telephone me-2"></i> Telf/Cel: <span class="text-white">{{
+                                        expediente.solicitante?.telefono || '---' }}</span></div>
+                                <div><i class="bi bi-envelope me-2"></i> Email: <span class="text-white">{{
+                                        expediente.solicitante?.correoElectronico || '---' }}</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CARD INVITADO -->
+                    <div class="col-md-6">
+                        <div class="p-3 rounded border border-info bg-dark bg-opacity-50">
+                            <small class="text-info fw-bold text-uppercase d-block mb-2">Datos del Invitado</small>
+                            <h5 class="text-white fw-bold mb-1">
+                                {{ expediente.invitado?.nombres }} {{ expediente.invitado?.apellidos }}
+                            </h5>
+                            <div class="d-flex flex-column gap-1 mt-2 text-secondary small">
+                                <div><i class="bi bi-card-heading me-2"></i> DNI: <span class="text-white">{{
+                                        expediente.invitado?.dni }}</span></div>
+                                <div><i class="bi bi-geo-alt me-2"></i> Dirección: <span class="text-white">{{
+                                        expediente.invitado?.domicilio || 'No registrada' }}</span></div>
+                                <div><i class="bi bi-telephone me-2"></i> Telf/Cel: <span class="text-white">{{
+                                        expediente.invitado?.telefono || '---' }}</span></div>
+                                <div><i class="bi bi-envelope me-2"></i> Email: <span class="text-white">{{
+                                        expediente.invitado?.correoElectronico || '---' }}</span></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

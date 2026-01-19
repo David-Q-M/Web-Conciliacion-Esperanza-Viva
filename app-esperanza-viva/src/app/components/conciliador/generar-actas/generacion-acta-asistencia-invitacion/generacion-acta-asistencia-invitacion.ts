@@ -187,12 +187,17 @@ export class GeneracionActaAsistenciaInvitacion implements OnInit {
                 // 2. Update Status
                 const token = localStorage.getItem('token');
                 const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+
+                // 🔹 ENVIAR DATOS PARA REPROGRAMACIÓN (Backend detectará fechaAudiencia y creará nueva)
                 const payload = {
                     resultadoTipo: 'Inasistencias',
                     resultadoDetalle: 'Asistencia e invitacion para conciliar|' + JSON.stringify({
                         ...this.datosActa,
                         constanciaUrl: res.archivoUrl
-                    })
+                    }),
+                    fechaAudiencia: this.datosActa.nuevaFecha,
+                    horaAudiencia: this.datosActa.nuevaHora.length === 5 ? this.datosActa.nuevaHora + ':00' : this.datosActa.nuevaHora,
+                    lugar: this.datosActa.lugarAudiencia
                 };
 
                 this.http.put(`https://web-conciliacion-esperanza-viva-production.up.railway.app/api/audiencias/${this.audienciaId}/resultado`, payload, { headers }).subscribe({

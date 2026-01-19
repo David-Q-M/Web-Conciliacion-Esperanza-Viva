@@ -33,9 +33,9 @@
 
         <!-- Stats Cards -->
         <div class="row g-4 mb-5">
-            <div class="col-md-4">
+            <div class="col-md-4" (click)="aplicarFiltro('PENDIENTES')" style="cursor: pointer;">
                 <div class="glass-card d-flex justify-content-between align-items-center"
-                    style="border-color: #ffc107;">
+                    [style.border-color]="filterType === 'PENDIENTES' ? '#ffc107' : '#333'">
                     <div>
                         <div class="stat-value text-warning">{{ countPendientes }}</div>
                         <div class="stat-label">Pendientes</div>
@@ -43,8 +43,9 @@
                     <i class="bi bi-bell-fill text-warning fs-3 opacity-50"></i>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="glass-card d-flex justify-content-between align-items-center">
+            <div class="col-md-4" (click)="aplicarFiltro('ENTREGADAS')" style="cursor: pointer;">
+                <div class="glass-card d-flex justify-content-between align-items-center"
+                    [style.border-color]="filterType === 'ENTREGADAS' ? '#198754' : '#333'">
                     <div>
                         <div class="stat-value text-white">{{ countEntregadas }}</div>
                         <div class="stat-label">Entregadas</div>
@@ -52,8 +53,9 @@
                     <i class="bi bi-check2-circle text-success fs-3 opacity-50"></i>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="glass-card d-flex justify-content-between align-items-center">
+            <div class="col-md-4" (click)="aplicarFiltro('URGENTE')" style="cursor: pointer;">
+                <div class="glass-card d-flex justify-content-between align-items-center"
+                    [style.border-color]="filterType === 'URGENTE' ? '#dc3545' : '#333'">
                     <div>
                         <div class="stat-value text-white">{{ countUrgente }}</div>
                         <div class="stat-label">Urgente</div>
@@ -100,7 +102,7 @@
 
                         <!-- DATA -->
                         <ng-container *ngIf="!isLoading">
-                            <tr *ngFor="let p of pendientes">
+                            <tr *ngFor="let p of filteredList">
                                 <td class="ps-4 fw-bold text-white">{{ p.solicitud?.numeroExpediente }}</td>
 
                                 <!-- SOLICITANTE -->
@@ -108,8 +110,17 @@
                                     <div class="d-flex flex-column">
                                         <span class="text-white fw-bold">{{ p.solicitud?.solicitante?.nombres }} {{
                                             p.solicitud?.solicitante?.apellidos }}</span>
+                                        <!-- INFO DE CONTACTO -->
+                                        <div class="d-flex align-items-center gap-1 text-secondary small mt-1">
+                                            <i class="bi bi-person-badge"></i>
+                                            <span>{{ p.solicitud?.solicitante?.dni }}</span>
+                                        </div>
+                                        <div class="d-flex align-items-center gap-1 text-info small">
+                                            <i class="bi bi-telephone-fill"></i>
+                                            <span>{{ p.solicitud?.solicitante?.telefono || '---' }}</span>
+                                        </div>
                                         <span class="text-secondary small"
-                                            style="font-size: 0.75rem;">Solicitante</span>
+                                            style="font-size: 0.70rem;">Solicitante</span>
                                     </div>
                                 </td>
 
@@ -118,7 +129,16 @@
                                     <div class="d-flex flex-column">
                                         <span class="text-white fw-bold">{{ p.solicitud?.invitado?.nombres }} {{
                                             p.solicitud?.invitado?.apellidos }}</span>
-                                        <span class="text-secondary small" style="font-size: 0.75rem;">Invitado</span>
+                                        <!-- INFO DE CONTACTO -->
+                                        <div class="d-flex align-items-center gap-1 text-warning small mt-1">
+                                            <i class="bi bi-geo-alt-fill"></i>
+                                            <span>{{ p.solicitud?.invitado?.domicilio || 'Sin dirección' }}</span>
+                                        </div>
+                                        <div class="d-flex align-items-center gap-1 text-info small">
+                                            <i class="bi bi-telephone-fill"></i>
+                                            <span>{{ p.solicitud?.invitado?.telefono || '---' }}</span>
+                                        </div>
+                                        <span class="text-secondary small" style="font-size: 0.70rem;">Invitado</span>
                                     </div>
                                 </td>
 
@@ -129,7 +149,7 @@
                                             <i class="bi bi-calendar-event me-1"></i> {{ p.fechaAudiencia |
                                             date:'dd/MM/yyyy' }}
                                         </span>
-                                        <div class="small text-secondary mt-1">
+                                        <div class="text-white small mt-1 fw-bold">
                                             <i class="bi bi-clock me-1"></i> {{ p.horaAudiencia }}
                                         </div>
                                     </div>
@@ -139,13 +159,19 @@
                                 </td>
 
                                 <td class="text-end pe-4">
-                                    <button class="btn btn-warning btn-sm fw-bold px-3"
+                                    <button *ngIf="p.solicitud?.estado === 'PROGRAMADO'"
+                                        class="btn btn-warning btn-sm fw-bold px-3"
                                         [routerLink]="['/notificador/certificacion', p.solicitud?.id]">
                                         Gestionar <i class="bi bi-chevron-right ms-1"></i>
                                     </button>
+                                    <span
+                                        *ngIf="p.solicitud?.estado === 'NOTIFICADO' || p.solicitud?.estado === 'ENTREGADO'"
+                                        class="badge bg-success text-white">
+                                        <i class="bi bi-check-circle-fill me-1"></i> Entregado
+                                    </span>
                                 </td>
                             </tr>
-                            <tr *ngIf="pendientes.length === 0">
+                            <tr *ngIf="filteredList.length === 0">
                                 <td colspan="5" class="text-center text-secondary py-5">
                                     <i class="bi bi-bookmarks fs-1 d-block mb-3 opacity-50"></i>
                                     No tienes notificaciones pendientes.

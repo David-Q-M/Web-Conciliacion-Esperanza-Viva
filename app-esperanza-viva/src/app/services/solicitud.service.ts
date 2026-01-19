@@ -62,4 +62,9 @@ export class SolicitudService {
   listarPorConciliadorYEstado(id: number, estado: string): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/conciliador/${id}/estado/${estado}`);
   }
+
+  // 🔹 NUEVO: Descargar archivo seguro (Blob)
+  descargarArchivo(id: number, tipo: string): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/${id}/archivo/${tipo}`, { responseType: 'blob' });
+  }
 }

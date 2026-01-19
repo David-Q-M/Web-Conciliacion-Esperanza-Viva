@@ -13,7 +13,7 @@ import appesperanzaviva.backend.service.AuditoriaService;
 
 @RestController
 @RequestMapping("/api/usuarios-sistema")
-@CrossOrigin(origins = "https://lucid-consideration-production.up.railway.app")
+@CrossOrigin(origins = "https://lucid-consideration-production.up.railway.app", allowedHeaders = "*")
 public class UsuarioController {
 
     @Autowired

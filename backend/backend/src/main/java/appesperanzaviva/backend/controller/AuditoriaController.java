@@ -9,7 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/auditoria")
-@CrossOrigin(origins = "https://lucid-consideration-production.up.railway.app")
+@CrossOrigin(origins = "https://lucid-consideration-production.up.railway.app", allowedHeaders = "*")
 public class AuditoriaController {
 
     @Autowired
