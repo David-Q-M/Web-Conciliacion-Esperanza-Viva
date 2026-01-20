@@ -1,26 +1,48 @@
 <div class="login-overlay">
   <div class="login-modal animate__animated animate__fadeInDown">
-    <div class="modal-header-custom">
-      <h5 class="text-warning fw-bold m-0">Acceso {{ (rolSeleccionado || 'Personal') | titlecase }}</h5>
-      <p class="text-secondary small m-0 mt-1">Ingresa tus credenciales para acceder al sistema</p>
+    <div class="modal-header-custom border-bottom border-secondary pb-3">
+      <h5 class="text-warning fw-bold m-0">
+        <i class="bi bi-shield-lock-fill me-2"></i>
+        ACCESO {{ (rolSeleccionado || 'PERSONAL') }}
+      </h5>
+      <p class="text-secondary small m-0 mt-1">Sistema de Conciliación Esperanza Viva</p>
     </div>
 
     <div class="modal-body-custom mt-4">
+      <div *ngIf="mensajeError" class="alert-viva-error mb-3 animate__animated animate__shakeX">
+        <i class="bi bi-exclamation-octagon-fill me-2"></i> {{ mensajeError }}
+      </div>
+
       <div class="mb-3 text-start">
-        <label class="label-viva">Usuario</label>
-        <input type="text" [(ngModel)]="credentials.usuario" class="input-wireframe" placeholder="Ingresa tu usuario">
+        <label class="label-viva">Nombre de Usuario</label>
+        <div class="input-group">
+          <span class="input-group-text bg-black border-secondary text-secondary">
+            <i class="bi bi-person-fill"></i>
+          </span>
+          <input type="text" [(ngModel)]="credentials.usuario" class="input-wireframe" [class.is-invalid]="mensajeError"
+            placeholder="Ej: dquispe" (input)="mensajeError = null">
+        </div>
       </div>
 
       <div class="mb-4 text-start">
         <label class="label-viva">Contraseña</label>
-        <input type="password" [(ngModel)]="credentials.contrasena" class="input-wireframe"
-          placeholder="Ingresa tu contraseña" (keyup.enter)="ingresar()">
+        <div class="input-group">
+          <span class="input-group-text bg-black border-secondary text-secondary">
+            <i class="bi bi-key-fill"></i>
+          </span>
+          <input type="password" [(ngModel)]="credentials.contrasena" class="input-wireframe"
+            [class.is-invalid]="mensajeError" placeholder="••••••••" (keyup.enter)="ingresar()"
+            (input)="mensajeError = null">
+        </div>
       </div>
 
-      <div class="d-flex justify-content-center gap-3">
-        <button class="btn-modal-white" (click)="cancelar()" [disabled]="cargando">Cancelar</button>
+      <div class="d-flex justify-content-center gap-3 mt-4">
+        <button class="btn-modal-white" (click)="cancelar()" [disabled]="cargando">
+          Cancelar
+        </button>
         <button class="btn-modal-yellow" (click)="ingresar()" [disabled]="cargando">
-          {{ cargando ? 'Verificando...' : 'Ingresar' }}
+          <span *ngIf="cargando" class="spinner-border spinner-border-sm me-2"></span>
+          {{ cargando ? 'Autenticando...' : 'Iniciar Sesión' }}
         </button>
       </div>
     </div>

@@ -14,74 +14,68 @@ import { UsuarioService } from '../../services/usuario.service';
 export class LoginAdmin {
   @Input() rolSeleccionado: string = '';
   @Output() cerrar = new EventEmitter<void>();
+
   credentials = { usuario: '', contrasena: '' };
   cargando = false;
+  mensajeError: string | null = null;
 
   constructor(private usuarioService: UsuarioService, private router: Router) { }
 
   ingresar() {
-    if (!this.credentials.usuario || !this.credentials.contrasena) {
-      alert("Por favor, ingresa tus credenciales.");
+    this.mensajeError = null;
+
+    // Validación de campos vacíos
+    if (!this.credentials.usuario.trim() || !this.credentials.contrasena.trim()) {
+      this.mensajeError = "Por favor, complete todos los campos.";
       return;
     }
 
     this.cargando = true;
     this.usuarioService.login(this.credentials).subscribe({
       next: (user) => {
-        // 1. Guardar sesión (Importante: El rol debe estar en mayúsculas para el Guard)
-        // 1. Guardar sesión
-        localStorage.setItem('currentUser', JSON.stringify(user));
-
-        // 🛡️ Soporte para múltiples roles
+        // Normalizar roles del usuario desde la BD
         const roles = user.roles || (user.rol ? [user.rol] : []);
         const rolesUpper = roles.map((r: string) => r.toUpperCase());
+        const targetRole = this.rolSeleccionado.toUpperCase();
 
-        console.log("Login exitoso. Roles detectados:", rolesUpper);
-
-        // 2. Redirección basada en PREFERENCIA DE USUARIO (Si seleccionó un rol e inició sesión)
-        if (this.rolSeleccionado && rolesUpper.includes(this.rolSeleccionado.toUpperCase())) {
-          const roleTarget = this.rolSeleccionado.toUpperCase();
-          if (roleTarget === 'ADMINISTRADOR') this.router.navigate(['/admin-dashboard']);
-          else if (roleTarget === 'DIRECTOR') this.router.navigate(['/director/bandeja-solicitudes']);
-          else if (roleTarget === 'CONCILIADOR') this.router.navigate(['/conciliador/mis-casos']);
-          else if (roleTarget === 'ABOGADO') this.router.navigate(['/abogado/pendientes']);
-          else if (roleTarget === 'ABOGADO') this.router.navigate(['/abogado/pendientes']);
-          else if (roleTarget === 'NOTIFICADOR') this.router.navigate(['/notificador/pendientes']);
-          else if (roleTarget === 'SECRETARIO') this.router.navigate(['/secretario/reporte']);
-
-          this.cerrar.emit();
+        // VALIDACIÓN DE SEGURIDAD PROFESIONAL: ¿Tiene el rol elegido?
+        if (this.rolSeleccionado && !rolesUpper.includes(targetRole)) {
+          this.cargando = false;
+          this.mensajeError = `Acceso denegado: Usted no cuenta con el perfil de ${this.rolSeleccionado}.`;
           return;
         }
 
-        // 3. Fallback: Prioridad por defecto si no seleccionó rol o el seleccionado no le corresponde
-        if (rolesUpper.includes('ADMINISTRADOR')) {
-          this.router.navigate(['/admin-dashboard']);
-        } else if (rolesUpper.includes('DIRECTOR')) {
-          this.router.navigate(['/director/bandeja-solicitudes']);
-        } else if (rolesUpper.includes('CONCILIADOR')) {
-          this.router.navigate(['/conciliador/mis-casos']);
-        } else if (rolesUpper.includes('ABOGADO')) {
-          this.router.navigate(['/abogado/pendientes']);
-        } else if (rolesUpper.includes('NOTIFICADOR')) {
-          this.router.navigate(['/notificador/pendientes']);
-        } else if (rolesUpper.includes('SECRETARIO')) {
-          this.router.navigate(['/secretario/reporte']);
-        } else {
-          alert("Rol no reconocido en el sistema.");
-          return;
-        }
+        // Guardar sesión y token para Railway
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        if (user.token) localStorage.setItem('token', user.token);
 
+        // Redirección exitosa
+        this.ejecutarRedireccion(targetRole || rolesUpper[0]);
         this.cerrar.emit();
       },
       error: (err) => {
         this.cargando = false;
-        alert("Acceso denegado. Credenciales incorrectas.");
+        this.mensajeError = "Usuario o contraseña incorrectos.";
+        console.error("Error de login:", err);
       }
     });
   }
 
+  private ejecutarRedireccion(role: string) {
+    const rutas: { [key: string]: string } = {
+      'ADMINISTRADOR': '/admin-dashboard',
+      'DIRECTOR': '/director/bandeja-solicitudes',
+      'CONCILIADOR': '/conciliador/mis-casos',
+      'ABOGADO': '/abogado/pendientes',
+      'NOTIFICADOR': '/notificador/pendientes',
+      'SECRETARIO': '/secretario/reporte'
+    };
+    this.router.navigate([rutas[role] || '/consulta']);
+  }
+
   cancelar() {
     this.credentials = { usuario: '', contrasena: '' };
+    this.mensajeError = null;
     this.cerrar.emit();
   }
 }
