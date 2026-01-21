@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { environment } from '../../../../environments/environment';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
@@ -34,7 +35,7 @@ export class HistorialAbogado implements OnInit {
 
     buscarHistorial() {
         this.isLoading = true;
-        this.http.get<any[]>('https://web-conciliacion-esperanza-viva-production.up.railway.app/api/solicitudes').subscribe({
+        this.http.get<any[]>(`${environment.apiUrl}/solicitudes`).subscribe({
             next: (res) => {
                 this.historial = res.filter(s => {
                     // 1. Base Filter: Only relevant states

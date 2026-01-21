@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { environment } from '../../../../environments/environment';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -169,7 +170,7 @@ export class ProgramarAudiencia implements OnInit {
       lugar: this.form.lugar
     };
 
-    this.http.post('https://web-conciliacion-esperanza-viva-production.up.railway.app/api/audiencias/programar', payload, { headers }).subscribe({
+    this.http.post(`${environment.apiUrl}/audiencias/programar`, payload, { headers }).subscribe({
       next: () => {
         this.isYaProgramado = true;
         alert(`✅ ÉXITO: Audiencia registrada y expediente actualizado.`);

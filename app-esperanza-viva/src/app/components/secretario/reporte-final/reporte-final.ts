@@ -1,9 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { environment } from '../../../../environments/environment';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
-import * as XLSX from 'xlsx';
+
+// EXCELJS & FILE-SAVER
+import * as ExcelJS from 'exceljs';
+import * as FileSaver from 'file-saver';
 
 @Component({
     selector: 'app-reporte-final',
@@ -16,11 +20,8 @@ export class ReporteFinal implements OnInit {
     secretarioNombre: string = 'Dr. Luis Alberto Ramirez';
     mes: string = '';
     anio: string = new Date().getFullYear().toString();
-
-    // Stats
     materias: any[] = [];
     resultados: any[] = [];
-
     isLoading: boolean = false;
     rawSolicitudes: any[] = [];
 
@@ -32,9 +33,8 @@ export class ReporteFinal implements OnInit {
             const user = JSON.parse(userJson);
             this.secretarioNombre = user.nombreCompleto || this.secretarioNombre;
         }
-        // Initialize with current month
         this.mes = (new Date().getMonth() + 1).toString();
-        this.cargarDatos(); // Auto load current month
+        this.cargarDatos();
     }
 
     cargarDatos() {
@@ -42,176 +42,346 @@ export class ReporteFinal implements OnInit {
             alert('Por favor seleccione mes y año');
             return;
         }
-
         this.isLoading = true;
-        this.http.get<any[]>('https://web-conciliacion-esperanza-viva-production.up.railway.app/api/solicitudes').subscribe({
+        this.http.get<any[]>(`${environment.apiUrl}/solicitudes`).subscribe({
             next: (data) => {
-                // Filter by date
                 this.rawSolicitudes = data.filter(s => {
                     const dateStr = s.fechaPresentacion || '';
                     const fecha = new Date(dateStr);
-                    // Check valid date
                     if (isNaN(fecha.getTime())) return false;
-
-                    const sMes = fecha.getMonth() + 1;
-                    const sAnio = fecha.getFullYear();
-                    return sMes.toString() === this.mes && sAnio.toString() === this.anio;
+                    return (fecha.getMonth() + 1).toString() === this.mes && fecha.getFullYear().toString() === this.anio;
                 });
-
                 this.calcularEstadisticas();
                 this.isLoading = false;
             },
             error: (err) => {
                 console.error("Error cargando reporte", err);
                 this.isLoading = false;
-                // Don't alert on auto-load if empty, but alert on manual click? 
-                // Just keeping silent or simple log is better for UX start
             }
         });
     }
 
     calcularEstadisticas() {
-        // 1. Materias Conciliables (Grouped by Civil vs Familia)
         let civilCount = 0;
         let familiaCount = 0;
-        let laboralCount = 0;
-        let otrosCount = 0;
+        const total = this.rawSolicitudes.length || 1;
 
         this.rawSolicitudes.forEach(s => {
             const mat = (s.materiaConciliable || '').toUpperCase();
-
-            // Basic Keyword Heuristic
-            if (mat.includes('FAMILIA') || mat.includes('ALIMENTOS') || mat.includes('TENENCIA') || mat.includes('VISITAS')) {
-                familiaCount++;
-            } else if (mat.includes('CIVIL') || mat.includes('DESALOJO') || mat.includes('DEUDA') || mat.includes('OBLIGACION') || mat.includes('INDEMNIZACION')) {
-                civilCount++;
-            } else if (mat.includes('LABORAL')) {
-                laboralCount++;
-            } else {
-                otrosCount++;
-            }
+            if (mat.includes('FAMILIA') || mat.includes('ALIMENTOS')) familiaCount++;
+            else civilCount++;
         });
-
-        const total = this.rawSolicitudes.length || 1;
 
         this.materias = [
-            { tipo: 'Civil (Desalojos, Deudas)', cantidad: civilCount, porcentaje: Math.round((civilCount / total) * 100) },
-            { tipo: 'Familia (Alimentos, Tenencia)', cantidad: familiaCount, porcentaje: Math.round((familiaCount / total) * 100) }
+            { tipo: 'Civil', cantidad: civilCount, porcentaje: Math.round((civilCount / total) * 100) },
+            { tipo: 'Familia', cantidad: familiaCount, porcentaje: Math.round((familiaCount / total) * 100) }
         ];
-
-        // Add others if significant
-        if (laboralCount > 0) this.materias.push({ tipo: 'Laboral', cantidad: laboralCount, porcentaje: Math.round((laboralCount / total) * 100) });
-        if (otrosCount > 0) this.materias.push({ tipo: 'Otros', cantidad: otrosCount, porcentaje: Math.round((otrosCount / total) * 100) });
-
-
-        // 2. Resultados (Outcomes)
-        const resultadoMap = new Map<string, number>();
-
-        // Initialize standard outcomes with 0
-        resultadoMap.set('Acuerdo Total', 0);
-        resultadoMap.set('Acuerdo Parcial', 0);
-        resultadoMap.set('Falta de Acuerdo', 0);
-        resultadoMap.set('Inasistencia Una Parte', 0);
-        resultadoMap.set('Inasistencia Ambas Partes', 0);
-
-        this.rawSolicitudes.forEach(s => {
-            // Priority: s.resultadoTipo (from Audiencia) -> Derived from State
-            let tipo = s.resultadoTipo || '';
-
-            // Normalize
-            if (!tipo) {
-                // Fallback Logic
-                if (s.estado === 'FINALIZADA' || s.estado === 'APROBADA') tipo = 'Acuerdo Total'; // Assumption
-                else if (s.estado === 'OBSERVADA') tipo = 'Pendiente Subsanación';
-                else tipo = 'En Trámite';
-            }
-
-            // Clean up string matching
-            if (tipo.toUpperCase().includes('TOTAL')) tipo = 'Acuerdo Total';
-            else if (tipo.toUpperCase().includes('PARCIAL')) tipo = 'Acuerdo Parcial';
-            else if (tipo.toUpperCase().includes('FALTA DE ACUERDO')) tipo = 'Falta de Acuerdo';
-            else if (tipo.toUpperCase().includes('UNA PARTE')) tipo = 'Inasistencia Una Parte';
-            else if (tipo.toUpperCase().includes('AMBAS PARTES')) tipo = 'Inasistencia Ambas Partes';
-
-            resultadoMap.set(tipo, (resultadoMap.get(tipo) || 0) + 1);
-        });
-
-        // Convert map to array and filter out zeros if desired, or keep main ones
-        this.resultados = [];
-        resultadoMap.forEach((cant, tipo) => {
-            if (cant > 0 || ['Acuerdo Total', 'Acuerdo Parcial', 'Falta de Acuerdo'].includes(tipo)) {
-                this.resultados.push({ tipo, cantidad: cant });
-            }
-        });
     }
 
-    generarHojaSumaria() {
+    async generarHojaSumaria() {
         if (!this.rawSolicitudes || this.rawSolicitudes.length === 0) {
             alert('No hay datos para exportar en este periodo.');
             return;
         }
 
-        const wb: XLSX.WorkBook = XLSX.utils.book_new();
+        const workbook = new ExcelJS.Workbook();
+        const datos = this.calcularMatricesDatos();
 
-        // --- SHEET 1: RESUMEN ESTADÍSTICO ---
-        const resumenData = [
-            ['REPORTE MENSUAL - CENTRO DE CONCILIACIÓN ESPERANZA VIVA'],
-            [`Periodo: ${this.mes}/${this.anio}`],
-            [`Generado por: ${this.secretarioNombre}`],
-            [''],
-            ['I. MATERIAS CONCILIABLES'],
-            ['Materia', 'Cantidad', 'Porcentaje'],
-            ...this.materias.map(m => [m.tipo, m.cantidad, `${m.porcentaje}%`]),
-            [''],
-            ['II. RESULTADOS DE ACTAS'],
-            ['Resultado', 'Cantidad'],
-            ...this.resultados.map(r => [r.tipo, r.cantidad])
+        await this.construirHoja(workbook, "Hoja Sumaria", "HOJA SUMARIA DEL SERVICIO CONCILIATORIO PRIVADO", datos);
+        await this.construirHoja(workbook, "Anexo", "HOJA SUMARIA DEL SERVICIO CONCILIATORIO PRIVADO - ANEXO", datos);
+
+        const buffer = await workbook.xlsx.writeBuffer();
+        const fileName = `Hoja_Sumaria_${this.mes}_${this.anio}.xlsx`;
+        const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        FileSaver.saveAs(blob, fileName);
+    }
+
+    private calcularMatricesDatos() {
+        const filasCivil = [
+            'Convocatoria a Junta o Asamblea (*)', 'Desalojo', 'Resolución Contractual', 'División y Partición de Bienes',
+            'Incumplimiento de Contrato', 'Indemnización', 'Interdicto (Derechos Reales)', 'Oblig. de dar, Hacer, No Hacer (1)',
+            'Oblig. de dar Suma de Dinero', 'Otorgamiento de Escritura Pública', 'Rectificación de Áreas', 'Reivindicación',
+            'Ofrecimiento de Pago (2)', 'OTROS (Anexo 1)'
+        ];
+        const filasFamilia = [
+            'Alimentos (3)', 'Régimen de Visitas', 'Tenencia', 'Alimentos, Régimen de Visitas, Tenencia (4)',
+            'Gastos de Embarazo', 'Liquidac. Soc. Gananciales (5)', 'OTROS (Anexo 1)'
+        ];
+        const filasContrataciones = [
+            'Ampliación de plazo', 'Conformidad de obra o servicio', 'Liquidación Contrato', 'Pagos',
+            'Recepción y/o conformidad', 'Resolución de Contrato', 'Valorizaciones', 'Defectos o Vicios ocultos', 'OTROS (Anexo 1)'
         ];
 
-        const wsResumen: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(resumenData);
+        const matrizCivil = Array(filasCivil.length).fill(0).map(() => Array(16).fill(0));
+        const matrizFamilia = Array(filasFamilia.length).fill(0).map(() => Array(16).fill(0));
+        const matrizContrataciones = Array(filasContrataciones.length).fill(0).map(() => Array(16).fill(0));
 
-        // Basic Column Widths
-        wsResumen['!cols'] = [{ wch: 40 }, { wch: 15 }, { wch: 15 }];
+        this.rawSolicitudes.forEach(s => {
+            const materia = (s.subMateria || s.materiaConciliable || '').toUpperCase();
+            const resultado = (s.resultadoTipo || '').toUpperCase();
+            const estado = (s.estado || '').toUpperCase();
+            const modalidad = (s.modalidad || 'PRESENCIAL').toUpperCase();
 
-        XLSX.utils.book_append_sheet(wb, wsResumen, 'Resumen Estadístico');
+            let matrizDestino = matrizCivil;
+            let indiceFila = filasCivil.length - 1;
 
-        // --- SHEET 2: DETALLE DE CASOS ---
-        // Flatten data for nice columns
-        const detalleData = this.rawSolicitudes.map(s => {
-            return {
-                'N° Expediente': s.numeroExpediente,
-                'Fecha Recepción': s.fechaPresentacion,
-                'Solicitante': s.solicitanteNombre || 'N/A',
-                'Invitado': s.invitadoNombre || 'N/A',
-                'Apoderado': s.apoderadoNombre || 'N/A', // Added Apoderado
-                'Materia': s.materiaConciliable,
-                'Estado Actual': s.estado,
-                'Resultado': s.resultadoTipo || 'En Trámite',
-                'Conciliador': s.conciliadorNombre || 'No Asignado'
-            };
+            if (materia.includes('ALIMENTOS') && materia.includes('VISITAS')) indiceFila = 3;
+            else if (materia.includes('ALIMENTOS')) { matrizDestino = matrizFamilia; indiceFila = 0; }
+            else if (materia.includes('VISITAS')) { matrizDestino = matrizFamilia; indiceFila = 1; }
+            else if (materia.includes('TENENCIA')) { matrizDestino = matrizFamilia; indiceFila = 2; }
+            else if (materia.includes('EMBARAZO')) { matrizDestino = matrizFamilia; indiceFila = 4; }
+            else if (materia.includes('GANANCIALES')) { matrizDestino = matrizFamilia; indiceFila = 5; }
+            else if (materia.includes('FAMILIA')) { matrizDestino = matrizFamilia; indiceFila = filasFamilia.length - 1; }
+            else if (materia.includes('CONTRATACIONES')) { matrizDestino = matrizContrataciones; indiceFila = filasContrataciones.length - 1; }
+            else {
+                if (materia.includes('DESALOJO')) indiceFila = 1;
+                else if (materia.includes('RESOLUCION') || materia.includes('RESOLUCIÓN')) indiceFila = 2;
+                else if (materia.includes('DIVISION') || materia.includes('PARTICION')) indiceFila = 3;
+                else if (materia.includes('INCUMPLIMIENTO')) indiceFila = 4;
+                else if (materia.includes('INDEMNIZACION')) indiceFila = 5;
+                else if (materia.includes('INTERDICTO')) indiceFila = 6;
+                else if (materia.includes('HACER') || materia.includes('DAR')) indiceFila = 7;
+                else if (materia.includes('SUMA DE DINERO')) indiceFila = 8;
+                else if (materia.includes('ESCRITURA')) indiceFila = 9;
+                else if (materia.includes('RECTIFICACION')) indiceFila = 10;
+                else if (materia.includes('REIVINDICACION')) indiceFila = 11;
+                else if (materia.includes('OFRECIMIENTO')) indiceFila = 12;
+            }
+
+            const isVirtual = (modalidad.includes('VIRTUAL') || modalidad.includes('ELECTRONICO'));
+
+            if (isVirtual) matrizDestino[indiceFila][1]++;
+            else matrizDestino[indiceFila][0]++;
+
+            let isConcluido = ['FINALIZADA', 'CONCILIADA', 'CERRADO', 'CONCLUIDO'].includes(estado);
+
+            if (isConcluido) {
+                let col = -1;
+                if (resultado.includes('TOTAL')) col = 5;
+                else if (resultado.includes('PARCIAL')) col = 6;
+                else if (resultado.includes('FALTA DE ACUERDO') || resultado.includes('NO ACUERDO')) col = 7;
+                else if (resultado.includes('UNA PARTE')) col = 9;
+                else if (resultado.includes('AMBAS PARTES')) col = 10;
+                else if (resultado.includes('MOTIVADA')) col = 11;
+                else col = 12;
+
+                if (col !== -1) {
+                    matrizDestino[indiceFila][col]++;
+                    matrizDestino[indiceFila][15]++;
+                    if (isVirtual) matrizDestino[indiceFila][14]++;
+                    else matrizDestino[indiceFila][13]++;
+                }
+            } else {
+                matrizDestino[indiceFila][4]++;
+            }
         });
 
-        const wsDetalle: XLSX.WorkSheet = XLSX.utils.json_to_sheet(detalleData);
+        return { filasCivil, filasFamilia, filasContrataciones, matrizCivil, matrizFamilia, matrizContrataciones };
+    }
 
-        // Auto-width for detail columns (heuristic)
-        const wscols = [
-            { wch: 15 }, // Expediente
-            { wch: 15 }, // Fecha
-            { wch: 30 }, // Solicitante
-            { wch: 30 }, // Invitado
-            { wch: 30 }, // Apoderado
-            { wch: 25 }, // Materia
-            { wch: 15 }, // Estado
-            { wch: 20 }, // Resultado
-            { wch: 25 }, // Conciliador
+    private async construirHoja(workbook: ExcelJS.Workbook, nombreHoja: string, tituloTexto: string, datos: any) {
+        const ws = workbook.addWorksheet(nombreHoja, {
+            pageSetup: { paperSize: 9, orientation: 'landscape', fitToPage: true, fitToWidth: 1, fitToHeight: 0 }
+        });
+
+        ws.columns = [
+            { width: 40 },
+            { width: 12 }, { width: 12 },
+            { width: 12 }, { width: 12 },
+            { width: 10 },
+            { width: 5 }, { width: 5 }, { width: 5 }, { width: 5 }, { width: 5 }, { width: 5 }, { width: 5 }, { width: 5 },
+            { width: 12 }, { width: 12 },
+            { width: 10 }
         ];
-        wsDetalle['!cols'] = wscols;
 
-        XLSX.utils.book_append_sheet(wb, wsDetalle, 'Detalle de Casos');
+        ws.mergeCells('A1:Q1');
+        const titleCell = ws.getCell('A1');
+        titleCell.value = tituloTexto;
+        titleCell.font = { bold: true, size: 12, name: 'Arial' };
+        titleCell.alignment = { horizontal: 'center' };
 
-        // Save File
-        const fileName = `Hoja_Sumaria_${this.mes}_${this.anio}.xlsx`;
-        XLSX.writeFile(wb, fileName);
+        ws.getCell('A3').value = 'NOMBRE DEL CENTRO DE CONCILIACIÓN';
+        ws.getCell('A3').font = { bold: true, size: 8 };
+
+        ws.mergeCells('E3:Q4');
+        const centroCell = ws.getCell('E3');
+        centroCell.value = 'CENTRO DE CONCILIACIÓN EXTRAJUDICIAL "ESPERANZA VIVA"';
+        centroCell.alignment = { horizontal: 'center', vertical: 'middle' };
+        centroCell.font = { bold: true, size: 14 };
+
+        // Explicit Border Type
+        const borderStyle: Partial<ExcelJS.Borders> = {
+            top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' }
+        };
+        centroCell.border = borderStyle;
+
+        const meses = ["ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO", "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"];
+        const row6 = ws.getRow(6);
+        row6.getCell(4).value = 'AÑO';
+        row6.getCell(5).value = this.anio;
+        row6.getCell(5).border = borderStyle;
+        row6.getCell(5).alignment = { horizontal: 'center' };
+
+        row6.getCell(7).value = 'PERIODO';
+        row6.getCell(8).value = meses[parseInt(this.mes) - 1] || this.mes;
+
+        ws.mergeCells('H6:I6'); // Combinar para que quepa el mes (FIXED)
+        const mesCell = row6.getCell(8);
+        mesCell.border = borderStyle;
+        mesCell.alignment = { horizontal: 'center' };
+
+        this.crearCabeceraTabla(ws);
+
+        let currentRow = 10;
+        currentRow = this.agregarSeccion(ws, currentRow, 'CIVIL', datos.filasCivil, datos.matrizCivil);
+        currentRow = this.agregarSeccion(ws, currentRow, 'FAMILIA', datos.filasFamilia, datos.matrizFamilia);
+        currentRow = this.agregarSeccion(ws, currentRow, 'CONTRATACIONES DEL ESTADO', datos.filasContrataciones, datos.matrizContrataciones);
+
+        const totalRow = ws.getRow(currentRow);
+        totalRow.getCell(1).value = 'TOTAL GENERAL';
+        totalRow.getCell(1).font = { bold: true };
+        totalRow.getCell(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'D9D9D9' } };
+
+        const sumMatrices = (c: number) => {
+            return datos.matrizCivil.reduce((a: any, b: any) => a + b[c], 0) +
+                datos.matrizFamilia.reduce((a: any, b: any) => a + b[c], 0) +
+                datos.matrizContrataciones.reduce((a: any, b: any) => a + b[c], 0);
+        }
+
+        for (let c = 0; c < 16; c++) {
+            const val = sumMatrices(c);
+            const cell = totalRow.getCell(c + 2);
+            cell.value = val;
+            cell.font = { bold: true };
+            cell.alignment = { horizontal: 'center' };
+            cell.border = borderStyle;
+            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'D9D9D9' } };
+        }
+        totalRow.getCell(1).border = borderStyle;
+
+        let f = currentRow + 2;
+        ws.getCell(`A${f}`).value = '(1) Obligación de dar no incluye sumas de dinero';
+        ws.getCell(`H${f}`).value = '(4) Cuando se concilie las 03 materias.';
+        f++;
+        ws.getCell(`A${f}`).value = '(2) Incluye pago alquileres y otras deudas dinerarias';
+        ws.getCell(`H${f}`).value = '(5) en matrimonio o unión de hecho';
+        f++;
+        ws.getCell(`A${f}`).value = '(3) Fijación de pensión, aumento, reducción...';
+
+        f += 2;
+        ws.getCell(`A${f}`).value = 'A.T. Acuerdo Total'; ws.getCell(`C${f}`).value = 'F.A. Falta de Acuerdo'; ws.getCell(`H${f}`).value = 'I.A.P. Inasistencia de Ambas Partes';
+        f++;
+        ws.getCell(`A${f}`).value = 'A.P. Acuerdo Parcial'; ws.getCell(`C${f}`).value = 'I.U.P. Inasistencia de una Parte'; ws.getCell(`H${f}`).value = 'D.M.C. Decisión Motivada del Conciliador';
+
+        f += 5;
+        ws.mergeCells(`G${f}:M${f}`);
+        const firma = ws.getCell(`G${f}`);
+        firma.value = 'FIRMA Y SELLO DEL DIRECTOR DEL CENTRO';
+        firma.border = { top: { style: 'thin' } };
+        firma.alignment = { horizontal: 'center' };
+    }
+
+    private crearCabeceraTabla(ws: ExcelJS.Worksheet) {
+        const gray = 'F2F2F2';
+        // TS Correct Typing for Border
+        const border: Partial<ExcelJS.Borders> = {
+            top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' }
+        };
+
+        const setStyle = (cell: string, val: string) => {
+            const c = ws.getCell(cell);
+            c.value = val;
+            // TS Correct Typing for Fill
+            const fill: ExcelJS.Fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: gray } };
+            c.fill = fill;
+            c.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true };
+            c.border = border;
+            c.font = { bold: true, size: 8 };
+        };
+
+        ws.mergeCells('A7:A9'); setStyle('A7', 'MATERIAS');
+        ws.mergeCells('B7:C7'); setStyle('B7', 'PROCEDIMIENTOS INICIADOS');
+        ws.mergeCells('B8:B9'); setStyle('B8', 'PRESENCIAL');
+        ws.mergeCells('C8:C9'); setStyle('C8', 'MEDIOS\nELECTRONICOS');
+
+        ws.mergeCells('D7:D9'); setStyle('D7', 'CONVERTIDOS DE\nPRESENCIAL A\nELECTRONICO');
+        ws.mergeCells('E7:E9'); setStyle('E7', 'CONVERTIDOS DE\nELECTRONICOS A\nPRESENCIAL');
+        ws.mergeCells('F7:F9'); setStyle('F7', 'EN\nTRAMITE');
+
+        ws.mergeCells('G7:N7'); setStyle('G7', 'CONCLUIDOS');
+        ws.mergeCells('G8:G9'); setStyle('G8', 'A.T.');
+        ws.mergeCells('H8:H9'); setStyle('H8', 'A.P.');
+        ws.mergeCells('I8:I9'); setStyle('I8', 'F.A.');
+
+        ws.mergeCells('J8:K8'); setStyle('J8', 'I.U.P.');
+        setStyle('J9', 'Solicitante');
+        setStyle('K9', 'Invitado');
+
+        ws.mergeCells('L8:L9'); setStyle('L8', 'I.A.P.');
+        ws.mergeCells('M8:M9'); setStyle('M8', 'D.M.C.');
+        ws.mergeCells('N8:N9'); setStyle('N8', 'C.I.');
+
+        ws.mergeCells('O7:P7'); setStyle('O7', 'MODALIDAD QUE CONCLUYE');
+        ws.mergeCells('O8:O9'); setStyle('O8', 'PRESENCIAL');
+        ws.mergeCells('P8:P9'); setStyle('P8', 'MEDIOS\nELECTRONICOS');
+
+        ws.mergeCells('Q7:Q9'); setStyle('Q7', 'TOTAL\nCONCLUIDOS');
+    }
+
+    private agregarSeccion(ws: ExcelJS.Worksheet, startRow: number, titulo: string, labels: string[], dataMatrix: number[][]): number {
+        const border: Partial<ExcelJS.Borders> = {
+            top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' }
+        };
+
+        ws.mergeCells(`A${startRow}:Q${startRow}`);
+        const tCell = ws.getCell(`A${startRow}`);
+        tCell.value = titulo;
+        tCell.font = { bold: true };
+
+        // Explicit Fill
+        const fill: ExcelJS.Fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'BFBFBF' } };
+        tCell.fill = fill;
+        tCell.border = border;
+
+        let r = startRow + 1;
+        labels.forEach((label, idx) => {
+            const row = ws.getRow(r);
+
+            const cLabel = row.getCell(1);
+            cLabel.value = label;
+            cLabel.border = border;
+            cLabel.font = { size: 9 };
+
+            const rowData = dataMatrix[idx];
+            rowData.forEach((val, colIdx) => {
+                const cell = row.getCell(colIdx + 2);
+                cell.value = val;
+                cell.alignment = { horizontal: 'center' };
+                cell.border = border;
+                if (val > 0) cell.font = { bold: true };
+            });
+
+            r++;
+        });
+
+        const totalRow = ws.getRow(r);
+        totalRow.getCell(1).value = 'TOTAL';
+        totalRow.getCell(1).font = { bold: true };
+        totalRow.getCell(1).alignment = { horizontal: 'right' };
+        totalRow.getCell(1).border = border;
+
+        const totalData = dataMatrix.reduce((acc, curr) => curr.map((v, i) => v + acc[i]), Array(16).fill(0));
+        totalData.forEach((val, colIdx) => {
+            const cell = totalRow.getCell(colIdx + 2);
+            cell.value = val;
+            cell.font = { bold: true };
+            cell.alignment = { horizontal: 'center' };
+            cell.border = border;
+            const totalFill: ExcelJS.Fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'F2F2F2' } };
+            cell.fill = totalFill;
+        });
+
+        return r + 2;
     }
 
     cerrarSesion() {

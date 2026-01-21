@@ -8,7 +8,7 @@ import java.util.Optional;
 @Repository
 public interface SolicitudRepository extends JpaRepository<Solicitud, Long> {
 
-        // Para buscar expedientes por su código EXP-2025-XXXXXX
+        // Para buscar expedientes por su código EXP-YYYY-XXXXXX
         // 🔹 NUEVO: Query con JOIN FETCH para cargar todos los datos requeridos por el
         // panel de consulta (evita LazyInitializationException y datos vacíos)
         @org.springframework.data.jpa.repository.Query("SELECT s FROM Solicitud s " +

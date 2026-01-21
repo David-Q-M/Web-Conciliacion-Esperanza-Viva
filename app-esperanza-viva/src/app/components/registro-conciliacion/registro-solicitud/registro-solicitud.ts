@@ -67,8 +67,8 @@ export class RegistroSolicitud {
       alert("El DNI del solicitante debe tener exactamente 8 números.");
       return;
     }
-    if (!s.telefono || !this.esSoloNumeros(s.telefono) || s.telefono.length < 9) {
-      alert("Ingresa un número de teléfono válido para el solicitante (mínimo 9 dígitos).");
+    if (!s.telefono || !this.esSoloNumeros(s.telefono) || s.telefono.length < 9 || !s.telefono.startsWith('9')) {
+      alert("Ingresa un número de teléfono válido para el solicitante (mínimo 9 dígitos y empezar con 9).");
       return;
     }
     if (!s.domicilio || s.domicilio.length < 5) {
@@ -79,7 +79,7 @@ export class RegistroSolicitud {
       alert("La dirección contiene caracteres no válidos (@, $, <, >). No se permiten scripts ni caracteres especiales.");
       return;
     }
-    if (!this.validarEmail(s.correoElectronico)) {
+    if (s.correoElectronico && !this.validarEmail(s.correoElectronico)) {
       alert("El correo electrónico del solicitante no tiene un formato válido.");
       return;
     }
@@ -94,15 +94,15 @@ export class RegistroSolicitud {
         alert("Los apellidos del apoderado son obligatorios y deben contener solo letras.");
         return;
       }
-      if (!a.dni || !this.esSoloNumeros(a.dni) || a.dni.length !== 8) {
+      if (a.dni && (!this.esSoloNumeros(a.dni) || a.dni.length !== 8)) {
         alert("El DNI del apoderado debe tener exactamente 8 números.");
         return;
       }
-      if (!a.telefono || !this.esSoloNumeros(a.telefono) || a.telefono.length < 9) {
-        alert("Ingresa un número de teléfono válido para el apoderado (mínimo 9 dígitos).");
+      if (!a.telefono || !this.esSoloNumeros(a.telefono) || a.telefono.length < 9 || !a.telefono.startsWith('9')) {
+        alert("Ingresa un número de teléfono válido para el apoderado (mínimo 9 dígitos y empezar con 9).");
         return;
       }
-      if (!a.domicilio || a.domicilio.length < 5) {
+      if (a.domicilio && a.domicilio.length < 5) {
         alert("El domicilio del apoderado es obligatorio.");
         return;
       }
@@ -111,8 +111,7 @@ export class RegistroSolicitud {
         return;
       }
       // Validación de email opcional o requerido para apoderado? Asumiremos requerido para consistencia o al menos formato válido si existe.
-      // Si queremos que sea obligatorio:
-      if (!this.validarEmail(a.correoElectronico)) {
+      if (a.correoElectronico && !this.validarEmail(a.correoElectronico)) {
         alert("El correo electrónico del apoderado no tiene un formato válido.");
         return;
       }
@@ -128,17 +127,17 @@ export class RegistroSolicitud {
       alert("Los apellidos del invitado son obligatorios y deben contener solo letras.");
       return;
     }
-    if (!i.dni || !this.esSoloNumeros(i.dni) || i.dni.length !== 8) {
+    if (i.dni && (!this.esSoloNumeros(i.dni) || i.dni.length !== 8)) {
       alert("El DNI del invitado debe tener exactamente 8 números.");
       return;
     }
     // Telefono invitado a veces no se tiene, pero si se pide, validar formato.
-    if (i.telefono && (!this.esSoloNumeros(i.telefono) || i.telefono.length < 9)) {
-      alert("El teléfono del invitado, si se ingresa, debe ser válido.");
+    if (i.telefono && (!this.esSoloNumeros(i.telefono) || i.telefono.length < 9 || !i.telefono.startsWith('9'))) {
+      alert("El teléfono del invitado, si se ingresa, debe ser válido (empezar con 9).");
       return;
     }
-    if (!i.domicilio || i.domicilio.length < 5) {
-      alert("El domicilio del invitado es obligatorio para poder notificarlo.");
+    if (i.domicilio && i.domicilio.length < 5) {
+      alert("El domicilio del invitado debe ser válido si se ingresa.");
       return;
     }
     if (this.tieneCaracteresProhibidos(i.domicilio)) {
@@ -148,6 +147,22 @@ export class RegistroSolicitud {
     if (i.correoElectronico && !this.validarEmail(i.correoElectronico)) {
       alert("El correo del invitado no es válido.");
       return;
+    }
+
+    // --- VALIDACIÓN DE UNICIDAD DE DNI ---
+    if (s.dni === i.dni && i.dni) {
+      alert("El DNI del solicitante y del invitado no pueden ser iguales.");
+      return;
+    }
+    if (this.mostrarApoderado) {
+      if (s.dni === a.dni) {
+        alert("El DNI del solicitante y del apoderado no pueden ser iguales.");
+        return;
+      }
+      if (a.dni === i.dni && i.dni) {
+        alert("El DNI del apoderado y del invitado no pueden ser iguales.");
+        return;
+      }
     }
 
     // --- GUARDADO Y NAVEGACIÓN ---

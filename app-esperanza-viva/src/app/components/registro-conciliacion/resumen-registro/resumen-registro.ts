@@ -12,7 +12,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 export class ResumenRegistro implements OnInit {
   numeroExpediente: string | null = '';
 
-  constructor(private route: ActivatedRoute, private router: Router) {}
+  constructor(private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit() {
     // Captura el número enviado desde la base de datos
@@ -20,6 +20,6 @@ export class ResumenRegistro implements OnInit {
   }
 
   volverAlInicio() {
-    this.router.navigate(['/consulta']); // Vuelve a la Página 1
+    this.router.navigate(['/consulta']);
   }
 }

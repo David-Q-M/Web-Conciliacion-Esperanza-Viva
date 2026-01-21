@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { environment } from '../../../../../environments/environment';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router, ActivatedRoute, RouterLink, RouterLinkActive } from '@angular/router';
@@ -52,7 +53,7 @@ export class GeneracionActaAsistenciaInvitacion implements OnInit {
     cargarDatos() {
         const token = localStorage.getItem('token');
         const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-        this.http.get<any>(`https://web-conciliacion-esperanza-viva-production.up.railway.app/api/audiencias/${this.audienciaId}`, { headers }).subscribe({
+        this.http.get<any>(`${environment.apiUrl}/audiencias/${this.audienciaId}`, { headers }).subscribe({
             next: (data) => {
                 this.audiencia = data;
 
@@ -200,7 +201,7 @@ export class GeneracionActaAsistenciaInvitacion implements OnInit {
                     lugar: this.datosActa.lugarAudiencia
                 };
 
-                this.http.put(`https://web-conciliacion-esperanza-viva-production.up.railway.app/api/audiencias/${this.audienciaId}/resultado`, payload, { headers }).subscribe({
+                this.http.put(`${environment.apiUrl}/audiencias/${this.audienciaId}/resultado`, payload, { headers }).subscribe({
                     next: () => {
                         doc.save(`Formato_D_Constancia_${this.audiencia.solicitud?.numeroExpediente}.pdf`);
                         alert("✅ Proceso Finalizado. Se ha registrado la reprogramación y guardado la constancia.");

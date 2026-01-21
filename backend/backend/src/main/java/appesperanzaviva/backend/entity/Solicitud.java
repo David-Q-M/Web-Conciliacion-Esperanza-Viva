@@ -15,7 +15,7 @@ public class Solicitud {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Número de seguimiento tipo EXP-2025-000003
+    // Número de seguimiento tipo EXP-YYYY-000003
     @Column(name = "numero_expediente", unique = true, length = 255)
     private String numeroExpediente;
 

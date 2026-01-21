@@ -153,7 +153,12 @@ public class AudienciaServiceImpl implements AudienciaService {
             }
             // 🔹 LÓGICA EXISTENTE DE ESTADOS
             else if (datos.getResultadoDetalle() != null && datos.getResultadoDetalle().contains("actaUrl")) {
-                solicitud.setEstado("PENDIENTE_FIRMA");
+                String rTipo = datos.getResultadoTipo();
+                if (rTipo != null && (rTipo.equalsIgnoreCase("Acuerdo Total") || rTipo.contains("Acuerdo Parcial"))) {
+                    solicitud.setEstado("FINALIZADA");
+                } else {
+                    solicitud.setEstado("PENDIENTE_FIRMA");
+                }
             } else if (datos.getResultadoTipo() != null && datos.getResultadoTipo().contains("Acuerdo")) {
                 solicitud.setEstado("PENDIENTE_ACTA"); // Acuerdo verbal pero falta subir PDF
             } else {

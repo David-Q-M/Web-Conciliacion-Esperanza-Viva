@@ -2,11 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+import { environment } from '../../environments/environment';
+
 @Injectable({
     providedIn: 'root'
 })
 export class ActaService {
-    private apiUrl = 'https://web-conciliacion-esperanza-viva-production.up.railway.app/api/actas';
+    private apiUrl = `${environment.apiUrl}/actas`;
 
     constructor(private http: HttpClient) { }
 
@@ -15,7 +17,6 @@ export class ActaService {
         formData.append('audienciaId', audienciaId.toString());
         formData.append('tipoActa', tipoActa);
         formData.append('numeroActa', numeroActa);
-        // 'constancia.pdf' is just a filename for the blob
         formData.append('archivo', archivo, 'acta_generada.pdf');
 
         return this.http.post(`${this.apiUrl}/upload`, formData);

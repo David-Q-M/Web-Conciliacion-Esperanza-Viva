@@ -46,7 +46,8 @@ public class SolicitudServiceImpl implements SolicitudService {
 
             // Generar correlativo dinámico
             long count = repository.count() + 1;
-            solicitud.setNumeroExpediente("EXP-2025-" + String.format("%06d", count));
+            int currentYear = java.time.Year.now().getValue();
+            solicitud.setNumeroExpediente("EXP-" + currentYear + "-" + String.format("%06d", count));
 
             // Asegurar estado inicial
             if (solicitud.getEstado() == null) {

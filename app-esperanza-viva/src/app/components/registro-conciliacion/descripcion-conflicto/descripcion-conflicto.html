@@ -46,21 +46,66 @@
           <ul class="dropdown-viva sub-menu animate__animated animate__fadeIn"
             *ngIf="menuSubMateriaAbierto && materiaSeleccionada === 'FAMILIA'">
             <li (click)="seleccionarSubMateria('Pensión de Alimentos')">Pensión de Alimentos</li>
-            <li (click)="seleccionarSubMateria('Exoneración de Alimentos')">Exoneración de Alimentos</li>
             <li (click)="seleccionarSubMateria('Pensión de alimentos a favor de conviviente')">Pensión de alimentos a
               favor de conviviente</li>
+            <li (click)="seleccionarSubMateria('Reducción o Pensión de Alimentos')">Reducción o Pensión de Alimentos
+            </li>
+            <li (click)="seleccionarSubMateria('Exoneración de Alimentos')">Exoneración de Alimentos</li>
+            <li (click)="seleccionarSubMateria('Régimen de visitas')">Régimen de visitas</li>
+            <li (click)="seleccionarSubMateria('Variación de régimen de visitas')">Variación de régimen de visitas</li>
+            <li (click)="seleccionarSubMateria('tenencia')">tenencia</li>
+            <li (click)="seleccionarSubMateria('Gastos de embarazo, tenencia y alimentos')">Gastos de embarazo, tenencia
+              y alimentos</li>
             <li (click)="seleccionarSubMateria('Liquidación de sociedad de gananciales')">Liquidación de sociedad de
               gananciales</li>
-            <li (click)="seleccionarSubMateria('Petición de herencia')">Petición de herencia</li>
-            <li (click)="seleccionarSubMateria('Sucesión intestada')">Sucesión intestada</li>
+            <li (click)="seleccionarSubMateria('Liquidación de sociedad de bienes durante la Unión de hecho')">
+              Liquidación de sociedad de bienes durante la Unión de hecho</li>
+            <li (click)="seleccionarSubMateria('Otros')">Otros</li>
           </ul>
 
           <ul class="dropdown-viva sub-menu animate__animated animate__fadeIn"
             *ngIf="menuSubMateriaAbierto && materiaSeleccionada === 'CIVIL'">
+            <li (click)="seleccionarSubMateria('Resolución de contrato')">Resolución de contrato</li>
             <li (click)="seleccionarSubMateria('Incumplimiento de contrato')">Incumplimiento de contrato</li>
+            <li (click)="seleccionarSubMateria('Otorgamiento de escritura')">Otorgamiento de escritura</li>
+            <li (click)="seleccionarSubMateria('Rectificación de áreas y linderos')">Rectificación de áreas y linderos
+            </li>
+            <li (click)="seleccionarSubMateria('Ofrecimiento de pago')">Ofrecimiento de pago</li>
             <li (click)="seleccionarSubMateria('Desalojo')">Desalojo</li>
             <li (click)="seleccionarSubMateria('Reivindicación')">Reivindicación</li>
             <li (click)="seleccionarSubMateria('División y partición')">División y partición</li>
+            <li (click)="seleccionarSubMateria('Indemnización')">Indemnización</li>
+            <li (click)="seleccionarSubMateria('Indemnización por separación unilateral de unión de hecho')">
+              Indemnización por separación unilateral de unión de hecho</li>
+            <li (click)="seleccionarSubMateria('Retracto')">Retracto</li>
+            <li (click)="seleccionarSubMateria('Petición de herencia')">Petición de herencia</li>
+            <li (click)="seleccionarSubMateria('Interdicto de retener')">Interdicto de retener</li>
+            <li (click)="seleccionarSubMateria('Interdicto de recobrar')">Interdicto de recobrar</li>
+            <li (click)="seleccionarSubMateria('Obligación de dar suma de dinero')">Obligación de dar suma de dinero
+            </li>
+            <li (click)="seleccionarSubMateria('Obligación de dar')">Obligación de dar</li>
+            <li (click)="seleccionarSubMateria('Obligación de hacer')">Obligación de hacer</li>
+            <li (click)="seleccionarSubMateria('Obligación de no hacer')">Obligación de no hacer</li>
+            <li (click)="seleccionarSubMateria('Sentencia con condena de futuro')">Sentencia con condena de futuro</li>
+            <li (click)="seleccionarSubMateria('Pago de mejoras')">Pago de mejoras</li>
+            <li (click)="seleccionarSubMateria('Otras pretensiones')">Otras pretensiones</li>
+          </ul>
+
+          <ul class="dropdown-viva sub-menu animate__animated animate__fadeIn"
+            *ngIf="menuSubMateriaAbierto && materiaSeleccionada === 'CONTRATACIONES CON EL ESTADO'">
+            <li (click)="seleccionarSubMateria('Resolución de contrato')">Resolución de contrato</li>
+            <li (click)="seleccionarSubMateria('Ampliación del plazo contractual')">Ampliación del plazo contractual
+            </li>
+            <li (click)="seleccionarSubMateria('Recepción y conformidad')">Recepción y conformidad</li>
+            <li (click)="seleccionarSubMateria('Valorizaciones o Metrados')">Valorizaciones o Metrados</li>
+            <li (click)="seleccionarSubMateria('Liquidación de contrato')">Liquidación de contrato</li>
+            <li (click)="seleccionarSubMateria('Obligaciones posteriores al pago')">Obligaciones posteriores al pago
+            </li>
+            <li (click)="seleccionarSubMateria('Pagos')">Pagos</li>
+            <li (click)="seleccionarSubMateria('Resarcimiento de daños y perjuicios')">Resarcimiento de daños y
+              perjuicios</li>
+            <li (click)="seleccionarSubMateria('Vicios ocultos')">Vicios ocultos</li>
+            <li (click)="seleccionarSubMateria('Otras pretensiones')">Otras pretensiones</li>
           </ul>
         </div>
 

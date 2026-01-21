@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { environment } from '../../../../environments/environment';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
@@ -43,7 +44,7 @@ export class HistorialNotificador implements OnInit {
     buscarHistorial() {
         if (!this.currentUserId) return;
         this.isLoading = true;
-        this.http.get<any[]>(`https://web-conciliacion-esperanza-viva-production.up.railway.app/api/audiencias/notificador/${this.currentUserId}`).subscribe({
+        this.http.get<any[]>(`${environment.apiUrl}/audiencias/notificador/${this.currentUserId}`).subscribe({
             next: (res) => {
                 // 🔹 FIX: Mostrar todo el historial sin filtrar estrictamente por estado
                 this.historial = res;

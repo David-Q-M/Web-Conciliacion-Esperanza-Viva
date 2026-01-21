@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { environment } from '../../../../environments/environment';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
@@ -43,7 +44,7 @@ export class BandejaNotificador implements OnInit {
 
     cargarPendientes(userId: number) {
         this.isLoading = true;
-        this.http.get<any[]>(`https://web-conciliacion-esperanza-viva-production.up.railway.app/api/audiencias/notificador/${userId}`).subscribe({
+        this.http.get<any[]>(`${environment.apiUrl}/audiencias/notificador/${userId}`).subscribe({
             next: (res) => {
                 console.log("🔔 NOTIFICACIONES:", res);
                 this.originalList = res || [];

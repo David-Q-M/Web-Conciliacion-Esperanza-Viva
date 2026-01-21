@@ -2,9 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+import { environment } from '../../environments/environment';
+
 @Injectable({ providedIn: 'root' })
 export class AudienciaService {
-  private url = 'https://web-conciliacion-esperanza-viva-production.up.railway.app/api/audiencias';
+  private url = `${environment.apiUrl}/audiencias`;
 
   constructor(private http: HttpClient) { }
 

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { environment } from '../../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
@@ -32,7 +33,7 @@ export class Auditoria implements OnInit {
   }
 
   cargarLogs() {
-    this.http.get<any[]>('https://web-conciliacion-esperanza-viva-production.up.railway.app/api/auditoria').subscribe({
+    this.http.get<any[]>(`${environment.apiUrl}/auditoria`).subscribe({
       next: (res) => {
         this.todosLogs = res;
         this.filtrarLogs();

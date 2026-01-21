@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { environment } from '../../../../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -59,7 +60,7 @@ export class GenerarActaSuspension implements OnInit {
         const token = localStorage.getItem('token');
         const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 
-        this.http.get<any>(`https://web-conciliacion-esperanza-viva-production.up.railway.app/api/audiencias/${this.audienciaId}`, { headers }).subscribe({
+        this.http.get<any>(`${environment.apiUrl}/audiencias/${this.audienciaId}`, { headers }).subscribe({
             next: (audiencia) => {
                 if (audiencia.solicitud) {
                     this.expediente = audiencia.solicitud;
@@ -76,7 +77,7 @@ export class GenerarActaSuspension implements OnInit {
         const token = localStorage.getItem('token');
         const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 
-        this.http.get<any[]>('https://web-conciliacion-esperanza-viva-production.up.railway.app/api/usuarios-sistema', { headers }).subscribe({
+        this.http.get<any[]>(`${environment.apiUrl}/usuarios-sistema`, { headers }).subscribe({
             next: (res) => {
                 this.abogados = res.filter(u => u.rol === 'ABOGADO' && u.estado === 'ACTIVO');
             },
@@ -204,7 +205,7 @@ export class GenerarActaSuspension implements OnInit {
                     })
                 };
 
-                this.http.put(`https://web-conciliacion-esperanza-viva-production.up.railway.app/api/audiencias/${this.audienciaId}/resultado`, payload, { headers }).subscribe({
+                this.http.put(`${environment.apiUrl}/audiencias/${this.audienciaId}/resultado`, payload, { headers }).subscribe({
                     next: () => {
                         doc.save(`Acta_Suspension_${this.expediente?.numeroExpediente}.pdf`);
                         alert("✅ Acta de Suspensión Emitida con éxito!");

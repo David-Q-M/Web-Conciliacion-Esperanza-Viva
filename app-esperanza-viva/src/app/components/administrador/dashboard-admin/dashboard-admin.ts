@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { environment } from '../../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { SolicitudService } from '../../../services/solicitud.service';
@@ -121,7 +122,7 @@ export class DashboardAdmin implements OnInit {
   }
 
   cargarSesionesActivas() {
-    this.http.get<any[]>('https://web-conciliacion-esperanza-viva-production.up.railway.app/api/auditoria').subscribe({
+    this.http.get<any[]>(`${environment.apiUrl}/auditoria`).subscribe({
       next: (logs) => {
         // 1. Ordenar por fecha descendente (lo más reciente primero)
         // Usamos una función robusta por si la fecha viene como string o timestamp

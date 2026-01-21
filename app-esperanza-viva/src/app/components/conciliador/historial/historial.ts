@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { environment } from '../../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 
@@ -62,7 +63,7 @@ export class Historial implements OnInit, OnDestroy {
     const userId = JSON.parse(userJson).id;
 
     // Usar el endpoint de audiencias del conciliador para asegurar que solo ve los suyos
-    this.http.get<any[]>(`https://web-conciliacion-esperanza-viva-production.up.railway.app/api/audiencias/conciliador/${userId}`).subscribe({
+    this.http.get<any[]>(`${environment.apiUrl}/audiencias/conciliador/${userId}`).subscribe({
       next: (res) => {
         // Historial = Audiencias con resultado registrado o Solicitudes en estado final
         this.casosCerrados = res.filter(a =>

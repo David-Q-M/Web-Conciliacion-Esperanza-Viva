@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { environment } from '../../../../environments/environment';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -42,7 +43,7 @@ export class GenerarCertificacion implements OnInit {
     }
 
     cargarDetalle() {
-        this.http.get<any>(`https://web-conciliacion-esperanza-viva-production.up.railway.app/api/solicitudes/${this.idSolicitud}`).subscribe({
+        this.http.get<any>(`${environment.apiUrl}/solicitudes/${this.idSolicitud}`).subscribe({
             next: (res) => this.expediente = res,
             error: (err) => console.error("Error cargando expediente", err)
         });
@@ -65,7 +66,7 @@ export class GenerarCertificacion implements OnInit {
             }
         };
 
-        this.http.put(`https://web-conciliacion-esperanza-viva-production.up.railway.app/api/solicitudes/${this.idSolicitud}/estado`, {
+        this.http.put(`${environment.apiUrl}/solicitudes/${this.idSolicitud}/estado`, {
             estado: 'NOTIFICADO'
         }).subscribe({
             next: () => {

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { environment } from '../../../../environments/environment';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
@@ -37,7 +38,7 @@ export class BandejaPendientes implements OnInit {
 
     cargarPendientes() {
         this.isLoading = true;
-        this.http.get<any[]>('https://web-conciliacion-esperanza-viva-production.up.railway.app/api/solicitudes').subscribe({
+        this.http.get<any[]>(`${environment.apiUrl}/solicitudes`).subscribe({
             next: (res) => {
                 // Fetch all relevant lawyer requests
                 this.pendientesOriginales = res.filter(s =>
